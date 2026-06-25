@@ -1,0 +1,746 @@
+{
+  "app": {
+    "name": "Silový deník",
+    "loading": "Načítání..."
+  },
+  "auth": {
+    "signIn": "Přihlášení",
+    "signUp": "Registrace",
+    "signOut": "Odhlásit se",
+    "signedIn": "Přihlášen",
+    "enterJournal": "Vstup do deníku",
+    "createAccount": "Vytvoř účet",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "tvuj@email.cz",
+    "passwordLabel": "Heslo",
+    "passwordLabelWithMin": "Heslo (min. 8 znaků)",
+    "passwordMinHint": "min. 8 znaků",
+    "signInSubtitle": "Zadej e-mail a heslo",
+    "signUpSubtitle": "Po registraci ověříme tvůj e-mail jednorázovým kódem",
+    "submitSignIn": "Přihlásit se ⚡",
+    "submitSignUp": "Zaregistrovat se ⚡",
+    "submittingSignIn": "Přihlašuji...",
+    "submittingSignUp": "Registruji...",
+    "switchToSignUp": "Nemám účet → Registrovat se",
+    "switchToSignIn": "Už mám účet → Přihlásit se",
+    "forgotPassword": "Zapomenuté heslo",
+    "forgotPasswordTitle": "Zapomenuté heslo",
+    "forgotPasswordSubtitle": "Pošleme ti kód pro nastavení nového hesla",
+    "forgotPasswordReset": "Reset hesla",
+    "sendCode": "Odeslat kód",
+    "sendingCode": "Odesílám...",
+    "backToSignIn": "← Zpět na přihlášení",
+    "verifyEmail": "Ověř svůj e-mail",
+    "verifyEmailSubtitle": "Odeslali jsme kód na",
+    "codeLabel": "Kód z e-mailu",
+    "verifyAndEnter": "Ověřit a vstoupit ⚡",
+    "verifying": "Ověřuji...",
+    "resetPasswordTitle": "Nastav nové heslo",
+    "resetPasswordSubtitle": "Zadej kód z e-mailu a zvol nové heslo",
+    "newPasswordLabel": "Nové heslo",
+    "setPassword": "Nastavit heslo",
+    "settingPassword": "Nastavuji...",
+    "errors": {
+      "invalidCode": "Neplatný nebo expirovaný kód. Zkus to znovu.",
+      "invalidCodeOrShortPassword": "Neplatný kód nebo heslo příliš krátké (min. 8 znaků).",
+      "emailNotFound": "E-mail nebyl nalezen nebo nastala chyba. Zkus to znovu.",
+      "accountExists": "Účet s tímto e-mailem již existuje. Přihlas se místo toho.",
+      "passwordTooShort": "Heslo musí mít alespoň 8 znaků.",
+      "wrongPassword": "Špatné heslo. Zkus to znovu nebo si resetuj heslo.",
+      "signInFailed": "Přihlášení selhalo. Zkontroluj e-mail a heslo."
+    }
+  },
+  "nav": {
+    "workout": "Trénink",
+    "history": "Historie",
+    "plan": "Plán",
+    "menu": "Menu",
+    "close": "Zavřít",
+    "athleteProfile": "Profil atleta",
+    "notSet": "Nenastaveno",
+    "statistics": "Statistiky",
+    "statsSubtitle": "Wilks, DOTS, strength level"
+  },
+  "program": {
+    "title": "5/3/1 Program",
+    "description": "Deterministický silový program od Jima Wendlera. Žádné hádání — tvé váhy se počítají matematicky z Training Maxu.",
+    "startCalibration": "Spustit kalibraci",
+    "calibrationHint": "Kalibrací zjistíme tvé startovní váhy. Netestujeme maxima — jdeš po pocitu.",
+    "paused": "Program pozastaven",
+    "pausedDescription": "Trénink je pozastaven. Tvoje pozice a fáze jsou zachovány — pokračuješ přesně tam, kde jsi skončil.",
+    "resume": "Pokračovat v programu",
+    "resumed": "Program obnoven",
+    "resumeFailed": "Nepodařilo se obnovit program, zkus to znovu",
+    "reset": "Resetovat program",
+    "resetConfirmTitle": "Resetovat program?",
+    "resetConfirmDescription": "Tím smažeš celý 5/3/1 program včetně TM a historie. Budeš muset znovu projít kalibrací.",
+    "delete": "Smazat",
+    "cancel": "Zrušit",
+    "fourDaysPerWeek": "4 tréninkové dny / týden · Leader/Anchor cykly",
+    "phases": {
+      "leader1": "Leader 1",
+      "leader2": "Leader 2",
+      "anchor": "Anchor",
+      "seventh_week": "7. týden"
+    },
+    "phaseDescriptions": {
+      "leader1": "První blok vysokého objemu. Budování síly a svalové hmoty.",
+      "leader2": "Druhý blok vysokého objemu. Pokračování v budování základu.",
+      "anchor": "Realizační blok. Nižší objem, maximální intenzita na AMRAP setech.",
+      "seventh_week": "TM Test nebo Deload mezi bloky."
+    }
+  },
+  "calibration": {
+    "title": "Kalibrace 5/3/1",
+    "subtitle": "Zjistíme tvé startovní váhy. Není to test maxima — jdeš po pocitu.",
+    "liftNumber": "Cvik {{current}} / {{total}}",
+    "weightLabel": "Váha (kg)",
+    "weightPlaceholder": "např. 80",
+    "repsLabel": "Opakování",
+    "repsPlaceholder": "např. 5",
+    "startingTM": "Startovní Training Max",
+    "conservativeStart": "Konzervativní start — progrese to vyrovná",
+    "alreadyCalibrated": "Již zkalibrováno",
+    "editHint": "(klikni pro úpravu)",
+    "saveAndContinue": "Uložit a pokračovat na {{liftName}}",
+    "saveChanges": "Uložit změny",
+    "saveChangesAndFinish": "Uložit změny a dokončit kalibraci",
+    "finishCalibration": "Dokončit kalibraci a spustit program",
+    "savingLabel": "Ukládám...",
+    "errorWeight": "Zadej váhu",
+    "errorReps": "Zadej opakování",
+    "errorSave": "Chyba při ukládání",
+    "rpeHint": "RPE 7-8 = mohls by udělat ještě 2-3 opakování, ale nepotřebuješ.",
+    "tips": {
+      "squat": "Naběhni do těžší série dřepu (cca RPE 7-8). Necháváš 2-3 opakování v zásobě.",
+      "bench": "Naběhni do těžší série bench pressu (cca RPE 7-8). Necháváš 2-3 opakování v zásobě.",
+      "deadlift": "Naběhni do těžší série mrtvého tahu (cca RPE 7-8). Necháváš 2-3 opakování v zásobě.",
+      "press": "Naběhni do těžší série tlaku nad hlavou (cca RPE 7-8). Necháváš 2-3 opakování v zásobě."
+    },
+    "backToTemplate": "Zpět na výběr template",
+    "continueToCalibration": "Pokračovat na kalibraci",
+    "templateSubtitle": "Vyber si supplemental template pro svůj program",
+    "programInfo": "Program: 5/3/1 Forever — {{template}}"
+  },
+  "template": {
+    "selectTitle": "Vyber supplemental template",
+    "selectSubtitle": "Template určuje doplňkovou práci po hlavních sériích",
+    "selected": "Vybraný template:",
+    "saving": "Ukládám...",
+    "howItWorks": "Jak funguje 5/3/1 Forever:",
+    "leaderPhase": "6 týdnů vysokého objemu (budování)",
+    "leaderPhase2": "6 týdnů vysokého objemu",
+    "seventhWeekProtocol": "TM Test nebo Deload",
+    "anchorPhase": "3 týdny realizace (PRs)",
+    "supplementalLabel": "Supplemental šablona"
+  },
+  "lifts": {
+    "squat": "Dřep",
+    "bench": "Bench press",
+    "deadlift": "Mrtvý tah",
+    "press": "Tlak nad hlavou"
+  },
+  "workout": {
+    "mainLift": "Hlavní cvik",
+    "sets": "Série",
+    "workingSets": "Pracovní série",
+    "tmTestSets": "TM Test série",
+    "deloadSets": "Deload série",
+    "amrapQuestion": "Kolik opakování jsi udělal? (AMRAP)",
+    "amrapMax": "Max opak.",
+    "amrapSaved": "✓ AMRAP uložen: {{reps}} opakování",
+    "saveAmrap": "Uložit",
+    "expandPlates": "Rozbalit kotouče pro {{weight}} kg",
+    "repsSuffix": "opak.",
+    "finishConfirmTitle": "Dokončit trénink?",
+    "finishConfirmDescription": "Posuneme se na další den v programu.",
+    "finishConfirm": "Dokončit",
+    "finishing": "...",
+    "macrocycle": "Makrocyklus {{number}}",
+    "loadError": "Chyba při načítání tréninku",
+    "templateLabel": "Šablona: {{name}}",
+    "cycleLabel": "Cyklus {{cycle}}",
+    "weekLabel": "Týden {{week}}:",
+    "dayLabel": "Den {{day}}/4",
+    "wakeLockOn": "Nezhasínat displej: zapnuto",
+    "wakeLockOff": "Nezhasínat displej: vypnuto",
+    "finishWorkout": "Dokončit trénink",
+    "enterAmrap": "Zadej AMRAP opakování",
+    "setsRemaining_one": "Zbývá {{count}} série",
+    "setsRemaining_few": "Zbývá {{count}} série",
+    "setsRemaining_other": "Zbývá {{count}} sérií",
+    "amrapPlaceholder": "např. 8"
+  },
+  "history": {
+    "loading": "Načítání...",
+    "empty": "Zatím žádné dokončené tréninky",
+    "pastWorkouts": "Minulé tréninky — {{count}} celkem",
+    "setsSuffix": "sérií",
+    "noteLabel": "Poznámky",
+    "ratingLabel": "Hodnocení",
+    "noteEditLabel": "Poznámka",
+    "notePlaceholder": "Volitelná poznámka k tréninku...",
+    "editWarning": "Úprava neovlivní training maxy ani postup programu.",
+    "deleteConfirm": "Smazat trénink?",
+    "deleteConfirmDescription": "Trénink bude trvale smazán z historie. Tato akce se nedá vrátit.",
+    "deleteLabel": "Smazat",
+    "cancelLabel": "Zrušit",
+    "backLabel": "Zpět",
+    "editLabel": "Upravit",
+    "saveLabel": "Uložit",
+    "savingLabel": "Ukládám...",
+    "editAriaLabel": "Upravit trénink",
+    "deleteAriaLabel": "Smazat trénink",
+    "savedSuccess": "Trénink upraven",
+    "savedError": "Nepodařilo se uložit změny",
+    "setTitle": "{{weight}} kg × {{reps}} opak.",
+    "setWeightAria": "{{name}} série {{num}} váha",
+    "setRepsAria": "{{name}} série {{num}} opakování",
+    "setCompletedAria": "{{name}} série {{num}} dokončena",
+    "ratingStarAria": "Hodnocení {{star}}"
+  },
+  "readiness": {
+    "title": "Readiness",
+    "editBtn": "Upravit",
+    "enterBtn": "Zadat",
+    "loading": "Načítání…",
+    "noDataHint": "Zadej, jak se dnes cítíš (a případně HRV/spánek z hodinek), a dostaneš orientační doporučení k dnešnímu tréninku.",
+    "disclaimer": "Orientační vodítko, ne lékařská rada. Když se cítíš jinak než čísla, věř sobě — činka nelže.",
+    "bands": {
+      "high": "Vysoká pohotovost",
+      "good": "Dobrá pohotovost",
+      "moderate": "Snížená pohotovost",
+      "low": "Nízká pohotovost"
+    },
+    "recommendations": {
+      "push_pr": "Dnes ti to půjde — na poslední (AMRAP) sérii klidně přitlač na rep PR.",
+      "on_plan": "Jeď přesně podle plánu.",
+      "grind_min_reps": "Odehraj předepsané váhy, na AMRAP stačí minimum opakování — nehoň PR. Váhy nesnižuj.",
+      "consider_deload": "Zvaž lehčí den nebo deload. Rozhodni se podle sebe — data jsou jen vodítko."
+    }
+  },
+  "settings": {
+    "trainingMaxes": "Training Maxy",
+    "roundedTo": "→ zaokrouhleno:",
+    "changesFromNext": "Změna se projeví od příštího tréninku, automatickou progresi neovlivní.",
+    "missesOne": "1 nesplněný cíl — při dalším nesplnění se TM automaticky sníží o 10 %",
+    "missesMany": "Opakovaná stagnace — zvaž reset TM. Při dalším nesplnění se TM automaticky sníží o 10 %.",
+    "newTM": "Nový Training Max",
+    "confirmBtn": "Potvrdit",
+    "cancelBtn": "Zrušit",
+    "saveBtn": "Ukládám…",
+    "editBtn": "Upravit",
+    "changeBtn": "Změnit",
+    "closeBtn": "Zavřít",
+    "programSettings": "Nastavení programu",
+    "programStatus": "Stav programu",
+    "pauseProgram": "Pozastavit program",
+    "pauseConfirm": "Opravdu chceš pozastavit program? Pozice ani fáze se nezmění.",
+    "pausingLabel": "Pausuji…",
+    "pauseConfirmBtn": "Ano, pozastavit",
+    "leaderRecommendation": "Doporučení Forever: objemové šablony (BBB, BBS) v leader fázích.",
+    "anchorRecommendation": "Doporučení Forever: intenzivnější šablony (FSL, SSL) v anchor fázi.",
+    "tmSavedSuccess": "TM pro {{liftName}} nastaven na {{value}} kg",
+    "tmSaveFailed": "Nepodařilo se uložit Training Max, zkus to znovu",
+    "pauseSuccess": "Program pozastaven",
+    "pauseFailed": "Nepodařilo se pozastavit program, zkus to znovu"
+  },
+  "seventhWeek": {
+    "title": "7. týden - Protokol",
+    "subtitle": "Vyber si, jak strávíš tento regenerační týden",
+    "sets": "Série",
+    "tip": "Tip:",
+    "tipTmTest": "TM Test ověří, zda je tvůj Training Max správně nastavený. Měl bys zvládnout 3-5 silných opakování.",
+    "tipDeload": "Deload je ideální, pokud se cítíš unavený. Lehké váhy pomohou regeneraci.",
+    "tipDefault": "TM Test je doporučený po Leader fázích. Deload je vhodnější, pokud potřebuješ odpočinek.",
+    "protocols": {
+      "tm_test": {
+        "name": "TM Test",
+        "description": "Validace Training Maxu. Měli byste zvládnout 3-5 silných opakování."
+      },
+      "deload": {
+        "name": "Deload",
+        "description": "Aktivní zotavení. Lehké váhy, udržení pohybových vzorců."
+      }
+    }
+  },
+  "restTimer": {
+    "label": "Pauza",
+    "ariaLabel": "Pauza: {{time}}",
+    "addTime": "+30 s",
+    "addTimeAria": "Přidat 30 sekund",
+    "stop": "Zrušit",
+    "stopAria": "Zrušit odpočinek"
+  },
+  "offline": {
+    "indicator": "Offline",
+    "conflictDetail": " (cyklus {{cycle}}, týden {{week}})",
+    "conflictMessage": "Trénink{{detail}} už byl dokončen na jiném zařízení — offline změny tohoto tréninku byly zahozeny.",
+    "dismiss": "Zavřít",
+    "dismissAria": "Zavřít upozornění",
+    "syncingAria_one": "Synchronizuje se — {{count}} čekající",
+    "syncingAria_few": "Synchronizuje se — {{count}} čekajících",
+    "syncingAria_other": "Synchronizuje se — {{count}} čekajících",
+    "offlineWithPendingAria_one": "Aplikace je offline — {{count}} čekající mutace",
+    "offlineWithPendingAria_few": "Aplikace je offline — {{count}} čekající mutace",
+    "offlineWithPendingAria_other": "Aplikace je offline — {{count}} čekajících mutací",
+    "offlineAria": "Aplikace je offline",
+    "pendingBadge": "⟳ {{count}} čeká"
+  },
+  "readinessInput": {
+    "dialogAriaLabel": "Zadání readiness",
+    "subtitle": "Readiness",
+    "title": "Jak na tom dnes jsi",
+    "closeAria": "Zavřít",
+    "feelLabel": "Jak se cítíš?",
+    "feelGreat": "Skvěle",
+    "feelNormal": "Normálně",
+    "feelBad": "Mizerně",
+    "watchSection": "Z hodinek (volitelné)",
+    "hrvLabel": "HRV (ms)",
+    "hrvPlaceholder": "např. 65",
+    "rhrLabel": "Klidový tep",
+    "rhrPlaceholder": "bpm",
+    "sleepHoursLabel": "Spánek (h)",
+    "sleepHoursPlaceholder": "např. 7.5",
+    "sleepQualityLabel": "Kvalita spánku",
+    "sleepQualityPlaceholder": "0–100",
+    "disclaimer": "Orientační vodítko, ne lékařská rada. Vždy poslouchej své tělo.",
+    "saveBtn": "Uložit readiness",
+    "savingBtn": "Ukládám...",
+    "errorNoFeel": "Vyber, jak se dnes cítíš",
+    "saveSuccess": "Readiness uložena",
+    "saveError": "Uložení se nezdařilo, zkus to znovu"
+  },
+  "upcoming": {
+    "noWorkouts": "Žádné nadcházející tréninky",
+    "sectionAriaLabel": "Nadcházející tréninky",
+    "workoutAriaLabel": "Nadcházející trénink: {{name}}",
+    "protocolNotSelected": "Protokol nevybrán",
+    "tmTest": "TM Test",
+    "deload": "Deload",
+    "topSet": "Top set",
+    "tmMayChange": "Váhy orientační — TM se po cyklu může zvýšit",
+    "footer": "Váhy počítány z aktuálních TM · bez predikce progrese"
+  },
+  "stats": {
+    "title": "Statistiky",
+    "missingProfileTitle": "Vyplň profil atleta",
+    "missingProfileDesc": "Pro výpočet Wilks bodů a strength level potřebujeme tvou váhu a pohlaví.",
+    "missingProfileBtn": "Nastavit profil",
+    "missingProgramTitle": "Spusť program",
+    "missingProgramDesc": "Statistiky se vypočítají z tvých Training Maxů po dokončení kalibrace.",
+    "missingProgramBtn": "Spustit kalibraci",
+    "ipfStandard": "IPF standard",
+    "perLiftTitle": "Jednotlivé lifty",
+    "bwMultiple": "{{value}}× BW",
+    "chartsTitle": "Grafy & Trendy",
+    "e1rmProgressTitle": "Vývoj e1RM",
+    "wilksTrendTitle": "Trend Wilks bodů",
+    "amrapPerformanceTitle": "AMRAP výkon",
+    "amrapPerformanceDesc": "Zelená = nad cíl, červená = pod cíl",
+    "weeklyVolumeTitle": "Týdenní objem",
+    "weeklyVolumeDesc": "Celkový objem v tunách (váha × opakování)",
+    "liftDistributionTitle": "Rozložení objemu",
+    "liftDistributionDesc": "Posledních 90 dní",
+    "bodyweightTitle": "Tělesná váha",
+    "bodyweightLast": "Poslední: {{weight}} kg ({{date}})",
+    "readinessTrendTitle": "Readiness",
+    "totalWorkoutsLabel": "Tréninků (90 dní)",
+    "currentCycleLabel": "Aktuální cyklus",
+    "accessorySectionTitle": "Doplňkové cviky",
+    "footnoteWilks": "Wilks a DOTS body normalizují sílu podle tělesné váhy a pohlaví — umožňují férové porovnání mezi liftery různých hmotnostních kategorií.",
+    "footnoteStrengthLevel": "Strength Level ukazuje, jak si stojíš oproti populaci podle bodyweight multiples. Elite = top 1% trénující populace.",
+    "footnoteE1rm": "Hodnoty e1RM jsou odhadnuty z Training Maxů nebo AMRAP výsledků."
+  },
+  "profile": {
+    "saveProfile": "Uložit profil",
+    "subtitle": "Tvůj profil pomáhá personalizovat coaching. Omezení jsou vždy respektována.",
+    "experienceDefault": "Středně pokročilý (1–3 roky)",
+    "errorInvalidWeight": "Neplatná váha — musí být 30–300 kg",
+    "weightLogged": "Váha {{weight}} kg zaznamenána",
+    "errorWeightLog": "Nepodařilo se zaznamenat váhu",
+    "exportJsonSuccess": "JSON export stažen",
+    "exportCsvSuccess": "CSV export stažen",
+    "exportFailed": "Export se nezdařil",
+    "sectionLabel": "Nastavení",
+    "title": "Profil atleta",
+    "closeAria": "Zavřít",
+    "genderLabel": "Pohlaví",
+    "genderMale": "Muž",
+    "genderFemale": "Žena",
+    "genderOther": "Jiné",
+    "ageLabel": "Věk",
+    "ageSuffix": "let",
+    "heightLabel": "Výška",
+    "heightSuffix": "cm",
+    "weightLabel": "Váha",
+    "weightSuffix": "kg",
+    "loggingWeight": "Zaznamenávám...",
+    "logWeightBtn": "Zaznamenat dnes",
+    "experienceLabel": "Zkušenosti",
+    "expBeginner": "Začátečník (méně než 1 rok)",
+    "expIntermediate": "Středně pokročilý (1–3 roky)",
+    "expAdvanced": "Pokročilý (3+ let)",
+    "expCompetitive": "Soutěžní powerlifter",
+    "exportSection": "Export dat",
+    "exportDescription": "Stáhněte všechna vaše tréninková data — tréninky, program, accessory logy.",
+    "downloadingLabel": "Stahování...",
+    "loadingLabel": "Načítání...",
+    "downloadJson": "Stáhnout JSON",
+    "downloadCsv": "Stáhnout CSV"
+  },
+  "autoreg": {
+    "title": "Autoregulovaný den",
+    "subtitle": "Zapni, pokud jsi vědomě zlehčil (únava, nemoc, špatný den)",
+    "noteLabel": "Proč? (volitelné, pro trenéra)",
+    "notePlaceholder": "např. Málo spánku, bolest ramene, stres v práci...",
+    "noteHint": "Tato poznámka se nepoužije pro výpočet progrese — pouze pro kontext trenéra.",
+    "warningBold": "Autoregulovaný den:",
+    "warningText": "Výkon z tohoto tréninku se nepočítá do progrese TM. Při příštím cyklu dostaneš čistý odečet."
+  },
+  "accessorySection": {
+    "title": "Doplňkové cviky",
+    "noneSelected": "Zatím nevybrané",
+    "forToday": "pro dnešek",
+    "editBtn": "Upravit",
+    "selectBtn": "Vybrat",
+    "exerciseCount_one": "{{count}} cvik",
+    "exerciseCount_few": "{{count}} cviky",
+    "exerciseCount_other": "{{count}} cviků",
+    "savedConfirm_one": "✓ Doplňkové cviky uloženy ({{count}} cvik)",
+    "savedConfirm_few": "✓ Doplňkové cviky uloženy ({{count}} cviky)",
+    "savedConfirm_other": "✓ Doplňkové cviky uloženy ({{count}} cviků)",
+    "emptyHint": "Klikni na \"Vybrat\" pro přidání doplňkových cviků.",
+    "emptyNote": "5/3/1 je flexibilní — hlavní je konzistence v hlavních cvicích."
+  },
+  "exerciseDialog": {
+    "titleAdd": "Nový cvik",
+    "titleEdit": "Upravit cvik",
+    "nameLabel": "Název cviku",
+    "namePlaceholder": "např. Bench press",
+    "weightLabel": "Váha (kg)",
+    "setsLabel": "Série",
+    "repsLabel": "Opakování",
+    "rpeOptional": "(volitelné)",
+    "rpeClear": "Smazat",
+    "preview": "Náhled",
+    "submitAdd": "Přidat cvik",
+    "submitEdit": "Uložit změny",
+    "rpe": {
+      "1": "Velmi lehké",
+      "2": "Lehké",
+      "3": "Mírné",
+      "4": "Trochu náročné",
+      "5": "Střední",
+      "6": "Náročnější",
+      "7": "Těžké",
+      "8": "Velmi těžké",
+      "9": "Skoro max",
+      "10": "Absolutní max"
+    }
+  },
+  "landing": {
+    "nav": {
+      "signInLink": "Přihlásit se"
+    },
+    "hero": {
+      "eyebrow": "5/3/1 Forever",
+      "heading": "Tvůj 5/3/1 trénink.",
+      "headingAccent": "Bez tabulek.",
+      "subheading": "Aplikace, která za tebe počítá váhy, hlídá postup cyklů a posouvá Training Maxy podle metodiky. Ty se soustředíš na zvedání.",
+      "ctaPrimary": "Spustit zdarma",
+      "ctaSecondary": "Jak to funguje"
+    },
+    "mockup": {
+      "weekDay": "Týden 1 · Den 1",
+      "setsLabel": "Série",
+      "amrapSet": "AMRAP · max opakování",
+      "workingSet": "pracovní série",
+      "plateHint": "Osa 20 · 25 · 20 · 10 · 2,5 na stranu"
+    },
+    "problem": {
+      "heading": "Znáš to z Google Sheets",
+      "body": "Rozmazané buňky na mobilu, ruční přepočty procent, hledání, kolik máš dnes vlastně zvedat. Silový deník dělá totéž co tvoje tabulka. Jen za tebe, na jedno ťuknutí a bez chyb."
+    },
+    "features": {
+      "0": {
+        "title": "5/3/1 Forever",
+        "desc": "Leader, anchor i 7. týden. Program počítá váhy, procenta a postup cyklů za tebe. Ty nemusíš nic hlídat."
+      },
+      "1": {
+        "title": "Automatická progrese",
+        "desc": "Zadáš AMRAP, aplikace spočítá odhad 1RM a posune Training Max přesně podle metodiky. Žádné ruční přepočítávání."
+      },
+      "2": {
+        "title": "Plate calculator",
+        "desc": "U každé série vidíš, jaké kotouče naložit na osu. Konec počítání v hlavě mezi sériemi."
+      },
+      "3": {
+        "title": "Rest timer",
+        "desc": "Odpočet pauzy se spustí sám po zaškrtnutí série. Displej během tréninku nezhasne."
+      },
+      "4": {
+        "title": "Statistiky, co dávají smysl",
+        "desc": "Wilks, DOTS, odhad 1RM v čase, objem, trendy doplňků i tělesné váhy. Vidíš, jestli rosteš."
+      },
+      "5": {
+        "title": "Funguje v posilovně",
+        "desc": "Nainstaluj na plochu jako appku. Offline režim, na kterém pracujeme, tě nenechá ve štychu ani v suterénu bez signálu."
+      }
+    },
+    "howItWorks": {
+      "heading": "Tři kroky a trénuješ"
+    },
+    "steps": {
+      "0": {
+        "title": "Kalibrace",
+        "desc": "Zadáš pár sérií u hlavních cviků. Aplikace z nich spočítá tvoje Training Maxy."
+      },
+      "1": {
+        "title": "Trénuj",
+        "desc": "Otevřeš dnešní trénink, zaškrtáváš série, zadáš AMRAP. Vše ostatní je dopočítané."
+      },
+      "2": {
+        "title": "Rosteš",
+        "desc": "Po každém cyklu se Training Maxy posunou podle tvého výkonu. Pokrok vidíš v grafech."
+      }
+    },
+    "differentiators": {
+      "0": {
+        "title": "Žádná AI, žádné hádání",
+        "desc": "Spoléháme na ověřenou matematiku 5/3/1, ne na jazykový model, který si může vymyslet váhu. U silového tréninku jde o zdraví."
+      },
+      "1": {
+        "title": "Tvoje data jsou tvoje",
+        "desc": "Kdykoli si stáhneš celou historii v CSV nebo JSON. Žádný zámek, žádné prodávání dat."
+      },
+      "2": {
+        "title": "Lepší než spreadsheet",
+        "desc": "Žádné scrollování a překlepy ve vzorcích. Jedno ťuknutí zaloguje sérii, appka udělá zbytek."
+      }
+    },
+    "cta": {
+      "heading": "Příští trénink veď tady",
+      "body": "Zadarmo, bez instalace. Otevři v prohlížeči a přidej na plochu jako appku.",
+      "button": "Začít trénovat"
+    },
+    "footer": {
+      "legal": "Postaveno na metodice 5/3/1 Jima Wendlera. Není oficiální produkt Jim Wendler LLC."
+    }
+  },
+  "cycleReview": {
+    "title": "Cyklus {{cycle}} dokončen",
+    "tmAutoSet": "TM pro příští cyklus bylo nastaveno automaticky",
+    "newTrainingMaxes": "Nové Training Maxy",
+    "continueBtn": "Pokračovat",
+    "reasons": {
+      "standard": "Splněno ({{reps}} opak.) — standardní zvýšení",
+      "standardNoReps": "Standardní zvýšení",
+      "no_clean_signal": "Chybí čistý signál — TM zachováno",
+      "first_miss": "Nesplněno ({{reps}} opak.) — TM zachováno",
+      "repeated_miss": "Opakované selhání — TM sníženo o 10 %",
+      "e1rm_stall": "Síla neroste — TM zachováno"
+    }
+  },
+  "exercises": {
+    "dips": "Dipy",
+    "tricep_pushdown": "Tricepsové stahování",
+    "db_incline_press": "Šikmý bench s jednoručkami",
+    "overhead_tricep_ext": "Francouzský tlak",
+    "pushups": "Kliky",
+    "close_grip_bench": "Úzký bench press",
+    "cable_fly": "Cable fly",
+    "db_shoulder_press": "Tlak s jednoručkami vsedě",
+    "pullups": "Shyby",
+    "chinups": "Shyby nadhmatem",
+    "face_pulls": "Face pulls",
+    "db_rows": "Jednoruční přítahy",
+    "cable_rows": "Přítahy na kladce vsedě",
+    "lat_pulldown": "Stahování na hrudník",
+    "barbell_rows": "Přítahy s velkou činkou",
+    "hammer_curls": "Kladivové bicepsové zdvihy",
+    "band_pullaparts": "Rozpažování s gumou",
+    "rdl": "Rumunský mrtvý tah",
+    "db_rdl": "Rumunský mrtvý tah s jednoručkami",
+    "leg_curl": "Leg curl",
+    "leg_press": "Leg press",
+    "lunges": "Výpady",
+    "split_squats": "Bulharské dřepy",
+    "hip_thrust": "Hip thrust",
+    "calf_raises": "Výpony na lýtka",
+    "goblet_squats": "Goblet dřepy",
+    "hanging_leg_raise": "Přednožování ve visu",
+    "ab_wheel": "Ab wheel",
+    "plank": "Plank",
+    "pallof_press": "Pallof press",
+    "cable_crunch": "Sklapovačky na kladce",
+    "dead_bug": "Dead bug",
+    "bird_dog": "Bird dog",
+    "side_plank": "Boční plank"
+  },
+  "categories": {
+    "push": "Tlak",
+    "pull": "Tah",
+    "legs": "Nohy",
+    "core": "Core"
+  },
+  "equipment": {
+    "barbell": "Velká činka",
+    "dumbbells": "Jednoručky",
+    "cable": "Kladka",
+    "pull_up_bar": "Hrazda",
+    "dip_bars": "Bradla",
+    "bench": "Lavička",
+    "machine": "Stroje",
+    "band": "Guma",
+    "ab_wheel": "Ab wheel"
+  },
+  "excludableTags": {
+    "overhead": {
+      "name": "Nad hlavou",
+      "description": "Cviky s rukama nad hlavou"
+    },
+    "spinal_loading": {
+      "name": "Zatížení páteře",
+      "description": "Cviky s axiálním zatížením"
+    },
+    "grip_intensive": {
+      "name": "Náročné na úchop",
+      "description": "Cviky zatěžující forearms"
+    }
+  },
+  "weeks": {
+    "1": "5/5/5+",
+    "2": "3/3/3+",
+    "3": "5/3/1+",
+    "seventh": "7. týden",
+    "unknown": "Neznámý týden"
+  },
+  "templates": {
+    "bbb": {
+      "name": "Boring But Big",
+      "description": "Klasický hypertrofický template. 5 sérií po 10 opakováních na 50-65% TM. Vysoký objem pro růst svalů.",
+      "shortDescription": "5×10 @ 50-65%"
+    },
+    "fsl": {
+      "name": "First Set Last",
+      "description": "Síla a technika. 5 sérií po 5 opakováních na váhu první pracovní série. Méně objemu, více kvality.",
+      "shortDescription": "5×5 @ první sada"
+    },
+    "ssl": {
+      "name": "Second Set Last",
+      "description": "Pokročilá varianta FSL. 5 sérií po 5 opakováních na váhu druhé série. Vyšší intenzita.",
+      "shortDescription": "5×5 @ druhá sada"
+    },
+    "bbs": {
+      "name": "Boring But Strong",
+      "description": "Síla + objem. 10 sérií po 5 opakováních na FSL váhu. Pro pokročilé liftery.",
+      "shortDescription": "10×5 @ FSL váha"
+    }
+  },
+  "wilks": {
+    "world_class": "Světová úroveň",
+    "elite": "Elitní závodník",
+    "advanced_competitor": "Pokročilý závodník",
+    "intermediate": "Intermediate lifter",
+    "solid_base": "Solidní základy",
+    "advanced_beginner": "Pokročilý začátečník",
+    "beginner": "Začátečník"
+  },
+  "strengthLevels": {
+    "beginner": "Začátečník",
+    "novice": "Pokročilý",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced",
+    "elite": "Elite",
+    "beginner_desc": "Právě začínáš",
+    "novice_desc": "Solidní základy",
+    "intermediate_desc": "Nad průměrem",
+    "advanced_desc": "Výjimečná síla",
+    "elite_desc": "Top 1%"
+  },
+  "charts": {
+    "needAmrap2": "Potřeba alespoň 2 AMRAP výsledky pro zobrazení grafu",
+    "needWilksData": "Potřeba více dat pro Wilks trend",
+    "needAmrap3": "Potřeba alespoň 3 AMRAP výsledky",
+    "needWeeks2": "Potřeba alespoň 2 týdny dat",
+    "noVolumeData": "Žádná data o objemu",
+    "needBodyweight2": "Potřeba alespoň 2 záznamy tělesné váhy pro zobrazení grafu",
+    "needReadiness2": "Potřeba alespoň 2 záznamy readiness",
+    "needWorkouts2": "Potřeba alespoň 2 tréninky pro zobrazení grafu",
+    "target": "Cíl",
+    "actual": "Skutečnost",
+    "tooltipTarget": "Cíl: {{n}} opakování",
+    "tooltipActual": "Skutečnost: {{n}} opakování",
+    "vsTarget": "oproti cíli",
+    "cycle": "Cyklus",
+    "weekLabel": "Týden",
+    "total": "Celkem",
+    "accessory": "Doplňky",
+    "reps": "{{n}} opakování",
+    "wilksUnit": "bodů",
+    "volumeLabel": "Objem"
+  },
+  "finishDialog": {
+    "title": "Trénink dokončen",
+    "subtitle": "Jak to šlo?",
+    "ratingLabel": "Hodnocení tréninku",
+    "ratingStarAria": "Hodnocení {{star}} z {{total}}",
+    "rating": {
+      "1": "Špatný trénink",
+      "2": "Podprůměrný",
+      "3": "Průměrný",
+      "4": "Dobrý trénink",
+      "5": "Skvělý trénink!"
+    },
+    "notesLabel": "Poznámky",
+    "notesOptional": "(volitelné)",
+    "notesPlaceholder": "Jak šel trénink? Co jsi cítil? Nové maximum?",
+    "back": "Zpět",
+    "save": "Uložit trénink",
+    "saving": "Ukládám..."
+  },
+  "plates": {
+    "belowBar": "{{weight}} kg je méně než tyč ({{barWeight}} kg) — použij lehčí tyč nebo jednoručky.",
+    "perSide": "Na stranu",
+    "barOnly": "jen tyč",
+    "residual": "Nelze přesně složit, nejblíž: {{achievableWeight}} kg"
+  },
+  "accessoryPicker": {
+    "title": "Doplňkové cviky",
+    "descriptionPrefix": "Vyber cviky pro dnešní trénink. Doporučené kategorie:",
+    "availableEquipment": "Dostupné vybavení",
+    "excludeWith": "Vyloučit cviky s",
+    "noExercises": "Žádné cviky s dostupným vybavením",
+    "backToExercises": "Zpět na cviky",
+    "settings": "Nastavení",
+    "saveWithCount": "Uložit ({{count}})",
+    "saving": "Ukládám...",
+    "equipmentLabel": "Vybavení:",
+    "noneEquipment": "Žádné"
+  },
+  "upgrade": {
+    "bannerTitle": "Upgrade na 5/3/1 Forever",
+    "bannerSubtitle": "Leader/Anchor cykly, více šablon, 7. týden protokol",
+    "bannerCta": "Vybrat →",
+    "modalTitle": "Upgrade na Forever",
+    "modalSubtitle": "Tvoje TM a historie zůstanou zachovány. Vyber si supplemental šablonu:",
+    "preserved": "Zachová se:",
+    "confirm": "Upgradovat",
+    "upgrading": "Upgraduji...",
+    "preservedTm": "Training Maxes (TM)",
+    "preservedE1rm": "Historie e1RM",
+    "preservedAmrap": "AMRAP výsledky",
+    "preservedStats": "Statistiky"
+  },
+  "accessoryTrends": {
+    "selectPlaceholder": "Vyber cvik",
+    "repsLabel": "Opakování",
+    "last": "Poslední",
+    "best": "Maximum",
+    "sessions": "Tréninků",
+    "total": "celkem",
+    "noData": "Zatím žádné záznamy pro tento cvik."
+  }
+}
