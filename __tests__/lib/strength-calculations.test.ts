@@ -8,39 +8,40 @@ import {
   calculateTotal,
   getWilksDescription,
   estimateE1RM,
+  normalizeGender,
 } from "@/lib/strength-calculations"
 
 describe("strength-calculations", () => {
   describe("calculateWilks", () => {
     it("returns 0 for invalid inputs", () => {
-      expect(calculateWilks(0, 80, "Muž")).toBe(0)
-      expect(calculateWilks(500, 0, "Muž")).toBe(0)
-      expect(calculateWilks(-100, 80, "Muž")).toBe(0)
-      expect(calculateWilks(500, -80, "Muž")).toBe(0)
+      expect(calculateWilks(0, 80, "male")).toBe(0)
+      expect(calculateWilks(500, 0, "male")).toBe(0)
+      expect(calculateWilks(-100, 80, "male")).toBe(0)
+      expect(calculateWilks(500, -80, "male")).toBe(0)
     })
 
     it("calculates Wilks for male lifter", () => {
       // 80kg male with 500kg total should be around 350-400 Wilks
-      const wilks = calculateWilks(500, 80, "Muž")
+      const wilks = calculateWilks(500, 80, "male")
       expect(wilks).toBeGreaterThan(300)
       expect(wilks).toBeLessThan(450)
     })
 
     it("calculates Wilks for female lifter", () => {
       // 60kg female with 350kg total should be around 350-450 Wilks
-      const wilks = calculateWilks(350, 60, "Žena")
+      const wilks = calculateWilks(350, 60, "female")
       expect(wilks).toBeGreaterThan(300)
       expect(wilks).toBeLessThan(500)
     })
 
     it("heavier lifter needs more weight for same Wilks", () => {
-      const light = calculateWilks(500, 70, "Muž")
-      const heavy = calculateWilks(500, 100, "Muž")
+      const light = calculateWilks(500, 70, "male")
+      const heavy = calculateWilks(500, 100, "male")
       expect(light).toBeGreaterThan(heavy)
     })
 
     it("returns a number with max 2 decimal places", () => {
-      const wilks = calculateWilks(500, 80, "Muž")
+      const wilks = calculateWilks(500, 80, "male")
       const decimals = wilks.toString().split(".")[1]?.length ?? 0
       expect(decimals).toBeLessThanOrEqual(2)
     })
@@ -48,29 +49,29 @@ describe("strength-calculations", () => {
 
   describe("calculateDOTS", () => {
     it("returns 0 for invalid inputs", () => {
-      expect(calculateDOTS(0, 80, "Muž")).toBe(0)
-      expect(calculateDOTS(500, 0, "Muž")).toBe(0)
+      expect(calculateDOTS(0, 80, "male")).toBe(0)
+      expect(calculateDOTS(500, 0, "male")).toBe(0)
     })
 
     it("calculates DOTS for male lifter", () => {
-      const dots = calculateDOTS(500, 80, "Muž")
+      const dots = calculateDOTS(500, 80, "male")
       expect(dots).toBeGreaterThan(200)
       expect(dots).toBeLessThan(500)
     })
 
     it("calculates DOTS for female lifter", () => {
-      const dots = calculateDOTS(350, 60, "Žena")
+      const dots = calculateDOTS(350, 60, "female")
       expect(dots).toBeGreaterThan(200)
       expect(dots).toBeLessThan(500)
     })
 
     it("DOTS and Wilks produce similar relative rankings", () => {
       // Both should show lighter lifter has higher points for same total
-      const wilksLight = calculateWilks(500, 70, "Muž")
-      const wilksHeavy = calculateWilks(500, 100, "Muž")
-      const dotsLight = calculateDOTS(500, 70, "Muž")
-      const dotsHeavy = calculateDOTS(500, 100, "Muž")
-      
+      const wilksLight = calculateWilks(500, 70, "male")
+      const wilksHeavy = calculateWilks(500, 100, "male")
+      const dotsLight = calculateDOTS(500, 70, "male")
+      const dotsHeavy = calculateDOTS(500, 100, "male")
+
       expect(wilksLight > wilksHeavy).toBe(dotsLight > dotsHeavy)
     })
   })
@@ -95,7 +96,7 @@ describe("strength-calculations", () => {
 
   describe("getStrengthLevel", () => {
     it("returns beginner key for invalid inputs", () => {
-      const level = getStrengthLevel("squat", 0, 80, "Muž")
+      const level = getStrengthLevel("squat", 0, 80, "male")
       expect(level.level).toBe("strengthLevels.beginner")
     })
 
@@ -103,32 +104,32 @@ describe("strength-calculations", () => {
       const bodyweight = 80
 
       // 0.5x BW = 40kg -> beginner
-      expect(getStrengthLevel("squat", 40, bodyweight, "Muž").level).toBe("strengthLevels.beginner")
+      expect(getStrengthLevel("squat", 40, bodyweight, "male").level).toBe("strengthLevels.beginner")
 
       // 1.0x BW = 80kg -> novice
-      expect(getStrengthLevel("squat", 80, bodyweight, "Muž").level).toBe("strengthLevels.novice")
+      expect(getStrengthLevel("squat", 80, bodyweight, "male").level).toBe("strengthLevels.novice")
 
       // 1.5x BW = 120kg -> intermediate
-      expect(getStrengthLevel("squat", 120, bodyweight, "Muž").level).toBe("strengthLevels.intermediate")
+      expect(getStrengthLevel("squat", 120, bodyweight, "male").level).toBe("strengthLevels.intermediate")
 
       // 2.0x BW = 160kg -> advanced
-      expect(getStrengthLevel("squat", 160, bodyweight, "Muž").level).toBe("strengthLevels.advanced")
+      expect(getStrengthLevel("squat", 160, bodyweight, "male").level).toBe("strengthLevels.advanced")
 
       // 2.5x BW = 200kg -> elite
-      expect(getStrengthLevel("squat", 200, bodyweight, "Muž").level).toBe("strengthLevels.elite")
+      expect(getStrengthLevel("squat", 200, bodyweight, "male").level).toBe("strengthLevels.elite")
     })
 
     it("returns correct i18n key for female squat (lower thresholds)", () => {
       const bodyweight = 60
 
       // 0.5x BW = 30kg -> beginner (female threshold is 0.75x)
-      expect(getStrengthLevel("squat", 30, bodyweight, "Žena").level).toBe("strengthLevels.beginner")
+      expect(getStrengthLevel("squat", 30, bodyweight, "female").level).toBe("strengthLevels.beginner")
 
       // 0.75x BW = 45kg -> novice
-      expect(getStrengthLevel("squat", 45, bodyweight, "Žena").level).toBe("strengthLevels.novice")
+      expect(getStrengthLevel("squat", 45, bodyweight, "female").level).toBe("strengthLevels.novice")
 
       // 2.0x BW = 120kg -> elite for female
-      expect(getStrengthLevel("squat", 120, bodyweight, "Žena").level).toBe("strengthLevels.elite")
+      expect(getStrengthLevel("squat", 120, bodyweight, "female").level).toBe("strengthLevels.elite")
     })
 
     it("returns correct i18n key for bench press", () => {
@@ -136,10 +137,10 @@ describe("strength-calculations", () => {
 
       // Bench has lower thresholds than squat
       // 1.0x BW = 80kg -> intermediate for bench
-      expect(getStrengthLevel("bench", 80, bodyweight, "Muž").level).toBe("strengthLevels.intermediate")
+      expect(getStrengthLevel("bench", 80, bodyweight, "male").level).toBe("strengthLevels.intermediate")
 
       // 1.5x BW = 120kg -> advanced for bench
-      expect(getStrengthLevel("bench", 120, bodyweight, "Muž").level).toBe("strengthLevels.advanced")
+      expect(getStrengthLevel("bench", 120, bodyweight, "male").level).toBe("strengthLevels.advanced")
     })
 
     it("returns correct i18n key for deadlift", () => {
@@ -147,10 +148,10 @@ describe("strength-calculations", () => {
 
       // Deadlift has higher thresholds
       // 1.75x BW = 140kg -> intermediate
-      expect(getStrengthLevel("deadlift", 140, bodyweight, "Muž").level).toBe("strengthLevels.intermediate")
+      expect(getStrengthLevel("deadlift", 140, bodyweight, "male").level).toBe("strengthLevels.intermediate")
 
       // 2.75x BW = 220kg -> elite
-      expect(getStrengthLevel("deadlift", 220, bodyweight, "Muž").level).toBe("strengthLevels.elite")
+      expect(getStrengthLevel("deadlift", 220, bodyweight, "male").level).toBe("strengthLevels.elite")
     })
 
     it("returns correct i18n key for press", () => {
@@ -158,14 +159,14 @@ describe("strength-calculations", () => {
 
       // Press has lowest thresholds
       // 0.75x BW = 60kg -> intermediate
-      expect(getStrengthLevel("press", 60, bodyweight, "Muž").level).toBe("strengthLevels.intermediate")
+      expect(getStrengthLevel("press", 60, bodyweight, "male").level).toBe("strengthLevels.intermediate")
 
       // 1.0x BW = 80kg -> advanced
-      expect(getStrengthLevel("press", 80, bodyweight, "Muž").level).toBe("strengthLevels.advanced")
+      expect(getStrengthLevel("press", 80, bodyweight, "male").level).toBe("strengthLevels.advanced")
     })
 
     it("includes color and description i18n key in result", () => {
-      const level = getStrengthLevel("squat", 160, 80, "Muž")
+      const level = getStrengthLevel("squat", 160, 80, "male")
       expect(level.color).toBeTruthy()
       expect(level.description).toBe("strengthLevels.advanced_desc")
     })
@@ -173,21 +174,21 @@ describe("strength-calculations", () => {
 
   describe("getStrengthStandards", () => {
     it("returns 5 levels for each lift", () => {
-      expect(getStrengthStandards("squat", "Muž")).toHaveLength(5)
-      expect(getStrengthStandards("bench", "Muž")).toHaveLength(5)
-      expect(getStrengthStandards("deadlift", "Žena")).toHaveLength(5)
+      expect(getStrengthStandards("squat", "male")).toHaveLength(5)
+      expect(getStrengthStandards("bench", "male")).toHaveLength(5)
+      expect(getStrengthStandards("deadlift", "female")).toHaveLength(5)
     })
 
     it("returns standards sorted by minMultiple", () => {
-      const standards = getStrengthStandards("squat", "Muž")
+      const standards = getStrengthStandards("squat", "male")
       for (let i = 1; i < standards.length; i++) {
         expect(standards[i].minMultiple).toBeGreaterThan(standards[i - 1].minMultiple)
       }
     })
 
     it("falls back to squat standards for unknown lift", () => {
-      const unknown = getStrengthStandards("unknown", "Muž")
-      const squat = getStrengthStandards("squat", "Muž")
+      const unknown = getStrengthStandards("unknown", "male")
+      const squat = getStrengthStandards("squat", "male")
       expect(unknown).toEqual(squat)
     })
   })
@@ -255,18 +256,18 @@ describe("strength-calculations", () => {
   describe("integration scenarios", () => {
     it("calculates full stats for typical male lifter", () => {
       const bodyweight = 80
-      const gender = "Muž" as const
+      const gender = "male" as const
       const e1rms = { squat: 160, bench: 120, deadlift: 200, press: 70 }
-      
+
       const total = calculateTotal(e1rms.squat, e1rms.bench, e1rms.deadlift)
       expect(total).toBe(480)
-      
+
       const wilks = calculateWilks(total, bodyweight, gender)
       expect(wilks).toBeGreaterThan(300)
-      
+
       const dots = calculateDOTS(total, bodyweight, gender)
       expect(dots).toBeGreaterThan(250)
-      
+
       // Check strength levels (i18n keys)
       // squat 160/80 = 2.0x BW -> advanced (threshold 2.0x)
       expect(getStrengthLevel("squat", e1rms.squat, bodyweight, gender).level).toBe("strengthLevels.advanced")
@@ -280,17 +281,55 @@ describe("strength-calculations", () => {
 
     it("calculates full stats for typical female lifter", () => {
       const bodyweight = 60
-      const gender = "Žena" as const
+      const gender = "female" as const
       const e1rms = { squat: 90, bench: 55, deadlift: 110, press: 35 }
-      
+
       const total = calculateTotal(e1rms.squat, e1rms.bench, e1rms.deadlift)
       expect(total).toBe(255)
-      
+
       const wilks = calculateWilks(total, bodyweight, gender)
       expect(wilks).toBeGreaterThan(200)
-      
+
       // Check strength levels (i18n keys): squat 90/60 = 1.5x BW -> advanced for female (threshold 1.5x)
       expect(getStrengthLevel("squat", e1rms.squat, bodyweight, gender).level).toBe("strengthLevels.advanced")
+    })
+  })
+
+  describe("normalizeGender — backward compatibility", () => {
+    it("passes through stable enum values unchanged", () => {
+      expect(normalizeGender("male")).toBe("male")
+      expect(normalizeGender("female")).toBe("female")
+      expect(normalizeGender("other")).toBe("other")
+    })
+
+    it("normalizes legacy Czech strings", () => {
+      expect(normalizeGender("Muž")).toBe("male")
+      expect(normalizeGender("Žena")).toBe("female")
+      expect(normalizeGender("Jiné")).toBe("other")
+    })
+
+    it("normalizes legacy English strings (case-insensitive)", () => {
+      expect(normalizeGender("Male")).toBe("male")
+      expect(normalizeGender("Female")).toBe("female")
+      expect(normalizeGender("Other")).toBe("other")
+    })
+
+    it("returns female for null/undefined/unknown (safe fallback)", () => {
+      expect(normalizeGender(null)).toBe("female")
+      expect(normalizeGender(undefined)).toBe("female")
+      expect(normalizeGender("")).toBe("female")
+      expect(normalizeGender("unknown_value")).toBe("female")
+    })
+
+    it("legacy Czech 'Muž' produces male Wilks — end-to-end backward compat", () => {
+      // Old DB row with Czech gender string must yield the same result as explicit "male"
+      const legacyGender = normalizeGender("Muž")
+      const wilksLegacy = calculateWilks(500, 80, legacyGender)
+      const wilksMale = calculateWilks(500, 80, "male")
+      expect(wilksLegacy).toBe(wilksMale)
+      // And it must be strictly greater than female (different coefficients)
+      const wilksFemale = calculateWilks(500, 80, "female")
+      expect(wilksLegacy).not.toBe(wilksFemale)
     })
   })
 })

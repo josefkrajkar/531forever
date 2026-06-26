@@ -259,6 +259,11 @@ export const completeWorkout = mutation({
     const userId = await getAuthUserId(ctx)
     if (!userId) throw new Error("Not authenticated")
 
+    // Validace délky poznámky
+    if (args.note !== undefined && args.note.length > 2000) {
+      throw new Error("Poznámka nesmí přesáhnout 2000 znaků")
+    }
+
     const workout = await ctx.db.get(args.workoutId)
     if (!workout || workout.userId !== userId) throw new Error("Workout not found")
 
@@ -366,6 +371,11 @@ export const updateCompletedWorkout = mutation({
           throw new Error("Počet opakování musí být celé číslo v rozsahu 0–100")
         }
       }
+    }
+
+    // Validace délky poznámky
+    if (args.note !== undefined && args.note.length > 2000) {
+      throw new Error("Poznámka nesmí přesáhnout 2000 znaků")
     }
 
     // Validace ratingu

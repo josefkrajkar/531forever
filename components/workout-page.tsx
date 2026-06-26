@@ -5,6 +5,7 @@ import { useMutation } from "convex/react"
 import { useAuthActions } from "@convex-dev/auth/react"
 import { useTranslation } from "react-i18next"
 import { api } from "@/convex/_generated/api"
+import { genderLabelKey, experienceLabelKey } from "@/lib/profile"
 import Link from "next/link"
 import { BarChart3 } from "lucide-react"
 import { toast } from "sonner"
@@ -24,6 +25,7 @@ import ReadinessCard from "./readiness-card"
 import { useSyncTriggers } from "@/hooks/use-sync-triggers"
 
 type Tab = "workout" | "history" | "plan"
+
 
 export default function WorkoutPage() {
   const { t } = useTranslation()
@@ -309,7 +311,7 @@ export default function WorkoutPage() {
               <p className="text-foreground">{t("nav.athleteProfile")}</p>
               {athleteProfile ? (
                 <p className="text-xs text-muted-foreground font-normal normal-case tracking-normal mt-0.5 truncate">
-                  {athleteProfile.gender}, {athleteProfile.age} let · {athleteProfile.experience.split(" ")[0]}
+                  {t(genderLabelKey(athleteProfile.gender))}, {athleteProfile.age} {t("profile.ageSuffix")} · {t(experienceLabelKey(athleteProfile.experience))}
                 </p>
               ) : (
                 <p className="text-xs text-primary/70 font-normal normal-case tracking-normal mt-0.5">

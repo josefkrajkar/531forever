@@ -2,9 +2,11 @@ import "./globals.css";
 
 import type { Metadata } from "next";
 import { Barlow_Condensed, Inter } from "next/font/google";
+import { cookies } from "next/headers";
 import { ConvexClientProvider } from "@/components/convex-client-provider";
 import { I18nProvider } from "@/components/i18n-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { isSupportedLang, DEFAULT_LANG } from "@/lib/i18n-config";
 
 const barlowCondensed = Barlow_Condensed({
   subsets: ["latin"],
@@ -30,13 +32,17 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const cookieStore = await cookies();
+  const rawLang = cookieStore.get("lang")?.value;
+  const lang = isSupportedLang(rawLang) ? rawLang : DEFAULT_LANG;
+
   return (
-    <html lang="cs">
+    <html lang={lang}>
       <head>
         <meta name="theme-color" content="#ff4500" />
         <meta name="mobile-web-app-capable" content="yes" />
@@ -47,7 +53,7 @@ export default function RootLayout({
         suppressHydrationWarning={true}
       >
         <ConvexClientProvider>
-          <I18nProvider>{children}</I18nProvider>
+          <I18nProvider lang={lang}>{children}</I18nProvider>
         </ConvexClientProvider>
         <Toaster />
       </body>

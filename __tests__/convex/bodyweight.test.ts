@@ -26,11 +26,11 @@ async function seedUser(t: ReturnType<typeof makeT>, weight = 80) {
       name: "BW Tester",
       email: "bw@example.com",
       athleteProfile: {
-        gender: "Muž",
+        gender: "male",
         age: 25,
         height: 175,
         weight,
-        experience: "Středně pokročilý (1–3 roky)",
+        experience: "intermediate",
       },
     })
   })

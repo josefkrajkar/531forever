@@ -1,6 +1,7 @@
 import { v } from "convex/values"
 import { mutation, query } from "./_generated/server"
 import { getAuthUserId } from "@convex-dev/auth/server"
+import { normalizeGender, normalizeExperience } from "../lib/profile"
 
 export const currentLoggedInUser = query({
   args: {},
@@ -34,13 +35,18 @@ export const updateAthleteProfile = mutation({
       throw new Error("Neplatná váha: musí být kladné číslo do 500 kg")
     }
 
+    // Normalize to stable enums — handles clients sending legacy localized strings
+    // (old Czech/English values) as well as clients already sending enum values.
+    const gender = normalizeGender(args.gender)
+    const experience = normalizeExperience(args.experience)
+
     await ctx.db.patch(userId, {
       athleteProfile: {
-        gender: args.gender,
+        gender,
         age: args.age,
         height: args.height,
         weight: args.weight,
-        experience: args.experience,
+        experience,
       },
     })
     console.log("[users] athleteProfile updated for:", userId)

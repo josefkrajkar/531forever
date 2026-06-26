@@ -24,7 +24,7 @@ if (!i18n.isInitialized) {
       defaultNS,
       lng: "cs",
       fallbackLng: "cs",
-      supportedLngs: ["cs"],
+      supportedLngs: ["cs", "en"],
       interpolation: {
         escapeValue: false, // React escapuje sám
       },

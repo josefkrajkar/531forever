@@ -5,10 +5,19 @@
  */
 
 import csCommon from "@/public/locales/cs/common.json"
+import enCommon from "@/public/locales/en/common.json"
 
 export const defaultNS = "common"
 
+export const SUPPORTED_LANGS = ["cs", "en"] as const
+export type SupportedLang = (typeof SUPPORTED_LANGS)[number]
+export const DEFAULT_LANG: SupportedLang = "cs"
+
+export function isSupportedLang(x: unknown): x is SupportedLang {
+  return SUPPORTED_LANGS.includes(x as SupportedLang)
+}
+
 export const resources = {
   cs: { common: csCommon },
-  // en: { common: enCommon },  // připraveno pro budoucí překlad
+  en: { common: enCommon },
 } as const

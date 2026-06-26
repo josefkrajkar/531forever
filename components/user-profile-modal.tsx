@@ -6,6 +6,13 @@ import { toast } from "sonner"
 import { useTranslation } from "react-i18next"
 import { api } from "../convex/_generated/api"
 import { toExportJson, toWorkoutsCsv } from "@/lib/export"
+import { LanguageSwitcher } from "@/components/language-switcher"
+import {
+  type Gender,
+  type ExperienceLevel,
+  normalizeGender,
+  normalizeExperience,
+} from "@/lib/profile"
 
 export interface UserProfile {
   gender: string
@@ -32,12 +39,13 @@ export default function UserProfileModal({
 }: Props) {
   const { t } = useTranslation()
 
-  const [gender, setGender] = useState(initialProfile?.gender ?? t("profile.genderMale"))
+  // State holds stable enum values — normalized from whatever was stored in DB (legacy or new).
+  const [gender, setGender] = useState<Gender>(normalizeGender(initialProfile?.gender))
   const [age, setAge] = useState(String(initialProfile?.age ?? "25"))
   const [height, setHeight] = useState(String(initialProfile?.height ?? "175"))
   const [weight, setWeight] = useState(String(initialProfile?.weight ?? "80"))
-  const [experience, setExperience] = useState(
-    initialProfile?.experience ?? t("profile.experienceDefault")
+  const [experience, setExperience] = useState<ExperienceLevel>(
+    normalizeExperience(initialProfile?.experience)
   )
   const [downloadingJson, setDownloadingJson] = useState(false)
   const [downloadingCsv, setDownloadingCsv] = useState(false)
@@ -133,17 +141,19 @@ export default function UserProfileModal({
 
   const isLoading = exportData === undefined
 
-  const genderOptions = [
-    { value: t("profile.genderMale"), label: t("profile.genderMale") },
-    { value: t("profile.genderFemale"), label: t("profile.genderFemale") },
-    { value: t("profile.genderOther"), label: t("profile.genderOther") },
+  // Stable enum value stored/compared; label from i18n for display only.
+  const genderOptions: Array<{ value: Gender; labelKey: string }> = [
+    { value: "male", labelKey: "profile.genderMale" },
+    { value: "female", labelKey: "profile.genderFemale" },
+    { value: "other", labelKey: "profile.genderOther" },
   ]
 
-  const experienceOptions = [
-    t("profile.expBeginner"),
-    t("profile.expIntermediate"),
-    t("profile.expAdvanced"),
-    t("profile.expCompetitive"),
+  // Stable enum value stored/compared; label from i18n for display only.
+  const experienceOptions: Array<{ value: ExperienceLevel; labelKey: string }> = [
+    { value: "beginner", labelKey: "profile.expBeginner" },
+    { value: "intermediate", labelKey: "profile.expIntermediate" },
+    { value: "advanced", labelKey: "profile.expAdvanced" },
+    { value: "competitive", labelKey: "profile.expCompetitive" },
   ]
 
   return (
@@ -183,13 +193,14 @@ export default function UserProfileModal({
                   key={g.value}
                   type="button"
                   onClick={() => setGender(g.value)}
+                  aria-pressed={gender === g.value}
                   className={`flex-1 py-2.5 text-xs font-heading font-bold uppercase tracking-widest rounded border transition-all ${
                     gender === g.value
                       ? "bg-primary border-primary text-primary-foreground"
                       : "bg-background border-border text-muted-foreground hover:border-primary hover:text-foreground"
                   }`}
                 >
-                  {g.label}
+                  {t(g.labelKey)}
                 </button>
               ))}
             </div>
@@ -257,16 +268,17 @@ export default function UserProfileModal({
             <div className="flex flex-col gap-2">
               {experienceOptions.map((exp) => (
                 <button
-                  key={exp}
+                  key={exp.value}
                   type="button"
-                  onClick={() => setExperience(exp)}
+                  onClick={() => setExperience(exp.value)}
+                  aria-pressed={experience === exp.value}
                   className={`w-full py-3 px-4 text-xs font-heading font-bold uppercase tracking-widest rounded border text-left transition-all ${
-                    experience === exp
+                    experience === exp.value
                       ? "bg-primary/10 border-primary text-primary"
                       : "bg-background border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
                   }`}
                 >
-                  {exp}
+                  {t(exp.labelKey)}
                 </button>
               ))}
             </div>
@@ -279,6 +291,12 @@ export default function UserProfileModal({
             {submitLabel ?? t("profile.saveProfile")}
           </button>
         </form>
+
+        {/* Jazyk */}
+        <div className="px-6 pb-5 border-t border-border pt-5 space-y-3">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground">{t("language.label")}</p>
+          <LanguageSwitcher />
+        </div>
 
         {/* Export dat */}
         <div className="px-6 pb-6 border-t border-border pt-5 space-y-3">

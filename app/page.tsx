@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { cookies } from "next/headers"
 import {
   Dumbbell,
   Calculator,
@@ -12,33 +13,64 @@ import {
   ArrowRight,
   Check,
 } from "lucide-react"
-import i18n from "@/lib/i18n-server"
+import { getServerI18n } from "@/lib/i18n-server"
+import { isSupportedLang, DEFAULT_LANG } from "@/lib/i18n-config"
 
-export const metadata: Metadata = {
-  title: "Silový deník — 5/3/1 tréninkový deník bez tabulek",
-  description:
-    "Tréninkový deník pro 5/3/1 Forever. Automatické výpočty vah, plate calculator, rest timer, sledování AMRAP a Training Maxů, statistiky Wilks/DOTS. Žádné tabulky, žádná AI — jen program a matematika.",
-  keywords: [
-    "5/3/1",
-    "531",
-    "Wendler",
-    "tréninkový deník",
-    "powerlifting",
-    "silový trénink",
-    "plate calculator",
-    "training max",
-    "5/3/1 Forever",
-  ],
-  openGraph: {
-    title: "Silový deník — 5/3/1 tréninkový deník",
-    description:
-      "Automatické výpočty 5/3/1, plate calculator, rest timer, statistiky. Lepší než spreadsheet.",
-    type: "website",
-    locale: "cs_CZ",
-  },
+const OG_IMAGE =
+  "https://assets.macaly-user-data.dev/aKuGh_DMERj5-kPG_GH16mOV/u6t5c8dyncxpkzyj6cqzieel/4_WB67YdCPp388S3K82Hf/generated-PI_27RZ_.png"
+
+export async function generateMetadata(): Promise<Metadata> {
+  const cookieStore = await cookies()
+  const rawLang = cookieStore.get("lang")?.value
+  const lang = isSupportedLang(rawLang) ? rawLang : DEFAULT_LANG
+  const i18n = await getServerI18n(lang)
+
+  const ogLocale = lang === "cs" ? "cs_CZ" : "en_US"
+  const title = i18n.t("landing.meta.title")
+  const description = i18n.t("landing.meta.description")
+  const ogTitle = i18n.t("app.name") + " — 5/3/1"
+
+  return {
+    title,
+    description,
+    keywords: [
+      "5/3/1",
+      "531",
+      "Wendler",
+      "powerlifting",
+      "plate calculator",
+      "training max",
+      "5/3/1 Forever",
+    ],
+    openGraph: {
+      title: ogTitle,
+      description,
+      type: "website",
+      locale: ogLocale,
+      images: [
+        {
+          url: OG_IMAGE,
+          width: 1344,
+          height: 768,
+          alt: ogTitle,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: ogTitle,
+      description,
+      images: [OG_IMAGE],
+    },
+  }
 }
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const cookieStore = await cookies()
+  const rawLang = cookieStore.get("lang")?.value
+  const lang = isSupportedLang(rawLang) ? rawLang : DEFAULT_LANG
+  const i18n = await getServerI18n(lang)
+
   const FEATURES = [
     {
       icon: Dumbbell,
@@ -232,6 +264,46 @@ export default function LandingPage() {
         <p className="text-muted-foreground text-lg leading-relaxed max-w-2xl mx-auto">
           {i18n.t("landing.problem.body")}
         </p>
+      </section>
+
+      {/* ─── Comparison: Spreadsheet vs. Power Diary ──────── */}
+      <section className="border-y border-border bg-card/30">
+        <div className="max-w-5xl mx-auto px-5 py-16 sm:py-20">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="font-heading font-extrabold uppercase tracking-tight text-2xl sm:text-3xl text-center mb-10">
+              {i18n.t("landing.comparison.title")}
+            </h2>
+            <div className="grid grid-cols-2 divide-x divide-border border border-border rounded-sm overflow-hidden text-sm">
+              {/* Header */}
+              <div className="bg-secondary/40 px-5 py-3 font-heading font-bold uppercase tracking-widest text-xs text-muted-foreground">
+                {i18n.t("landing.comparison.spreadsheetHeader")}
+              </div>
+              <div className="bg-primary/10 px-5 py-3 font-heading font-bold uppercase tracking-widest text-xs text-primary flex items-center gap-1.5">
+                {i18n.t("landing.comparison.appHeader")}
+              </div>
+              {(i18n.t("landing.comparison.rows", { returnObjects: true }) as Array<{ bad: string; good: string }>).flatMap(
+                ({ bad, good }) => [
+                  <div key={`bad-${bad}`} className="px-5 py-3.5 border-t border-border text-muted-foreground/70 flex items-start gap-2">
+                    <span className="text-destructive/60 mt-0.5">✗</span>
+                    {bad}
+                  </div>,
+                  <div key={`good-${good}`} className="px-5 py-3.5 border-t border-border flex items-start gap-2">
+                    <span className="text-primary mt-0.5">✓</span>
+                    {good}
+                  </div>,
+                ]
+              )}
+            </div>
+            <div className="mt-12 text-center">
+              <Link
+                href="/app"
+                className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-heading font-bold uppercase tracking-widest text-sm px-6 py-3.5 rounded-sm hover:opacity-90 transition-opacity"
+              >
+                {i18n.t("landing.comparison.cta")}
+              </Link>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* ─── Funkce ─────────────────────────────────────────── */}

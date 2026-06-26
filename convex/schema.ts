@@ -76,7 +76,7 @@ export default defineSchema({
     amrapResults: v.optional(v.array(v.object({
       cycle: v.number(),
       week: v.number(),
-      lift: v.string(),      // "squat", "bench", etc.
+      lift: v.union(v.literal("squat"), v.literal("bench"), v.literal("deadlift"), v.literal("press")),
       weight: v.number(),
       targetReps: v.number(),
       actualReps: v.number(),
@@ -217,4 +217,13 @@ export default defineSchema({
   })
     .index("by_user_status", ["userId", "status"])
     .index("by_user_status_date", ["userId", "status", "date"]),
+
+  // OTP rate-limit tracking — max 3 požadavků na e-mail za 10 minut.
+  // Záznam se vytvoří při prvním OTP požadavku a resetuje se po uplynutí okna.
+  otpRateLimits: defineTable({
+    email: v.string(),        // normalizovaný e-mail (lowercase, trim)
+    count: v.number(),        // počet požadavků v aktuálním okně
+    windowStart: v.number(),  // timestamp (ms) začátku aktuálního okna
+  })
+    .index("by_email", ["email"]),
 })

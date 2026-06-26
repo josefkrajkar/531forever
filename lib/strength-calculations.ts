@@ -54,7 +54,11 @@ const IPF_GL_FEMALE_RAW = {
   c: 0.03048,
 }
 
-export type Gender = "Muž" | "Žena"
+// Import from canonical shared module for local use, then re-export so that
+// existing importers of "@/lib/strength-calculations" continue to work
+// without any changes.
+import { type Gender, normalizeGender } from "./profile"
+export { type Gender, normalizeGender }
 
 export type StrengthLevelKey =
   | "strengthLevels.beginner"
@@ -67,12 +71,14 @@ export type StrengthLevelKey =
  * Calculate Wilks points
  * @param total - Total weight lifted (SBD total or single lift)
  * @param bodyweight - Athlete bodyweight in kg
- * @param gender - "Muž" or "Žena"
+ * @param gender - "male" or "female" (or "other")
  */
 export function calculateWilks(total: number, bodyweight: number, gender: Gender): number {
   if (bodyweight <= 0 || total <= 0) return 0
-  
-  const coef = gender === "Muž" ? WILKS_MALE_COEFFICIENTS : WILKS_FEMALE_COEFFICIENTS
+
+  // "other" uses female coefficients — this preserves the original behaviour where
+  // anything other than the explicit male value fell back to female coefficients.
+  const coef = gender === "male" ? WILKS_MALE_COEFFICIENTS : WILKS_FEMALE_COEFFICIENTS
   const bw = bodyweight
   
   const denominator = 
@@ -92,12 +98,13 @@ export function calculateWilks(total: number, bodyweight: number, gender: Gender
  * Calculate DOTS points (newer formula, replacing Wilks in IPF)
  * @param total - Total weight lifted
  * @param bodyweight - Athlete bodyweight in kg
- * @param gender - "Muž" or "Žena"
+ * @param gender - "male" or "female" (or "other")
  */
 export function calculateDOTS(total: number, bodyweight: number, gender: Gender): number {
   if (bodyweight <= 0 || total <= 0) return 0
-  
-  const coef = gender === "Muž" ? DOTS_MALE_COEFFICIENTS : DOTS_FEMALE_COEFFICIENTS
+
+  // "other" uses female coefficients — see calculateWilks for rationale.
+  const coef = gender === "male" ? DOTS_MALE_COEFFICIENTS : DOTS_FEMALE_COEFFICIENTS
   const bw = bodyweight
   
   const denominator =
@@ -116,12 +123,13 @@ export function calculateDOTS(total: number, bodyweight: number, gender: Gender)
  * Calculate IPF GL Points (Goodlift Points)
  * @param total - Total weight lifted
  * @param bodyweight - Athlete bodyweight in kg
- * @param gender - "Muž" or "Žena"
+ * @param gender - "male" or "female" (or "other")
  */
 export function calculateIPFGL(total: number, bodyweight: number, gender: Gender): number {
   if (bodyweight <= 0 || total <= 0) return 0
-  
-  const coef = gender === "Muž" ? IPF_GL_MALE_RAW : IPF_GL_FEMALE_RAW
+
+  // "other" uses female coefficients — see calculateWilks for rationale.
+  const coef = gender === "male" ? IPF_GL_MALE_RAW : IPF_GL_FEMALE_RAW
   
   const denominator = coef.a - coef.b * Math.exp(-coef.c * bodyweight)
   
@@ -219,7 +227,7 @@ const FEMALE_STANDARDS: Record<string, StrengthStandard[]> = {
  * @param lift - "squat", "bench", "deadlift", or "press"
  * @param weight - Weight lifted (e1RM)
  * @param bodyweight - Athlete bodyweight
- * @param gender - "Muž" or "Žena"
+ * @param gender - "male" or "female" (or "other")
  *
  * Poznámka: pro neznámý lift se vrací standardy pro dřep jako neutrální fallback.
  * To zajišťuje, že funkce nikdy nevyhodí chybu, ale hodnota může být zavádějící —
@@ -236,7 +244,8 @@ export function getStrengthLevel(
   }
 
   const multiple = weight / bodyweight
-  const standards = gender === "Muž" ? MALE_STANDARDS : FEMALE_STANDARDS
+  // "other" uses female standards — see calculateWilks for rationale.
+  const standards = gender === "male" ? MALE_STANDARDS : FEMALE_STANDARDS
   // Neznámý lift: fallback na dřep standardy (bezpečný neutrální výběr)
   const liftStandards = standards[lift] ?? standards.squat
   
@@ -255,7 +264,8 @@ export function getStrengthLevel(
  * Get all strength standards for a lift (for progress bar display)
  */
 export function getStrengthStandards(lift: string, gender: Gender): StrengthStandard[] {
-  const standards = gender === "Muž" ? MALE_STANDARDS : FEMALE_STANDARDS
+  // "other" uses female standards — see calculateWilks for rationale.
+  const standards = gender === "male" ? MALE_STANDARDS : FEMALE_STANDARDS
   return standards[lift] || standards.squat
 }
 

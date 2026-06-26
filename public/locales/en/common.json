@@ -1,0 +1,765 @@
+{
+  "app": {
+    "name": "Power Diary",
+    "loading": "Loading..."
+  },
+  "language": {
+    "label": "Language",
+    "switchAria": "Change language",
+    "cs": "Czech",
+    "en": "English"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "signOut": "Sign Out",
+    "signedIn": "Signed in",
+    "enterJournal": "Enter diary",
+    "createAccount": "Create account",
+    "emailLabel": "Email",
+    "emailPlaceholder": "you@email.com",
+    "passwordLabel": "Password",
+    "passwordLabelWithMin": "Password (min. 8 characters)",
+    "passwordMinHint": "min. 8 characters",
+    "signInSubtitle": "Enter your email and password",
+    "signUpSubtitle": "After sign-up we will verify your email with a one-time code",
+    "submitSignIn": "Sign In ⚡",
+    "submitSignUp": "Sign Up ⚡",
+    "submittingSignIn": "Signing in...",
+    "submittingSignUp": "Signing up...",
+    "switchToSignUp": "No account → Sign Up",
+    "switchToSignIn": "Already have an account → Sign In",
+    "forgotPassword": "Forgot password",
+    "forgotPasswordTitle": "Forgot password",
+    "forgotPasswordSubtitle": "We will send you a code to reset your password",
+    "forgotPasswordReset": "Reset password",
+    "sendCode": "Send code",
+    "sendingCode": "Sending...",
+    "backToSignIn": "← Back to sign in",
+    "verifyEmail": "Verify your email",
+    "verifyEmailSubtitle": "We sent a code to",
+    "codeLabel": "Code from email",
+    "verifyAndEnter": "Verify and enter ⚡",
+    "verifying": "Verifying...",
+    "resetPasswordTitle": "Set new password",
+    "resetPasswordSubtitle": "Enter the code from your email and choose a new password",
+    "newPasswordLabel": "New password",
+    "setPassword": "Set password",
+    "settingPassword": "Setting...",
+    "errors": {
+      "invalidCode": "Invalid or expired code. Please try again.",
+      "invalidCodeOrShortPassword": "Invalid code or password too short (min. 8 characters).",
+      "emailNotFound": "Email not found or an error occurred. Please try again.",
+      "accountExists": "An account with this email already exists. Sign in instead.",
+      "passwordTooShort": "Password must be at least 8 characters.",
+      "wrongPassword": "Incorrect password. Try again or reset your password.",
+      "signInFailed": "Sign in failed. Check your email and password."
+    }
+  },
+  "nav": {
+    "workout": "Workout",
+    "history": "History",
+    "plan": "Plan",
+    "menu": "Menu",
+    "close": "Close",
+    "athleteProfile": "Athlete profile",
+    "notSet": "Not set",
+    "statistics": "Statistics",
+    "statsSubtitle": "Wilks, DOTS, strength level"
+  },
+  "program": {
+    "title": "5/3/1 Program",
+    "description": "A deterministic strength program by Jim Wendler. No guessing — your weights are calculated mathematically from your Training Max.",
+    "startCalibration": "Start calibration",
+    "calibrationHint": "Calibration determines your starting weights. We are not testing your max — go by feel.",
+    "paused": "Program paused",
+    "pausedDescription": "Training is paused. Your position and phase are preserved — you continue exactly where you left off.",
+    "resume": "Resume program",
+    "resumed": "Program resumed",
+    "resumeFailed": "Failed to resume program, please try again",
+    "reset": "Reset program",
+    "resetConfirmTitle": "Reset program?",
+    "resetConfirmDescription": "This will delete the entire 5/3/1 program including TM and history. You will need to go through calibration again.",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "fourDaysPerWeek": "4 training days / week · Leader/Anchor cycles",
+    "phases": {
+      "leader1": "Leader 1",
+      "leader2": "Leader 2",
+      "anchor": "Anchor",
+      "seventh_week": "7th Week"
+    },
+    "phaseDescriptions": {
+      "leader1": "First high-volume block. Building strength and muscle mass.",
+      "leader2": "Second high-volume block. Continuing to build the foundation.",
+      "anchor": "Realization block. Lower volume, maximum intensity on AMRAP sets.",
+      "seventh_week": "TM Test or Deload between blocks."
+    }
+  },
+  "calibration": {
+    "title": "5/3/1 Calibration",
+    "subtitle": "We will find your starting weights. This is not a max test — go by feel.",
+    "liftNumber": "Lift {{current}} / {{total}}",
+    "weightLabel": "Weight (kg)",
+    "weightPlaceholder": "e.g. 80",
+    "repsLabel": "Reps",
+    "repsPlaceholder": "e.g. 5",
+    "startingTM": "Starting Training Max",
+    "conservativeStart": "Conservative start — progression will catch up",
+    "alreadyCalibrated": "Already calibrated",
+    "editHint": "(click to edit)",
+    "saveAndContinue": "Save and continue to {{liftName}}",
+    "saveChanges": "Save changes",
+    "saveChangesAndFinish": "Save changes and finish calibration",
+    "finishCalibration": "Finish calibration and start program",
+    "savingLabel": "Saving...",
+    "errorWeight": "Enter weight",
+    "errorReps": "Enter reps",
+    "errorSave": "Error saving",
+    "rpeHint": "RPE 7-8 = you could do 2-3 more reps, but you don't need to.",
+    "tips": {
+      "squat": "Work up to a heavier squat set (approx. RPE 7-8). Leave 2-3 reps in the tank.",
+      "bench": "Work up to a heavier bench press set (approx. RPE 7-8). Leave 2-3 reps in the tank.",
+      "deadlift": "Work up to a heavier deadlift set (approx. RPE 7-8). Leave 2-3 reps in the tank.",
+      "press": "Work up to a heavier overhead press set (approx. RPE 7-8). Leave 2-3 reps in the tank."
+    },
+    "backToTemplate": "Back to template selection",
+    "continueToCalibration": "Continue to calibration",
+    "templateSubtitle": "Choose a supplemental template for your program",
+    "programInfo": "Program: 5/3/1 Forever — {{template}}"
+  },
+  "template": {
+    "selectTitle": "Choose supplemental template",
+    "selectSubtitle": "The template defines the supplemental work after main sets",
+    "selected": "Selected template:",
+    "saving": "Saving...",
+    "howItWorks": "How 5/3/1 Forever works:",
+    "leaderPhase": "6 weeks high volume (building)",
+    "leaderPhase2": "6 weeks high volume",
+    "seventhWeekProtocol": "TM Test or Deload",
+    "anchorPhase": "3 weeks realization (PRs)",
+    "supplementalLabel": "Supplemental template"
+  },
+  "lifts": {
+    "squat": "Squat",
+    "bench": "Bench Press",
+    "deadlift": "Deadlift",
+    "press": "Overhead Press"
+  },
+  "workout": {
+    "mainLift": "Main lift",
+    "sets": "Sets",
+    "workingSets": "Working sets",
+    "tmTestSets": "TM Test sets",
+    "deloadSets": "Deload sets",
+    "amrapQuestion": "How many reps did you get? (AMRAP)",
+    "amrapMax": "Max reps",
+    "amrapSaved": "✓ AMRAP saved: {{reps}} reps",
+    "saveAmrap": "Save",
+    "expandPlates": "Show plates for {{weight}} kg",
+    "repsSuffix": "reps",
+    "finishConfirmTitle": "Finish workout?",
+    "finishConfirmDescription": "We will move to the next day in the program.",
+    "finishConfirm": "Finish",
+    "finishing": "...",
+    "macrocycle": "Macrocycle {{number}}",
+    "loadError": "Error loading workout",
+    "templateLabel": "Template: {{name}}",
+    "cycleLabel": "Cycle {{cycle}}",
+    "weekLabel": "Week {{week}}:",
+    "dayLabel": "Day {{day}}/4",
+    "wakeLockOn": "Keep screen on: enabled",
+    "wakeLockOff": "Keep screen on: disabled",
+    "finishWorkout": "Finish workout",
+    "enterAmrap": "Enter AMRAP reps",
+    "setsRemaining_one": "{{count}} set remaining",
+    "setsRemaining_other": "{{count}} sets remaining",
+    "amrapPlaceholder": "e.g. 8"
+  },
+  "history": {
+    "loading": "Loading...",
+    "empty": "No completed workouts yet",
+    "pastWorkouts": "Past workouts — {{count}} total",
+    "setsSuffix": "sets",
+    "noteLabel": "Notes",
+    "ratingLabel": "Rating",
+    "noteEditLabel": "Note",
+    "notePlaceholder": "Optional note about the workout...",
+    "editWarning": "Editing will not affect training maxes or program progress.",
+    "deleteConfirm": "Delete workout?",
+    "deleteConfirmDescription": "This workout will be permanently deleted from history. This action cannot be undone.",
+    "deleteLabel": "Delete",
+    "cancelLabel": "Cancel",
+    "backLabel": "Back",
+    "editLabel": "Edit",
+    "saveLabel": "Save",
+    "savingLabel": "Saving...",
+    "editAriaLabel": "Edit workout",
+    "deleteAriaLabel": "Delete workout",
+    "savedSuccess": "Workout updated",
+    "savedError": "Failed to save changes",
+    "setTitle": "{{weight}} kg × {{reps}} reps",
+    "setWeightAria": "{{name}} set {{num}} weight",
+    "setRepsAria": "{{name}} set {{num}} reps",
+    "setCompletedAria": "{{name}} set {{num}} completed",
+    "ratingStarAria": "Rating {{star}}"
+  },
+  "readiness": {
+    "title": "Readiness",
+    "editBtn": "Edit",
+    "enterBtn": "Enter",
+    "loading": "Loading…",
+    "noDataHint": "Log how you feel today (and optionally HRV/sleep from your watch) to get a readiness recommendation for today's workout.",
+    "disclaimer": "Guidance only, not medical advice. If you feel different from the numbers, trust yourself — the bar doesn't lie.",
+    "bands": {
+      "high": "High readiness",
+      "good": "Good readiness",
+      "moderate": "Reduced readiness",
+      "low": "Low readiness"
+    },
+    "recommendations": {
+      "push_pr": "You're on today — feel free to push for a rep PR on the last (AMRAP) set.",
+      "on_plan": "Stick exactly to the plan.",
+      "grind_min_reps": "Hit the prescribed weights, minimum reps on AMRAP is fine — don't chase a PR. Do not reduce weights.",
+      "consider_deload": "Consider a lighter day or a deload. Decide for yourself — the data is only a guide."
+    }
+  },
+  "settings": {
+    "trainingMaxes": "Training Maxes",
+    "roundedTo": "→ rounded to:",
+    "changesFromNext": "Changes take effect from the next workout and will not affect automatic progression.",
+    "missesOne": "1 missed target — next miss will automatically reduce TM by 10%",
+    "missesMany": "Repeated stagnation — consider resetting TM. Next miss will automatically reduce TM by 10%.",
+    "newTM": "New Training Max",
+    "confirmBtn": "Confirm",
+    "cancelBtn": "Cancel",
+    "saveBtn": "Saving…",
+    "editBtn": "Edit",
+    "changeBtn": "Change",
+    "closeBtn": "Close",
+    "programSettings": "Program settings",
+    "programStatus": "Program status",
+    "pauseProgram": "Pause program",
+    "pauseConfirm": "Are you sure you want to pause the program? Position and phase will not change.",
+    "pausingLabel": "Pausing…",
+    "pauseConfirmBtn": "Yes, pause",
+    "leaderRecommendation": "Forever recommendation: volume templates (BBB, BBS) in leader phases.",
+    "anchorRecommendation": "Forever recommendation: intensity templates (FSL, SSL) in anchor phase.",
+    "tmSavedSuccess": "TM for {{liftName}} set to {{value}} kg",
+    "tmSaveFailed": "Failed to save Training Max, please try again",
+    "pauseSuccess": "Program paused",
+    "pauseFailed": "Failed to pause program, please try again"
+  },
+  "seventhWeek": {
+    "title": "7th Week Protocol",
+    "subtitle": "Choose how you will spend this recovery week",
+    "sets": "Sets",
+    "tip": "Tip:",
+    "tipTmTest": "TM Test verifies whether your Training Max is set correctly. You should be able to hit 3-5 strong reps.",
+    "tipDeload": "Deload is ideal if you feel fatigued. Light weights will aid recovery.",
+    "tipDefault": "TM Test is recommended after Leader phases. Deload is better if you need rest.",
+    "protocols": {
+      "tm_test": {
+        "name": "TM Test",
+        "description": "Training Max validation. You should be able to hit 3-5 strong reps."
+      },
+      "deload": {
+        "name": "Deload",
+        "description": "Active recovery. Light weights, maintaining movement patterns."
+      }
+    }
+  },
+  "restTimer": {
+    "label": "Rest",
+    "ariaLabel": "Rest: {{time}}",
+    "addTime": "+30 s",
+    "addTimeAria": "Add 30 seconds",
+    "stop": "Cancel",
+    "stopAria": "Cancel rest"
+  },
+  "offline": {
+    "indicator": "Offline",
+    "conflictDetail": " (cycle {{cycle}}, week {{week}})",
+    "conflictMessage": "Workout{{detail}} was already completed on another device — offline changes to this workout were discarded.",
+    "dismiss": "Dismiss",
+    "dismissAria": "Dismiss notification",
+    "syncingAria_one": "Syncing — {{count}} pending",
+    "syncingAria_other": "Syncing — {{count}} pending",
+    "offlineWithPendingAria_one": "App is offline — {{count}} pending mutation",
+    "offlineWithPendingAria_other": "App is offline — {{count}} pending mutations",
+    "offlineAria": "App is offline",
+    "pendingBadge": "⟳ {{count}} pending"
+  },
+  "readinessInput": {
+    "dialogAriaLabel": "Readiness input",
+    "subtitle": "Readiness",
+    "title": "How are you feeling today",
+    "closeAria": "Close",
+    "feelLabel": "How do you feel?",
+    "feelGreat": "Great",
+    "feelNormal": "Normal",
+    "feelBad": "Bad",
+    "watchSection": "From watch (optional)",
+    "hrvLabel": "HRV (ms)",
+    "hrvPlaceholder": "e.g. 65",
+    "rhrLabel": "Resting heart rate",
+    "rhrPlaceholder": "bpm",
+    "sleepHoursLabel": "Sleep (h)",
+    "sleepHoursPlaceholder": "e.g. 7.5",
+    "sleepQualityLabel": "Sleep quality",
+    "sleepQualityPlaceholder": "0–100",
+    "disclaimer": "Guidance only, not medical advice. Always listen to your body.",
+    "saveBtn": "Save readiness",
+    "savingBtn": "Saving...",
+    "errorNoFeel": "Select how you feel today",
+    "saveSuccess": "Readiness saved",
+    "saveError": "Save failed, please try again"
+  },
+  "upcoming": {
+    "noWorkouts": "No upcoming workouts",
+    "sectionAriaLabel": "Upcoming workouts",
+    "workoutAriaLabel": "Upcoming workout: {{name}}",
+    "protocolNotSelected": "Protocol not selected",
+    "tmTest": "TM Test",
+    "deload": "Deload",
+    "topSet": "Top set",
+    "tmMayChange": "Weights are approximate — TM may increase after the cycle",
+    "footer": "Weights calculated from current TM · no progression prediction"
+  },
+  "stats": {
+    "title": "Statistics",
+    "missingProfileTitle": "Complete your athlete profile",
+    "missingProfileDesc": "We need your body weight and gender to calculate Wilks score and strength level.",
+    "missingProfileBtn": "Set up profile",
+    "missingProgramTitle": "Start the program",
+    "missingProgramDesc": "Statistics will be calculated from your Training Maxes after completing calibration.",
+    "missingProgramBtn": "Start calibration",
+    "ipfStandard": "IPF standard",
+    "perLiftTitle": "Individual lifts",
+    "bwMultiple": "{{value}}× BW",
+    "chartsTitle": "Charts & Trends",
+    "e1rmProgressTitle": "e1RM Progress",
+    "wilksTrendTitle": "Wilks Score Trend",
+    "amrapPerformanceTitle": "AMRAP Performance",
+    "amrapPerformanceDesc": "Green = above target, red = below target",
+    "weeklyVolumeTitle": "Weekly Volume",
+    "weeklyVolumeDesc": "Total volume in tonnes (weight × reps)",
+    "liftDistributionTitle": "Volume Distribution",
+    "liftDistributionDesc": "Last 90 days",
+    "bodyweightTitle": "Body weight",
+    "bodyweightLast": "Last: {{weight}} kg ({{date}})",
+    "readinessTrendTitle": "Readiness",
+    "totalWorkoutsLabel": "Workouts (90 days)",
+    "currentCycleLabel": "Current cycle",
+    "accessorySectionTitle": "Accessory exercises",
+    "footnoteWilks": "Wilks and DOTS scores normalize strength by body weight and gender — enabling fair comparison between lifters of different weight classes.",
+    "footnoteStrengthLevel": "Strength Level shows where you stand relative to the population by bodyweight multiples. Elite = top 1% of trained population.",
+    "footnoteE1rm": "e1RM values are estimated from Training Maxes or AMRAP results."
+  },
+  "profile": {
+    "saveProfile": "Save profile",
+    "subtitle": "Your profile helps personalize coaching. Limitations are always respected.",
+    "experienceDefault": "Intermediate (1–3 years)",
+    "errorInvalidWeight": "Invalid weight — must be 30–300 kg",
+    "weightLogged": "Weight {{weight}} kg logged",
+    "errorWeightLog": "Failed to log weight",
+    "exportJsonSuccess": "JSON export downloaded",
+    "exportCsvSuccess": "CSV export downloaded",
+    "exportFailed": "Export failed",
+    "sectionLabel": "Settings",
+    "title": "Athlete profile",
+    "closeAria": "Close",
+    "genderLabel": "Gender",
+    "genderMale": "Male",
+    "genderFemale": "Female",
+    "genderOther": "Other",
+    "ageLabel": "Age",
+    "ageSuffix": "yrs",
+    "heightLabel": "Height",
+    "heightSuffix": "cm",
+    "weightLabel": "Weight",
+    "weightSuffix": "kg",
+    "loggingWeight": "Logging...",
+    "logWeightBtn": "Log today",
+    "experienceLabel": "Experience",
+    "expBeginner": "Beginner (less than 1 year)",
+    "expIntermediate": "Intermediate (1–3 years)",
+    "expAdvanced": "Advanced (3+ years)",
+    "expCompetitive": "Competitive powerlifter",
+    "exportSection": "Data export",
+    "exportDescription": "Download all your training data — workouts, program, accessory logs.",
+    "downloadingLabel": "Downloading...",
+    "loadingLabel": "Loading...",
+    "downloadJson": "Download JSON",
+    "downloadCsv": "Download CSV"
+  },
+  "autoreg": {
+    "title": "Autoregulated day",
+    "subtitle": "Enable if you consciously went lighter (fatigue, illness, bad day)",
+    "noteLabel": "Why? (optional, for coach)",
+    "notePlaceholder": "e.g. Poor sleep, shoulder pain, work stress...",
+    "noteHint": "This note will not be used for progression calculations — for coach context only.",
+    "warningBold": "Autoregulated day:",
+    "warningText": "Performance from this workout will not count toward TM progression. You will get a clean reading on the next cycle."
+  },
+  "accessorySection": {
+    "title": "Accessory exercises",
+    "noneSelected": "None selected yet",
+    "forToday": "for today",
+    "editBtn": "Edit",
+    "selectBtn": "Select",
+    "exerciseCount_one": "{{count}} exercise",
+    "exerciseCount_other": "{{count}} exercises",
+    "savedConfirm_one": "✓ Accessory exercises saved ({{count}} exercise)",
+    "savedConfirm_other": "✓ Accessory exercises saved ({{count}} exercises)",
+    "emptyHint": "Click \"Select\" to add accessory exercises.",
+    "emptyNote": "5/3/1 is flexible — consistency in the main lifts is what matters."
+  },
+  "exerciseDialog": {
+    "titleAdd": "New exercise",
+    "titleEdit": "Edit exercise",
+    "nameLabel": "Exercise name",
+    "namePlaceholder": "e.g. Bench Press",
+    "weightLabel": "Weight (kg)",
+    "setsLabel": "Sets",
+    "repsLabel": "Reps",
+    "rpeOptional": "(optional)",
+    "rpeClear": "Clear",
+    "preview": "Preview",
+    "submitAdd": "Add exercise",
+    "submitEdit": "Save changes",
+    "rpe": {
+      "1": "Very easy",
+      "2": "Easy",
+      "3": "Moderate",
+      "4": "Somewhat hard",
+      "5": "Medium",
+      "6": "Hard",
+      "7": "Heavy",
+      "8": "Very heavy",
+      "9": "Near max",
+      "10": "Absolute max"
+    }
+  },
+  "landing": {
+    "meta": {
+      "title": "Power Diary — 5/3/1 training log without spreadsheets",
+      "description": "Training log for 5/3/1 Forever. Automatic weight calculations, plate calculator, rest timer, AMRAP and Training Max tracking, Wilks/DOTS statistics. No spreadsheets, no AI — just the program and math."
+    },
+    "comparison": {
+      "title": "Spreadsheet vs. Power Diary",
+      "spreadsheetHeader": "📊 Spreadsheet",
+      "appHeader": "⚡ Power Diary",
+      "rows": [
+        { "bad": "You calculate weights manually", "good": "Weights are calculated automatically" },
+        { "bad": "You forget how many plates to load", "good": "Plate calculator always at hand" },
+        { "bad": "You don't know when to increase TM", "good": "Automatic progression after each cycle" },
+        { "bad": "You need a PC or phone with signal", "good": "Works offline, always available" },
+        { "bad": "History is a mess", "good": "Clean workout history" },
+        { "bad": "No rest timer", "good": "Built-in rest countdown timer" }
+      ],
+      "cta": "Start training"
+    },
+    "nav": {
+      "signInLink": "Sign In"
+    },
+    "hero": {
+      "eyebrow": "5/3/1 Forever",
+      "heading": "Your 5/3/1 training.",
+      "headingAccent": "Without spreadsheets.",
+      "subheading": "The app that calculates your weights, tracks cycle progress, and advances Training Maxes according to the methodology. You focus on lifting.",
+      "ctaPrimary": "Start training",
+      "ctaSecondary": "How it works"
+    },
+    "mockup": {
+      "weekDay": "Week 1 · Day 1",
+      "setsLabel": "Sets",
+      "amrapSet": "AMRAP · max reps",
+      "workingSet": "working set",
+      "plateHint": "Bar 20 · 25 · 20 · 10 · 2.5 per side"
+    },
+    "problem": {
+      "heading": "You know it from Google Sheets",
+      "body": "Blurry cells on mobile, manual percentage calculations, figuring out what to lift today. Power Diary does exactly what your spreadsheet does. Just for you, in one tap, without errors."
+    },
+    "features": {
+      "0": {
+        "title": "5/3/1 Forever",
+        "desc": "Leader, Anchor, and 7th week. The program calculates weights, percentages, and cycle progress for you. Nothing to track."
+      },
+      "1": {
+        "title": "Automatic progression",
+        "desc": "Log your AMRAP, the app calculates an e1RM estimate and advances the Training Max precisely per the methodology. No manual recalculation."
+      },
+      "2": {
+        "title": "Plate calculator",
+        "desc": "See exactly which plates to load for every set. No more mental math between sets."
+      },
+      "3": {
+        "title": "Rest timer",
+        "desc": "The rest countdown starts automatically after you check off a set. The screen stays on during your workout."
+      },
+      "4": {
+        "title": "Stats that make sense",
+        "desc": "Wilks, DOTS, e1RM over time, volume, accessory and body weight trends. See whether you are progressing."
+      },
+      "5": {
+        "title": "Works in the gym",
+        "desc": "Install to your home screen as an app. Offline mode lets you train even in a basement without signal."
+      }
+    },
+    "howItWorks": {
+      "heading": "Three steps and you're training"
+    },
+    "steps": {
+      "0": {
+        "title": "Calibration",
+        "desc": "Enter a few sets on the main lifts. The app calculates your Training Maxes from them."
+      },
+      "1": {
+        "title": "Train",
+        "desc": "Open today's workout, check off sets, log your AMRAP. Everything else is calculated."
+      },
+      "2": {
+        "title": "Progress",
+        "desc": "After each cycle, Training Maxes advance based on your performance. See your progress in the charts."
+      }
+    },
+    "differentiators": {
+      "0": {
+        "title": "No AI, no guessing",
+        "desc": "We rely on the proven math of 5/3/1, not a language model that could make up a weight. With strength training, it's about your health."
+      },
+      "1": {
+        "title": "Your data is yours",
+        "desc": "Download your full history in CSV or JSON at any time. No lock-in, no data selling."
+      },
+      "2": {
+        "title": "Better than a spreadsheet",
+        "desc": "No scrolling or typos in formulas. One tap logs a set, the app does the rest."
+      }
+    },
+    "cta": {
+      "heading": "Run your next workout here",
+      "body": "Free, no install needed. Open in your browser and add to your home screen as an app.",
+      "button": "Start training"
+    },
+    "footer": {
+      "legal": "Built on the 5/3/1 methodology by Jim Wendler. Not an official Jim Wendler LLC product."
+    }
+  },
+  "cycleReview": {
+    "title": "Cycle {{cycle}} complete",
+    "tmAutoSet": "TM for the next cycle was set automatically",
+    "newTrainingMaxes": "New Training Maxes",
+    "continueBtn": "Continue",
+    "reasons": {
+      "standard": "Target met ({{reps}} reps) — standard increase",
+      "standardNoReps": "Standard increase",
+      "no_clean_signal": "No clean signal — TM preserved",
+      "first_miss": "Target missed ({{reps}} reps) — TM preserved",
+      "repeated_miss": "Repeated failure — TM reduced by 10%",
+      "e1rm_stall": "Strength not progressing — TM preserved"
+    }
+  },
+  "exercises": {
+    "dips": "Dips",
+    "tricep_pushdown": "Tricep pushdown",
+    "db_incline_press": "Incline dumbbell press",
+    "overhead_tricep_ext": "Overhead tricep extension",
+    "pushups": "Push-ups",
+    "close_grip_bench": "Close-grip bench press",
+    "cable_fly": "Cable fly",
+    "db_shoulder_press": "Seated dumbbell press",
+    "pullups": "Pull-ups",
+    "chinups": "Chin-ups",
+    "face_pulls": "Face pulls",
+    "db_rows": "Dumbbell rows",
+    "cable_rows": "Seated cable rows",
+    "lat_pulldown": "Lat pulldown",
+    "barbell_rows": "Barbell rows",
+    "hammer_curls": "Hammer curls",
+    "band_pullaparts": "Band pull-aparts",
+    "rdl": "Romanian deadlift",
+    "db_rdl": "Dumbbell Romanian deadlift",
+    "leg_curl": "Leg curl",
+    "leg_press": "Leg press",
+    "lunges": "Lunges",
+    "split_squats": "Bulgarian split squats",
+    "hip_thrust": "Hip thrust",
+    "calf_raises": "Calf raises",
+    "goblet_squats": "Goblet squats",
+    "hanging_leg_raise": "Hanging leg raise",
+    "ab_wheel": "Ab wheel",
+    "plank": "Plank",
+    "pallof_press": "Pallof press",
+    "cable_crunch": "Cable crunch",
+    "dead_bug": "Dead bug",
+    "bird_dog": "Bird dog",
+    "side_plank": "Side plank"
+  },
+  "categories": {
+    "push": "Push",
+    "pull": "Pull",
+    "legs": "Legs",
+    "core": "Core"
+  },
+  "equipment": {
+    "barbell": "Barbell",
+    "dumbbells": "Dumbbells",
+    "cable": "Cable",
+    "pull_up_bar": "Pull-up bar",
+    "dip_bars": "Dip bars",
+    "bench": "Bench",
+    "machine": "Machine",
+    "band": "Band",
+    "ab_wheel": "Ab wheel"
+  },
+  "excludableTags": {
+    "overhead": {
+      "name": "Overhead",
+      "description": "Exercises with hands above head"
+    },
+    "spinal_loading": {
+      "name": "Spinal loading",
+      "description": "Exercises with axial load"
+    },
+    "grip_intensive": {
+      "name": "Grip intensive",
+      "description": "Exercises that stress the forearms"
+    }
+  },
+  "weeks": {
+    "1": "5/5/5+",
+    "2": "3/3/3+",
+    "3": "5/3/1+",
+    "seventh": "7th Week",
+    "unknown": "Unknown week"
+  },
+  "templates": {
+    "bbb": {
+      "name": "Boring But Big",
+      "description": "Classic hypertrophy template. 5 sets of 10 reps at 50-65% TM. High volume for muscle growth.",
+      "shortDescription": "5×10 @ 50-65%"
+    },
+    "fsl": {
+      "name": "First Set Last",
+      "description": "Strength and technique. 5 sets of 5 reps at the first working set weight. Less volume, more quality.",
+      "shortDescription": "5×5 @ first set"
+    },
+    "ssl": {
+      "name": "Second Set Last",
+      "description": "Advanced FSL variant. 5 sets of 5 reps at the second set weight. Higher intensity.",
+      "shortDescription": "5×5 @ second set"
+    },
+    "bbs": {
+      "name": "Boring But Strong",
+      "description": "Strength + volume. 10 sets of 5 reps at FSL weight. For advanced lifters.",
+      "shortDescription": "10×5 @ FSL weight"
+    }
+  },
+  "wilks": {
+    "world_class": "World class",
+    "elite": "Elite competitor",
+    "advanced_competitor": "Advanced competitor",
+    "intermediate": "Intermediate lifter",
+    "solid_base": "Solid base",
+    "advanced_beginner": "Advanced beginner",
+    "beginner": "Beginner"
+  },
+  "strengthLevels": {
+    "beginner": "Beginner",
+    "novice": "Novice",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced",
+    "elite": "Elite",
+    "beginner_desc": "Just starting out",
+    "novice_desc": "Solid foundation",
+    "intermediate_desc": "Above average",
+    "advanced_desc": "Exceptional strength",
+    "elite_desc": "Top 1%"
+  },
+  "charts": {
+    "needAmrap2": "Need at least 2 AMRAP results to display chart",
+    "needWilksData": "Need more data for Wilks trend",
+    "needAmrap3": "Need at least 3 AMRAP results",
+    "needWeeks2": "Need at least 2 weeks of data",
+    "noVolumeData": "No volume data",
+    "needBodyweight2": "Need at least 2 body weight entries to display chart",
+    "needReadiness2": "Need at least 2 readiness entries",
+    "needWorkouts2": "Need at least 2 workouts to display chart",
+    "target": "Target",
+    "actual": "Actual",
+    "tooltipTarget": "Target: {{n}} reps",
+    "tooltipActual": "Actual: {{n}} reps",
+    "vsTarget": "vs target",
+    "cycle": "Cycle",
+    "weekLabel": "Week",
+    "total": "Total",
+    "accessory": "Accessory",
+    "reps": "{{n}} reps",
+    "wilksUnit": "pts",
+    "volumeLabel": "Volume"
+  },
+  "finishDialog": {
+    "title": "Workout complete",
+    "subtitle": "How did it go?",
+    "ratingLabel": "Workout rating",
+    "ratingStarAria": "Rating {{star}} of {{total}}",
+    "rating": {
+      "1": "Bad workout",
+      "2": "Below average",
+      "3": "Average",
+      "4": "Good workout",
+      "5": "Great workout!"
+    },
+    "notesLabel": "Notes",
+    "notesOptional": "(optional)",
+    "notesPlaceholder": "How did it go? How did you feel? New PR?",
+    "back": "Back",
+    "save": "Save workout",
+    "saving": "Saving..."
+  },
+  "plates": {
+    "belowBar": "{{weight}} kg is less than the bar ({{barWeight}} kg) — use a lighter bar or dumbbells.",
+    "perSide": "Per side",
+    "barOnly": "bar only",
+    "residual": "Cannot load exactly, closest: {{achievableWeight}} kg"
+  },
+  "accessoryPicker": {
+    "title": "Accessory exercises",
+    "descriptionPrefix": "Select exercises for today's workout. Recommended categories:",
+    "availableEquipment": "Available equipment",
+    "excludeWith": "Exclude exercises with",
+    "noExercises": "No exercises with available equipment",
+    "backToExercises": "Back to exercises",
+    "settings": "Settings",
+    "saveWithCount": "Save ({{count}})",
+    "saving": "Saving...",
+    "equipmentLabel": "Equipment:",
+    "noneEquipment": "None"
+  },
+  "upgrade": {
+    "bannerTitle": "Upgrade to 5/3/1 Forever",
+    "bannerSubtitle": "Leader/Anchor cycles, more templates, 7th Week Protocol",
+    "bannerCta": "Choose →",
+    "modalTitle": "Upgrade to Forever",
+    "modalSubtitle": "Your TM and history will be preserved. Choose a supplemental template:",
+    "preserved": "Preserved:",
+    "confirm": "Upgrade",
+    "upgrading": "Upgrading...",
+    "preservedTm": "Training Maxes (TM)",
+    "preservedE1rm": "e1RM history",
+    "preservedAmrap": "AMRAP results",
+    "preservedStats": "Statistics"
+  },
+  "accessoryTrends": {
+    "selectPlaceholder": "Select exercise",
+    "repsLabel": "Reps",
+    "last": "Last",
+    "best": "Best",
+    "sessions": "Sessions",
+    "total": "total",
+    "noData": "No records yet for this exercise."
+  }
+}

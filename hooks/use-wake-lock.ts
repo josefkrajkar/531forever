@@ -1,8 +1,12 @@
 "use client"
 
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useEffectEvent, useRef, useState } from "react"
 
 const STORAGE_KEY = "wake-lock-enabled"
+
+type WakeLockNav = Navigator & {
+  wakeLock: { request: (type: string) => Promise<WakeLockSentinel> }
+}
 
 /**
  * Hook nad Screen Wake Lock API.
@@ -27,10 +31,16 @@ export function useWakeLock() {
   const [active, setActive] = useState(false)
   const lockRef = useRef<WakeLockSentinel | null>(null)
 
-  const acquire = useCallback(async () => {
+  // useEffectEvent: non-reactive callbacks that always read current
+  // supported/enabled/setActive but do NOT re-trigger effects when those
+  // values change. setState calls inside useEffectEvent are not flagged by
+  // react-hooks/set-state-in-effect because they are effect events, not
+  // synchronous effect body calls.
+  // Rules: never put these in a dependency array, never pass as prop.
+  const acquireEvent = useEffectEvent(async () => {
     if (!supported || !enabled) return
     try {
-      lockRef.current = await (navigator as Navigator & { wakeLock: { request: (type: string) => Promise<WakeLockSentinel> } }).wakeLock.request("screen")
+      lockRef.current = await (navigator as WakeLockNav).wakeLock.request("screen")
       setActive(true)
       lockRef.current.addEventListener("release", () => {
         setActive(false)
@@ -40,27 +50,26 @@ export function useWakeLock() {
       // Může selhat např. na iOS Safari nebo při nízkém baterii
       setActive(false)
     }
-  }, [supported, enabled])
+  })
 
-  const release = useCallback(async () => {
+  const releaseEvent = useEffectEvent(async () => {
     if (lockRef.current) {
       await lockRef.current.release()
       lockRef.current = null
       setActive(false)
     }
-  }, [])
+  })
 
   // Acquire/release podle preference
   useEffect(() => {
     if (enabled) {
-      void acquire()
+      void acquireEvent()
     } else {
-      void release()
+      void releaseEvent()
     }
     return () => {
-      void release()
+      void releaseEvent()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled])
 
   // Re-acquire po návratu záložky na popředí (lock se uvolní při minimalizaci)
@@ -69,7 +78,7 @@ export function useWakeLock() {
 
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible" && enabled) {
-        void acquire()
+        void acquireEvent()
       }
     }
 
@@ -77,7 +86,7 @@ export function useWakeLock() {
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange)
     }
-  }, [supported, enabled, acquire])
+  }, [supported, enabled])
 
   const toggle = useCallback(() => {
     const next = !enabled

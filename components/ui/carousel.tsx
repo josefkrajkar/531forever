@@ -106,17 +106,26 @@ const Carousel = React.forwardRef<
       setApi(api);
     }, [api, setApi]);
 
+    // Read initial scroll state synchronously before the browser paints so
+    // the prev/next buttons render in the correct enabled/disabled state
+    // without a flash. useLayoutEffect is appropriate here because we are
+    // synchronising with the Embla DOM state, not an external async system.
+    React.useLayoutEffect(() => {
+      if (!api) return;
+      onSelect(api);
+    }, [api, onSelect]);
+
     React.useEffect(() => {
       if (!api) {
         return;
       }
 
-      onSelect(api);
       api.on('reInit', onSelect);
       api.on('select', onSelect);
 
       return () => {
         api?.off('select', onSelect);
+        api?.off('reInit', onSelect);
       };
     }, [api, onSelect]);
 

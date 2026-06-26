@@ -3,8 +3,7 @@
 import { useAuthActions } from "@convex-dev/auth/react"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
-
-const REGISTRATION_ENABLED = process.env.NEXT_PUBLIC_REGISTRATION_ENABLED === "true"
+import { LanguageSwitcher } from "@/components/language-switcher"
 
 type Step =
   | "signIn"
@@ -248,11 +247,9 @@ export function SignInForm() {
         />
 
         <div className="flex flex-col items-center gap-2 pt-1">
-          {REGISTRATION_ENABLED && (
             <LinkBtn onClick={() => reset(isSignUp ? "signIn" : "signUp")}>
               {isSignUp ? t("auth.switchToSignIn") : t("auth.switchToSignUp")}
             </LinkBtn>
-          )}
           {!isSignUp && (
             <LinkBtn onClick={() => reset("forgot")}>{t("auth.forgotPassword")}</LinkBtn>
           )}
@@ -279,11 +276,14 @@ function AuthShell({
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       <header className="border-b border-border">
-        <div className="max-w-2xl mx-auto px-4 py-4">
-          <span className="text-primary text-xl mr-2">⚡</span>
-          <span className="font-heading font-extrabold text-2xl uppercase tracking-widest">
-            {t("app.name")}
-          </span>
+        <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
+          <div>
+            <span className="text-primary text-xl mr-2">⚡</span>
+            <span className="font-heading font-extrabold text-2xl uppercase tracking-widest">
+              {t("app.name")}
+            </span>
+          </div>
+          <LanguageSwitcher />
         </div>
       </header>
       <main className="flex-1 flex items-center justify-center px-4 py-12">

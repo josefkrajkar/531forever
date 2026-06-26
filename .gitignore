@@ -45,15 +45,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# macaly internal files
-.macaly/skills
-.sandbox
-.profile
-.bashrc
-.bash_logout
-.bash_profile
-.bash_history
-.npm
-.npmrc
-.config
-.sudo_as_admin_successful
+# claude files
+/.claude

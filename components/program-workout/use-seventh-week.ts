@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useRef } from "react"
 import { useMutation } from "convex/react"
 import { api } from "@/convex/_generated/api"
 import { toast } from "sonner"
@@ -20,15 +20,19 @@ interface UseSeventhWeekReturn {
 export function useSeventhWeek({ programSeventhWeekType }: Pick<UseSeventhWeekParams, "programSeventhWeekType">): UseSeventhWeekReturn {
   const setSeventhWeekType = useMutation(api.programs.setSeventhWeekType)
 
-  const [selectedSeventhWeekType, setSelectedSeventhWeekType] = useState<SeventhWeekType | null>(
-    (programSeventhWeekType as SeventhWeekType) || null
-  )
+  const serverValue = (programSeventhWeekType as SeventhWeekType) || null
+
+  const [selectedSeventhWeekType, setSelectedSeventhWeekType] = useState<SeventhWeekType | null>(serverValue)
   const [savingSeventhWeekType, setSavingSeventhWeekType] = useState(false)
 
-  // Sync with program when it changes (e.g., after phase transition)
-  useEffect(() => {
-    setSelectedSeventhWeekType((programSeventhWeekType as SeventhWeekType) || null)
-  }, [programSeventhWeekType])
+  // Track previous server value so we can reset local selection when the
+  // program changes externally (e.g. after a phase transition) without
+  // running a setState-in-effect.
+  const prevServerValueRef = useRef<SeventhWeekType | null>(serverValue)
+  if (prevServerValueRef.current !== serverValue) {
+    prevServerValueRef.current = serverValue
+    setSelectedSeventhWeekType(serverValue)
+  }
 
   const handleSeventhWeekTypeSelect = async (type: SeventhWeekType) => {
     setSelectedSeventhWeekType(type)

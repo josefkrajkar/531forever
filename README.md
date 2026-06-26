@@ -1,8 +1,10 @@
+> 🇬🇧 English version: [README.en.md](README.en.md)
+
 # Silový Deník — 5/3/1 Forever Powerlifting App
 
 Osobní tréninkový deník pro powerlifting postavený na systému **5/3/1 Forever** od Jima Wendlera. Deterministický výpočet vah, offline-first architektura, automatická TM progrese.
 
-**Live demo:** https://powerlifter-diary.macaly.app
+**Live demo:** _(live demo TBD)_
 
 ---
 
@@ -51,7 +53,7 @@ Osobní tréninkový deník pro powerlifting postavený na systému **5/3/1 Fore
 
 ### 1. Prerekvizity
 
-- Node.js 18+
+- Node.js 20.9+
 - Účet na [Convex](https://dashboard.convex.dev) (free tier stačí)
 - OTP e-mail provider (viz níže)
 
@@ -111,7 +113,7 @@ Appka běží na http://localhost:3000.
 npm run test:run
 ```
 
-636 testů pokrývá Convex funkce (programs, bodyweight, accessories, readiness), utility knihovny (5/3/1 kalkulátor, offline store, sync engine) a React hooky.
+679 testů pokrývá Convex funkce (programs, bodyweight, accessories, readiness), utility knihovny (5/3/1 kalkulátor, offline store, sync engine) a React hooky.
 
 ---
 

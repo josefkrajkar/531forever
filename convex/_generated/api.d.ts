@@ -15,6 +15,7 @@ import type * as bodyweight from "../bodyweight.js";
 import type * as exports from "../exports.js";
 import type * as http from "../http.js";
 import type * as programs from "../programs.js";
+import type * as rateLimit from "../rateLimit.js";
 import type * as readiness from "../readiness.js";
 import type * as statistics from "../statistics.js";
 import type * as users from "../users.js";
@@ -34,6 +35,7 @@ declare const fullApi: ApiFromModules<{
   exports: typeof exports;
   http: typeof http;
   programs: typeof programs;
+  rateLimit: typeof rateLimit;
   readiness: typeof readiness;
   statistics: typeof statistics;
   users: typeof users;

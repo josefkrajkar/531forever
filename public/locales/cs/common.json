@@ -3,6 +3,12 @@
     "name": "Silový deník",
     "loading": "Načítání..."
   },
+  "language": {
+    "label": "Jazyk",
+    "switchAria": "Změnit jazyk",
+    "cs": "Čeština",
+    "en": "Angličtina"
+  },
   "auth": {
     "signIn": "Přihlášení",
     "signUp": "Registrace",
@@ -441,6 +447,24 @@
     }
   },
   "landing": {
+    "meta": {
+      "title": "Silový deník — 5/3/1 tréninkový deník bez tabulek",
+      "description": "Tréninkový deník pro 5/3/1 Forever. Automatické výpočty vah, plate calculator, rest timer, sledování AMRAP a Training Maxů, statistiky Wilks/DOTS. Žádné tabulky, žádná AI — jen program a matematika."
+    },
+    "comparison": {
+      "title": "Spreadsheet vs. Silový deník",
+      "spreadsheetHeader": "📊 Spreadsheet",
+      "appHeader": "⚡ Silový deník",
+      "rows": [
+        { "bad": "Počítáš váhy ručně", "good": "Váhy se počítají samy" },
+        { "bad": "Zapomínáš kolik kotoučů dát", "good": "Plate calculator hned po ruce" },
+        { "bad": "Nevíš kdy zvýšit TM", "good": "Automatický postup po cyklu" },
+        { "bad": "Musíš otevřít PC nebo telefon se sítí", "good": "Funguje offline, vždy po ruce" },
+        { "bad": "Historie je chaos", "good": "Přehledná historie tréninků" },
+        { "bad": "Žádný rest timer", "good": "Zabudovaný odpočtový časovač" }
+      ],
+      "cta": "Začít trénovat"
+    },
     "nav": {
       "signInLink": "Přihlásit se"
     },
@@ -449,7 +473,7 @@
       "heading": "Tvůj 5/3/1 trénink.",
       "headingAccent": "Bez tabulek.",
       "subheading": "Aplikace, která za tebe počítá váhy, hlídá postup cyklů a posouvá Training Maxy podle metodiky. Ty se soustředíš na zvedání.",
-      "ctaPrimary": "Spustit zdarma",
+      "ctaPrimary": "Začít trénovat",
       "ctaSecondary": "Jak to funguje"
     },
     "mockup": {

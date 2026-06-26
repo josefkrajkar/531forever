@@ -76,11 +76,11 @@ export const logBodyweight = mutation({
       if (user) {
         await ctx.db.patch(userId, {
           athleteProfile: {
-            gender: user.athleteProfile?.gender ?? "Muž",
+            gender: user.athleteProfile?.gender ?? "male",
             age: user.athleteProfile?.age ?? 25,
             height: user.athleteProfile?.height ?? 175,
             weight: args.weightKg,
-            experience: user.athleteProfile?.experience ?? "Středně pokročilý (1–3 roky)",
+            experience: user.athleteProfile?.experience ?? "intermediate",
           },
         })
       }

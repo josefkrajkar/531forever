@@ -24,8 +24,10 @@ import {
   getStrengthStandards,
   calculateTotal,
   getWilksDescription,
+  normalizeGender,
   type Gender,
 } from "@/lib/strength-calculations"
+import { genderLabelKey, experienceLabelKey } from "@/lib/profile"
 
 type Lift = "squat" | "bench" | "deadlift" | "press"
 
@@ -39,7 +41,7 @@ export default function StatisticsPageContent() {
 
   const athleteProfile = currentUser?.athleteProfile
   const bodyweight = athleteProfile?.weight ?? 0
-  const gender = (athleteProfile?.gender as Gender) ?? "Muž"
+  const gender = normalizeGender(athleteProfile?.gender)
 
   // Calculate e1RMs from Training Maxes (TM = 90% of e1RM, so e1RM = TM / 0.9)
   // Or use e1rmHistory if available
@@ -314,7 +316,7 @@ export default function StatisticsPageContent() {
                   <span className="text-xs text-muted-foreground uppercase tracking-widest">SBD Total</span>
                 </div>
                 <div className="text-xs text-muted-foreground">
-                  {bodyweight} kg @ {gender}
+                  {bodyweight} kg @ {t(genderLabelKey(gender))}
                 </div>
               </div>
               <div className="font-heading font-extrabold text-5xl text-foreground mb-2">
@@ -408,10 +410,10 @@ export default function StatisticsPageContent() {
               <div className="flex items-center gap-3 text-sm text-muted-foreground">
                 <User className="w-4 h-4" />
                 <span>
-                  {athleteProfile?.gender}, {athleteProfile?.age} let, {bodyweight} kg
+                  {t(genderLabelKey(gender))}, {athleteProfile?.age} {t("profile.ageSuffix")}, {bodyweight} kg
                 </span>
                 <span className="text-border">•</span>
-                <span>{athleteProfile?.experience}</span>
+                <span>{t(experienceLabelKey(athleteProfile?.experience))}</span>
               </div>
             </div>
 

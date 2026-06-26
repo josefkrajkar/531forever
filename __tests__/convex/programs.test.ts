@@ -705,7 +705,7 @@ async function seedForeverProgramWithAmraps(
     trainingMaxes?: { squat: number; bench: number; deadlift: number; press: number }
     misses?: { squat: number; bench: number; deadlift: number; press: number }
     amrapResults?: Array<{
-      cycle: number; week: number; lift: string
+      cycle: number; week: number; lift: "squat" | "bench" | "deadlift" | "press"
       weight: number; targetReps: number; actualReps: number
       autoregulated?: boolean; date: string
     }>

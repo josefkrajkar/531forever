@@ -315,9 +315,19 @@ export const advanceDay = mutation({
   },
 })
 
+// Povolené hodnoty pro lift — sdílené s schema.ts amrapResults.lift
+const VALID_LIFTS = ["squat", "bench", "deadlift", "press"] as const
+type ValidLift = typeof VALID_LIFTS[number]
+
+function isValidLift(lift: string): lift is ValidLift {
+  return (VALID_LIFTS as readonly string[]).includes(lift)
+}
+
 // Save AMRAP result
 export const saveAmrapResult = mutation({
   args: {
+    // Přijímáme v.string() kvůli kompatibilitě se stávajícím klientem (use-amrap.ts).
+    // Runtime validace níže zajistí, že se uloží jen povolené hodnoty.
     lift: v.string(),
     weight: v.number(),
     targetReps: v.number(),
@@ -330,6 +340,9 @@ export const saveAmrapResult = mutation({
     if (!userId) throw new Error("Not authenticated")
 
     // Validace vstupů
+    if (!isValidLift(args.lift)) {
+      throw new Error(`Neplatný lift: "${args.lift}". Povolené hodnoty: ${VALID_LIFTS.join(", ")}`)
+    }
     if (!Number.isFinite(args.weight) || args.weight <= 0 || args.weight >= 1000) {
       throw new Error("Neplatná váha: musí být kladné číslo menší než 1000 kg")
     }
@@ -363,7 +376,8 @@ export const saveAmrapResult = mutation({
     amrapResults.push({
       cycle: program.cycle,
       week: program.week,
-      lift: args.lift,
+      // args.lift je ověřen isValidLift() výše — bezpečné přetypování
+      lift: args.lift as ValidLift,
       weight: args.weight,
       targetReps: args.targetReps,
       actualReps: args.actualReps,
@@ -443,6 +457,14 @@ export const completeWorkout = mutation({
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx)
     if (!userId) throw new Error("Not authenticated")
+
+    // Validace délky textových polí
+    if (args.note !== undefined && args.note.length > 2000) {
+      throw new Error("Poznámka nesmí přesáhnout 2000 znaků")
+    }
+    if (args.deviationNote !== undefined && args.deviationNote.length > 1000) {
+      throw new Error("Poznámka o odchylce nesmí přesáhnout 1000 znaků")
+    }
 
     const program = await ctx.db
       .query("programs")
