@@ -53,7 +53,8 @@
       "accountExists": "An account with this email already exists. Sign in instead.",
       "passwordTooShort": "Password must be at least 8 characters.",
       "wrongPassword": "Incorrect password. Try again or reset your password.",
-      "signInFailed": "Sign in failed. Check your email and password."
+      "signInFailed": "Sign in failed. Check your email and password.",
+      "tooManyAttempts": "Too many sign-in attempts. Please try again shortly."
     }
   },
   "nav": {

@@ -53,7 +53,8 @@
       "accountExists": "Účet s tímto e-mailem již existuje. Přihlas se místo toho.",
       "passwordTooShort": "Heslo musí mít alespoň 8 znaků.",
       "wrongPassword": "Špatné heslo. Zkus to znovu nebo si resetuj heslo.",
-      "signInFailed": "Přihlášení selhalo. Zkontroluj e-mail a heslo."
+      "signInFailed": "Přihlášení selhalo. Zkontroluj e-mail a heslo.",
+      "tooManyAttempts": "Příliš mnoho pokusů o přihlášení. Zkus to za chvíli."
     }
   },
   "nav": {

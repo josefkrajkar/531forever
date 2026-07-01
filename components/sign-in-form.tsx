@@ -195,7 +195,9 @@ export function SignInForm() {
             }
           } catch (err) {
             const msg = err instanceof Error ? err.message : ""
-            if (msg.includes("already exists")) {
+            if (msg.includes("Příliš mnoho pokusů")) {
+              setError(t("auth.errors.tooManyAttempts"))
+            } else if (msg.includes("already exists")) {
               setError(t("auth.errors.accountExists"))
             } else if (msg.includes("Invalid password") || msg.includes("too short")) {
               setError(t("auth.errors.passwordTooShort"))

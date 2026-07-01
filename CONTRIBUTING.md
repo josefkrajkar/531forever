@@ -1,55 +1,55 @@
-# Jak přispět
+# Contributing
 
-Díky za zájem! Každý příspěvek je vítán — oprava chyby, nová funkce nebo jen upozornění na problém.
+Thanks for your interest! Every contribution is welcome — a bug fix, a new feature, or just flagging a problem.
 
-## Nahlášení chyby
+## Reporting a bug
 
-Otevři [GitHub Issue](../../issues/new) a popiš:
-- Co jsi dělal
-- Co se stalo
-- Co jsi očekával
-- Verze prohlížeče / OS
+Open a [GitHub Issue](../../issues/new) and describe:
+- What you were doing
+- What happened
+- What you expected
+- Browser / OS version
 
-## Návrh funkce
+## Proposing a feature
 
-Otevři Issue s popisem nápadu. Před velkou implementací je lepší nejdřív prodiskutovat záměr — šetří to čas oběma stranám.
+Open an Issue describing your idea. For anything large, it's best to discuss the intent first — it saves both sides time.
 
-## Pull Request
+## Pull requests
 
-1. Forkni repozitář a vytvoř větev z `main`:
+1. Fork the repository and create a branch off `main`:
    ```bash
-   git checkout -b feat/nazev-funkce
+   git checkout -b feat/feature-name
    ```
 
-2. Napiš kód. Drž se existujícího stylu (TypeScript, Tailwind, Convex patterns).
+2. Write your code. Follow the existing style (TypeScript, Tailwind, Convex patterns).
 
-3. Spusť testy — všechny musí projít:
+3. Run the tests — all must pass:
    ```bash
    npm run test:run
    ```
 
-4. Pro netriviální logiku přidej testy do `__tests__/`.
+4. Add tests under `__tests__/` for any non-trivial logic.
 
-5. Otevři PR s popisem co a proč jsi změnil.
+5. Open a PR describing what you changed and why.
 
-## Co je vítáno
+## What's welcome
 
-- Opravy chyb
-- Nové doplňkové cviky do katalogu (`lib/accessory-catalog.ts`)
-- Překlady (i18n zatím není, ale PR s návrhem architektury je vítán)
-- Vylepšení UX pro mobilní zařízení
-- Dokumentace a komentáře v kódu
+- Bug fixes
+- New accessory exercises for the catalog (`lib/accessory-catalog.ts`)
+- Translations and i18n improvements (the app ships with Czech and English — locale files live in `public/locales/`)
+- Mobile UX improvements
+- Documentation and code comments
 
-## Co sem nepatří
+## What doesn't belong here
 
-- Změna 5/3/1 matematiky bez odkazu na Wendlerovu knihu — implementace záměrně sleduje knihu Forever
-- Závislosti navíc bez jasného důvodu
-- AI-generované PR bez pochopení kódu
+- Changes to the 5/3/1 math without a reference to Wendler's book — the implementation deliberately follows the *Forever* book
+- Extra dependencies without a clear reason
+- AI-generated PRs without an understanding of the code
 
-## Lokální setup
+## Local setup
 
-Viz [README.md](README.md) — sekce *Fork & lokální setup*.
+See [README.en.md](README.en.md) — the *Fork & Local Setup* section.
 
 ---
 
-Otázky? Otevři Issue nebo napiš na josef.krajkar@mensa.cz.
+Questions? Open an Issue or reach out at josef.krajkar@mensa.cz.

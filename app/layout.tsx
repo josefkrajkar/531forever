@@ -7,6 +7,7 @@ import { ConvexClientProvider } from "@/components/convex-client-provider";
 import { I18nProvider } from "@/components/i18n-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { isSupportedLang, DEFAULT_LANG } from "@/lib/i18n-config";
+import { SITE_URL, OG_IMAGE } from "@/lib/site";
 
 const barlowCondensed = Barlow_Condensed({
   subsets: ["latin"],
@@ -20,7 +21,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://powerlifter-diary.macaly.app"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "531Forever — 5/3/1 Forever Training Log",
     template: "%s | 531Forever",
@@ -32,15 +33,15 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://powerlifter-diary.macaly.app",
+    url: SITE_URL,
     siteName: "531Forever",
     title: "531Forever - 5/3/1 Forever Training Log",
     description: "Personal training log for Jim Wendler's 5/3/1 Forever program. Track your Training Max, AMRAP results and strength progress. No spreadsheets needed.",
     images: [
       {
-        url: "https://assets.macaly-user-data.dev/aKuGh_DMERj5-kPG_GH16mOV/u6t5c8dyncxpkzyj6cqzieel/dGXjHVYAIs1AUGSR7gQiY/generated-FxHXXOeC.png",
+        url: OG_IMAGE,
         width: 1200,
-        height: 675,
+        height: 630,
         alt: "531Forever — Tréninkový deník pro 5/3/1 Forever",
       },
     ],
@@ -49,7 +50,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "531Forever - 5/3/1 Forever Training Log",
     description: "Personal training log for Jim Wendler's 5/3/1 Forever program. Track your Training Max, AMRAP results and strength progress. No spreadsheets needed.",
-    images: ["https://assets.macaly-user-data.dev/aKuGh_DMERj5-kPG_GH16mOV/u6t5c8dyncxpkzyj6cqzieel/dGXjHVYAIs1AUGSR7gQiY/generated-FxHXXOeC.png"],
+    images: [OG_IMAGE],
   },
   robots: {
     index: true,

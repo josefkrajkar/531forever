@@ -1,7 +1,30 @@
 {
-  "name": "src",
+  "name": "531forever",
   "version": "0.1.0",
   "private": true,
+  "description": "531Forever — a personal training log for Jim Wendler's 5/3/1 Forever powerlifting program. Deterministic weight calculations, offline-first, automatic Training Max progression. Built with Next.js and Convex.",
+  "license": "MIT",
+  "author": "Josef Krajkář",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/josefkrajkar/531forever.git"
+  },
+  "homepage": "https://github.com/josefkrajkar/531forever#readme",
+  "bugs": {
+    "url": "https://github.com/josefkrajkar/531forever/issues"
+  },
+  "keywords": [
+    "531",
+    "5/3/1",
+    "5/3/1 forever",
+    "wendler",
+    "powerlifting",
+    "strength-training",
+    "training-log",
+    "training-max",
+    "nextjs",
+    "convex"
+  ],
   "engines": {
     "node": ">=20.9.0"
   },

@@ -15,9 +15,7 @@ import {
 } from "lucide-react"
 import { getServerI18n } from "@/lib/i18n-server"
 import { isSupportedLang, DEFAULT_LANG } from "@/lib/i18n-config"
-
-const OG_IMAGE =
-  "https://assets.macaly-user-data.dev/aKuGh_DMERj5-kPG_GH16mOV/u6t5c8dyncxpkzyj6cqzieel/4_WB67YdCPp388S3K82Hf/generated-PI_27RZ_.png"
+import { OG_IMAGE } from "@/lib/site"
 
 export async function generateMetadata(): Promise<Metadata> {
   const cookieStore = await cookies()

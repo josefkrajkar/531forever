@@ -1,6 +1,6 @@
 > 🇨🇿 Česká verze: [README.md](README.md)
 
-# Power Diary — 5/3/1 Forever Powerlifting App
+# 531Forever — 5/3/1 Forever Powerlifting App
 
 A personal training journal for powerlifting built on Jim Wendler's **5/3/1 Forever** system. Deterministic weight calculations, offline-first architecture, and automatic Training Max progression.
 
@@ -65,8 +65,8 @@ A personal training journal for powerlifting built on Jim Wendler's **5/3/1 Fore
 ### 2. Clone and install
 
 ```bash
-git clone https://github.com/<your-username>/power-diary.git
-cd power-diary
+git clone https://github.com/josefkrajkar/531forever.git
+cd 531forever
 npm install
 ```
 
@@ -96,7 +96,7 @@ In the Convex dashboard (Settings → Environment Variables) set:
 CONVEX_SITE_URL=http://localhost:3000
 OTP_ENDPOINT=<url of your OTP provider>
 CHAT_ID=<channel/chat id for OTP messages>
-APP_NAME=Power Diary
+APP_NAME=531Forever
 SECRET_KEY=<random secret key>
 ```
 
@@ -118,7 +118,7 @@ App runs at http://localhost:3000.
 npm run test:run
 ```
 
-679 tests cover Convex functions (programs, bodyweight, accessories, readiness), utility libraries (5/3/1 calculator, offline store, sync engine), and React hooks.
+684 tests cover Convex functions (programs, bodyweight, accessories, readiness), utility libraries (5/3/1 calculator, offline store, sync engine), and React hooks.
 
 ---
 
@@ -155,7 +155,7 @@ npm run test:run
 
 ## Contributing
 
-Bug reports, feature ideas, and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) (currently Czech-only) for guidelines.
+Bug reports, feature ideas, and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ---
 

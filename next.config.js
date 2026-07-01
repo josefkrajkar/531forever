@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  allowedDevOrigins: ["u6t5c8dyncxpkzyj6cqzieel.macaly.dev"],
   experimental: {
     turbopackFileSystemCacheForDev: true,
   },

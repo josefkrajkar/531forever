@@ -1,6 +1,6 @@
 > 🇬🇧 English version: [README.en.md](README.en.md)
 
-# Silový Deník — 5/3/1 Forever Powerlifting App
+# 531Forever — 5/3/1 Forever Powerlifting App
 
 Osobní tréninkový deník pro powerlifting postavený na systému **5/3/1 Forever** od Jima Wendlera. Deterministický výpočet vah, offline-first architektura, automatická TM progrese.
 
@@ -60,8 +60,8 @@ Osobní tréninkový deník pro powerlifting postavený na systému **5/3/1 Fore
 ### 2. Klonování a instalace
 
 ```bash
-git clone https://github.com/<tvuj-username>/silovy-denik.git
-cd silovy-denik
+git clone https://github.com/josefkrajkar/531forever.git
+cd 531forever
 npm install
 ```
 
@@ -91,7 +91,7 @@ V Convex dashboardu (Settings → Environment Variables) nastav:
 CONVEX_SITE_URL=http://localhost:3000
 OTP_ENDPOINT=<url tvého OTP providera>
 CHAT_ID=<id chatu/kanálu pro OTP zprávy>
-APP_NAME=Silový deník
+APP_NAME=531Forever
 SECRET_KEY=<náhodný tajný klíč>
 ```
 
@@ -113,7 +113,7 @@ Appka běží na http://localhost:3000.
 npm run test:run
 ```
 
-679 testů pokrývá Convex funkce (programs, bodyweight, accessories, readiness), utility knihovny (5/3/1 kalkulátor, offline store, sync engine) a React hooky.
+684 testů pokrývá Convex funkce (programs, bodyweight, accessories, readiness), utility knihovny (5/3/1 kalkulátor, offline store, sync engine) a React hooky.
 
 ---
 

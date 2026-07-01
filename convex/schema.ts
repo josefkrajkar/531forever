@@ -226,4 +226,14 @@ export default defineSchema({
     windowStart: v.number(),  // timestamp (ms) začátku aktuálního okna
   })
     .index("by_email", ["email"]),
+
+  // Brute-force rate-limit pro přihlášení heslem — max 10 pokusů na e-mail za 15 minut.
+  // Chrání proti credential-stuffing / online brute-force na signIn flow.
+  // Každý pokus (i neúspěšný) se počítá; okno se resetuje po uplynutí.
+  loginRateLimits: defineTable({
+    email: v.string(),        // normalizovaný e-mail (lowercase, trim)
+    count: v.number(),        // počet pokusů o přihlášení v aktuálním okně
+    windowStart: v.number(),  // timestamp (ms) začátku aktuálního okna
+  })
+    .index("by_email", ["email"]),
 })
