@@ -1,7 +1,7 @@
-// Service Worker pro Silový deník — app-shell cache
+// Service Worker pro 531Forever — app-shell cache
 // Verze cache — při každém releasu inkrementuj CACHE_VERSION
 const CACHE_VERSION = "v1"
-const CACHE_NAME = `silovy-denik-${CACHE_VERSION}`
+const CACHE_NAME = `531forever-${CACHE_VERSION}`
 
 // Assety, které se precachují při instalaci SW (app-shell)
 // POZOR: "/" zde záměrně není — precachovaná "/" by po deployi odkazovala na staré chunky.

@@ -106,7 +106,7 @@ describe("toExportJson", () => {
 
   it("obsahuje název aplikace v metadatech", () => {
     const parsed = JSON.parse(toExportJson(makeEmptyData(), "2024-01-01T00:00:00.000Z"))
-    expect(parsed.meta.app).toBe("Silový deník")
+    expect(parsed.meta.app).toBe("531Forever")
   })
 
   it("JSON round-trip: prázdná data → validní struktura", () => {

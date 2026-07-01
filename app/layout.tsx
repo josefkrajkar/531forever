@@ -20,12 +20,45 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Silový deník",
-  description: "Osobní deník silového tréninku",
+  metadataBase: new URL("https://powerlifter-diary.macaly.app"),
+  title: {
+    default: "531Forever — 5/3/1 Forever Training Log",
+    template: "%s | 531Forever",
+  },
+  description: "Personal training log for Jim Wendler's 5/3/1 Forever program. Track your Training Max, AMRAP results, strength progress and plan your entire macrocycle. No spreadsheets needed.",
+  keywords: ["5/3/1", "531 Forever", "powerlifting", "strength training", "training log", "Jim Wendler", "Training Max", "AMRAP"],
+  authors: [{ name: "531Forever" }],
+  creator: "531Forever",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://powerlifter-diary.macaly.app",
+    siteName: "531Forever",
+    title: "531Forever - 5/3/1 Forever Training Log",
+    description: "Personal training log for Jim Wendler's 5/3/1 Forever program. Track your Training Max, AMRAP results and strength progress. No spreadsheets needed.",
+    images: [
+      {
+        url: "https://assets.macaly-user-data.dev/aKuGh_DMERj5-kPG_GH16mOV/u6t5c8dyncxpkzyj6cqzieel/dGXjHVYAIs1AUGSR7gQiY/generated-FxHXXOeC.png",
+        width: 1200,
+        height: 675,
+        alt: "531Forever — Tréninkový deník pro 5/3/1 Forever",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "531Forever - 5/3/1 Forever Training Log",
+    description: "Personal training log for Jim Wendler's 5/3/1 Forever program. Track your Training Max, AMRAP results and strength progress. No spreadsheets needed.",
+    images: ["https://assets.macaly-user-data.dev/aKuGh_DMERj5-kPG_GH16mOV/u6t5c8dyncxpkzyj6cqzieel/dGXjHVYAIs1AUGSR7gQiY/generated-FxHXXOeC.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Silový deník",
+    title: "531Forever",
   },
   formatDetection: {
     telephone: false,

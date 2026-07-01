@@ -278,7 +278,11 @@ function AuthShell({
       <header className="border-b border-border">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
           <div>
-            <span className="text-primary text-xl mr-2">⚡</span>
+            <img
+              src="/icons/icon-192.png"
+              alt="531Forever"
+              className="w-8 h-8 rounded-sm"
+            />
             <span className="font-heading font-extrabold text-2xl uppercase tracking-widest">
               {t("app.name")}
             </span>

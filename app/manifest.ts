@@ -2,9 +2,9 @@ import type { MetadataRoute } from "next"
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Silový deník",
-    short_name: "Silový deník",
-    description: "Osobní deník silového tréninku",
+    name: "531Forever",
+    short_name: "531Forever",
+    description: "Tréninkový deník pro 5/3/1 Forever program",
     start_url: "/app",
     display: "standalone",
     background_color: "#0a0a0a",

@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import StatisticsPageContent from "@/components/statistics-page-content"
 
 export const metadata: Metadata = {
-  title: "Statistiky | Silový deník",
+  title: "Statistiky | 531Forever",
   description: "Tvoje powerlifting statistiky - Wilks, DOTS, bodyweight multiples a strength level.",
 }
 

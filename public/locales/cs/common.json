@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "Silový deník",
+    "name": "531Forever",
     "loading": "Načítání..."
   },
   "language": {
@@ -448,13 +448,13 @@
   },
   "landing": {
     "meta": {
-      "title": "Silový deník — 5/3/1 tréninkový deník bez tabulek",
+      "title": "531Forever — 5/3/1 tréninkový deník bez tabulek",
       "description": "Tréninkový deník pro 5/3/1 Forever. Automatické výpočty vah, plate calculator, rest timer, sledování AMRAP a Training Maxů, statistiky Wilks/DOTS. Žádné tabulky, žádná AI — jen program a matematika."
     },
     "comparison": {
-      "title": "Spreadsheet vs. Silový deník",
+      "title": "Spreadsheet vs. 531Forever",
       "spreadsheetHeader": "📊 Spreadsheet",
-      "appHeader": "⚡ Silový deník",
+      "appHeader": "⚡ 531Forever",
       "rows": [
         { "bad": "Počítáš váhy ručně", "good": "Váhy se počítají samy" },
         { "bad": "Zapomínáš kolik kotoučů dát", "good": "Plate calculator hned po ruce" },
@@ -485,7 +485,7 @@
     },
     "problem": {
       "heading": "Znáš to z Google Sheets",
-      "body": "Rozmazané buňky na mobilu, ruční přepočty procent, hledání, kolik máš dnes vlastně zvedat. Silový deník dělá totéž co tvoje tabulka. Jen za tebe, na jedno ťuknutí a bez chyb."
+      "body": "Rozmazané buňky na mobilu, ruční přepočty procent, hledání, kolik máš dnes vlastně zvedat. 531Forever dělá totéž co tvoje tabulka. Jen za tebe, na jedno ťuknutí a bez chyb."
     },
     "features": {
       "0": {

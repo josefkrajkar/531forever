@@ -110,7 +110,7 @@ export default function UserProfileModal({
       const json = toExportJson(exportData, new Date().toISOString())
       triggerDownload(
         json,
-        `silovy-denik-export-${getDateSuffix()}.json`,
+        `531forever-export-${getDateSuffix()}.json`,
         "application/json;charset=utf-8"
       )
       toast.success(t("profile.exportJsonSuccess"))
@@ -128,7 +128,7 @@ export default function UserProfileModal({
       const csv = toWorkoutsCsv(exportData)
       triggerDownload(
         csv,
-        `silovy-denik-export-${getDateSuffix()}.csv`,
+        `531forever-export-${getDateSuffix()}.csv`,
         "text/csv;charset=utf-8"
       )
       toast.success(t("profile.exportCsvSuccess"))

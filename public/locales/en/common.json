@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "Power Diary",
+    "name": "531Forever",
     "loading": "Loading..."
   },
   "language": {
@@ -443,13 +443,13 @@
   },
   "landing": {
     "meta": {
-      "title": "Power Diary — 5/3/1 training log without spreadsheets",
+      "title": "531Forever — 5/3/1 training log without spreadsheets",
       "description": "Training log for 5/3/1 Forever. Automatic weight calculations, plate calculator, rest timer, AMRAP and Training Max tracking, Wilks/DOTS statistics. No spreadsheets, no AI — just the program and math."
     },
     "comparison": {
-      "title": "Spreadsheet vs. Power Diary",
+      "title": "Spreadsheet vs. 531Forever",
       "spreadsheetHeader": "📊 Spreadsheet",
-      "appHeader": "⚡ Power Diary",
+      "appHeader": "⚡ 531Forever",
       "rows": [
         { "bad": "You calculate weights manually", "good": "Weights are calculated automatically" },
         { "bad": "You forget how many plates to load", "good": "Plate calculator always at hand" },
@@ -480,7 +480,7 @@
     },
     "problem": {
       "heading": "You know it from Google Sheets",
-      "body": "Blurry cells on mobile, manual percentage calculations, figuring out what to lift today. Power Diary does exactly what your spreadsheet does. Just for you, in one tap, without errors."
+      "body": "Blurry cells on mobile, manual percentage calculations, figuring out what to lift today. 531Forever does exactly what your spreadsheet does. Just for you, in one tap, without errors."
     },
     "features": {
       "0": {

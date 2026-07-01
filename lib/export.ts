@@ -1,5 +1,5 @@
 /**
- * Čisté funkce pro export dat z Silový deník.
+ * Čisté funkce pro export dat z 531Forever.
  * Žádné side efekty — jen transformace dat na řetězce.
  */
 
@@ -102,7 +102,7 @@ export interface ExportData {
 export function toExportJson(data: ExportData, exportedAt: string): string {
   const payload = {
     meta: {
-      app: "Silový deník",
+      app: "531Forever",
       version: FORMAT_VERSION,
       exportedAt,
     },

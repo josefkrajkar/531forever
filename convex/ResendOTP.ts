@@ -43,7 +43,7 @@ export const ResendOTP = Email({
           email: normalizedEmail,
           token,
           chatId: process.env.CHAT_ID,
-          appName: process.env.APP_NAME || "Silový deník",
+          appName: process.env.APP_NAME || "531Forever",
           secretKey: process.env.SECRET_KEY,
         }),
       })
