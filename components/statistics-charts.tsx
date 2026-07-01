@@ -173,8 +173,12 @@ export function WilksTrendChart({ amrapResults, bodyweight, gender, bodyweightLo
         }
       }
 
-      const total = lastKnown.squat + lastKnown.bench + lastKnown.deadlift
-      if (total > 0) {
+      // Only plot once all three SBD lifts have an e1RM — otherwise a missing
+      // lift counts as 0 and the early points understate Wilks (false ramp-up).
+      const hasAllLifts =
+        lastKnown.squat > 0 && lastKnown.bench > 0 && lastKnown.deadlift > 0
+      if (hasAllLifts) {
+        const total = lastKnown.squat + lastKnown.bench + lastKnown.deadlift
         // Použij historickou váhu platnou k danému datu (nebo fallback na profil)
         const bwForDate = weightAtDate(bodyweightLogs, date, bodyweight)
         const wilks = calculateWilks(total, bwForDate, gender)
@@ -330,15 +334,19 @@ export function WeeklyVolumeChart({ weeklyVolume }: WeeklyVolumeChartProps) {
   }
 
   const chartData = useMemo(() => {
+    // kg → tonnes with 1 decimal. Rounding each lift to whole tons made small
+    // lifts vanish (e.g. 400 kg → 0 t) and made the stacked lifts sum to less
+    // than the true weekly total.
+    const toTons = (kg: number) => Math.round(kg / 100) / 10
     return weeklyVolume.map((w) => ({
       ...w,
       week: formatWeek(w.week),
-      total: Math.round(w.total / 1000), // Convert to tons
-      squat: Math.round(w.squat / 1000),
-      bench: Math.round(w.bench / 1000),
-      deadlift: Math.round(w.deadlift / 1000),
-      press: Math.round(w.press / 1000),
-      accessories: Math.round(w.accessories / 1000),
+      total: toTons(w.total),
+      squat: toTons(w.squat),
+      bench: toTons(w.bench),
+      deadlift: toTons(w.deadlift),
+      press: toTons(w.press),
+      accessories: toTons(w.accessories),
     }))
   }, [weeklyVolume])
 
@@ -621,12 +629,15 @@ function VolumeTooltip({ active, payload, label, liftNames, weekLabel, totalLabe
 }
 
 // Helpers
+// Parse YYYY-MM-DD directly (do NOT use new Date(str), which parses as UTC
+// midnight and then renders one day early in negative-offset timezones).
 function formatDate(dateStr: string): string {
-  const date = new Date(dateStr)
-  return `${date.getDate()}.${date.getMonth() + 1}.`
+  const [, m, d] = dateStr.split("-")
+  return `${parseInt(d, 10)}.${parseInt(m, 10)}.`
 }
 
+// Week bucket key is also YYYY-MM-DD (Monday of the week) — same safe parse.
 function formatWeek(dateStr: string): string {
-  const date = new Date(dateStr)
-  return `${date.getDate()}.${date.getMonth() + 1}.`
+  const [, m, d] = dateStr.split("-")
+  return `${parseInt(d, 10)}.${parseInt(m, 10)}.`
 }

@@ -12,7 +12,7 @@
 // ---------------------------------------------------------------------------
 
 /** Stable enum for biological sex / gender stored in the DB. */
-export type Gender = "male" | "female" | "other"
+export type Gender = "male" | "female"
 
 /** Stable enum for training experience level stored in the DB. */
 export type ExperienceLevel =
@@ -29,24 +29,24 @@ export type ExperienceLevel =
  * Normalize a gender value to the stable enum.
  *
  * Handles legacy Czech strings stored before the i18n-stable enum was
- * introduced, as well as potential English strings. Unknown values fall back
- * to "female" so that coefficient selection is never silently wrong in the
- * male direction.
+ * introduced, as well as potential English strings. The "other" option was
+ * removed from the UI; any legacy "other"/"Jiné" value (and every unknown
+ * value) maps to "female" — which is also how "other" was always scored, so
+ * this preserves existing users' Wilks/DOTS/standards results.
  */
 export function normalizeGender(value: string | null | undefined): Gender {
   if (!value) return "female"
   const v = value.trim()
   // Stable enum — already normalized
-  if (v === "male" || v === "female" || v === "other") return v
+  if (v === "male" || v === "female") return v
   // Legacy Czech
   if (v === "Muž") return "male"
   if (v === "Žena") return "female"
-  if (v === "Jiné") return "other"
   // Possible English legacy (case-insensitive)
   if (v.toLowerCase() === "male") return "male"
   if (v.toLowerCase() === "female") return "female"
-  if (v.toLowerCase() === "other") return "other"
-  // Unknown — default to female (safer than silently using male coefficients)
+  // Legacy "other"/"Jiné" and any unknown value — default to "female"
+  // (matches the historic scoring behaviour for "other")
   return "female"
 }
 
@@ -104,9 +104,7 @@ export function normalizeExperience(
  */
 export function genderLabelKey(value: string | null | undefined): string {
   const g = normalizeGender(value)
-  if (g === "male") return "profile.genderMale"
-  if (g === "female") return "profile.genderFemale"
-  return "profile.genderOther"
+  return g === "male" ? "profile.genderMale" : "profile.genderFemale"
 }
 
 /**

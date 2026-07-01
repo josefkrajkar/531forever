@@ -3,8 +3,11 @@
  * Includes: Wilks, DOTS, IPF GL Points, Bodyweight Multiples, Strength Standards
  */
 
-// Wilks coefficients (2020 revision)
-// Source: https://worldpowerlifting.com/wilks-formula/
+// Wilks coefficients — classic "Robert Wilks" formula (1994).
+// NOTE: these are the ORIGINAL 1994 coefficients, NOT Wilks-2 (2020). The
+// getWilksDescription() thresholds are calibrated to this classic scale — do
+// not swap in Wilks-2 coefficients without also recalibrating those thresholds.
+// Verified digit-for-digit against the canonical published values.
 const WILKS_MALE_COEFFICIENTS = {
   a: -216.0475144,
   b: 16.2606339,
@@ -23,8 +26,8 @@ const WILKS_FEMALE_COEFFICIENTS = {
   f: -9.054e-8,
 }
 
-// DOTS coefficients
-// Source: https://www.powerlifting.sport/fileadmin/ipf/data/ipf-formula/IPF_GL_Coefficients-2020.pdf
+// DOTS coefficients — 4th-degree polynomial, numerator 500 (as used by
+// OpenPowerlifting). Coefficients are ordered constant→x⁴ (a + b·x + … + e·x⁴).
 const DOTS_MALE_COEFFICIENTS = {
   a: -307.75076,
   b: 24.0900756,
@@ -71,13 +74,12 @@ export type StrengthLevelKey =
  * Calculate Wilks points
  * @param total - Total weight lifted (SBD total or single lift)
  * @param bodyweight - Athlete bodyweight in kg
- * @param gender - "male" or "female" (or "other")
+ * @param gender - "male" or "female"
  */
 export function calculateWilks(total: number, bodyweight: number, gender: Gender): number {
   if (bodyweight <= 0 || total <= 0) return 0
 
-  // "other" uses female coefficients — this preserves the original behaviour where
-  // anything other than the explicit male value fell back to female coefficients.
+  // Non-male (female) uses female coefficients.
   const coef = gender === "male" ? WILKS_MALE_COEFFICIENTS : WILKS_FEMALE_COEFFICIENTS
   const bw = bodyweight
   
@@ -98,12 +100,12 @@ export function calculateWilks(total: number, bodyweight: number, gender: Gender
  * Calculate DOTS points (newer formula, replacing Wilks in IPF)
  * @param total - Total weight lifted
  * @param bodyweight - Athlete bodyweight in kg
- * @param gender - "male" or "female" (or "other")
+ * @param gender - "male" or "female"
  */
 export function calculateDOTS(total: number, bodyweight: number, gender: Gender): number {
   if (bodyweight <= 0 || total <= 0) return 0
 
-  // "other" uses female coefficients — see calculateWilks for rationale.
+  // Non-male (female) uses female coefficients.
   const coef = gender === "male" ? DOTS_MALE_COEFFICIENTS : DOTS_FEMALE_COEFFICIENTS
   const bw = bodyweight
   
@@ -123,12 +125,12 @@ export function calculateDOTS(total: number, bodyweight: number, gender: Gender)
  * Calculate IPF GL Points (Goodlift Points)
  * @param total - Total weight lifted
  * @param bodyweight - Athlete bodyweight in kg
- * @param gender - "male" or "female" (or "other")
+ * @param gender - "male" or "female"
  */
 export function calculateIPFGL(total: number, bodyweight: number, gender: Gender): number {
   if (bodyweight <= 0 || total <= 0) return 0
 
-  // "other" uses female coefficients — see calculateWilks for rationale.
+  // Non-male (female) uses female coefficients.
   const coef = gender === "male" ? IPF_GL_MALE_RAW : IPF_GL_FEMALE_RAW
   
   const denominator = coef.a - coef.b * Math.exp(-coef.c * bodyweight)
@@ -227,7 +229,7 @@ const FEMALE_STANDARDS: Record<string, StrengthStandard[]> = {
  * @param lift - "squat", "bench", "deadlift", or "press"
  * @param weight - Weight lifted (e1RM)
  * @param bodyweight - Athlete bodyweight
- * @param gender - "male" or "female" (or "other")
+ * @param gender - "male" or "female"
  *
  * Poznámka: pro neznámý lift se vrací standardy pro dřep jako neutrální fallback.
  * To zajišťuje, že funkce nikdy nevyhodí chybu, ale hodnota může být zavádějící —
@@ -244,7 +246,7 @@ export function getStrengthLevel(
   }
 
   const multiple = weight / bodyweight
-  // "other" uses female standards — see calculateWilks for rationale.
+  // Non-male (female) uses female standards.
   const standards = gender === "male" ? MALE_STANDARDS : FEMALE_STANDARDS
   // Neznámý lift: fallback na dřep standardy (bezpečný neutrální výběr)
   const liftStandards = standards[lift] ?? standards.squat
@@ -264,7 +266,7 @@ export function getStrengthLevel(
  * Get all strength standards for a lift (for progress bar display)
  */
 export function getStrengthStandards(lift: string, gender: Gender): StrengthStandard[] {
-  // "other" uses female standards — see calculateWilks for rationale.
+  // Non-male (female) uses female standards.
   const standards = gender === "male" ? MALE_STANDARDS : FEMALE_STANDARDS
   return standards[lift] || standards.squat
 }

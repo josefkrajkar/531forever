@@ -1,5 +1,44 @@
 import { query } from "./_generated/server"
 import { getAuthUserId } from "@convex-dev/auth/server"
+import { ACCESSORY_CATALOG } from "../lib/accessory-catalog"
+
+// Accessory display names (lowercased) — used to separate accessory volume from
+// main-lift volume WITHOUT fragile substring matching. An accessory like
+// "Leg press" or "Bulharské dřepy" must not leak into press/squat volume.
+const ACCESSORY_NAMES = new Set(ACCESSORY_CATALOG.map((e) => e.name.toLowerCase()))
+
+const MAIN_LIFTS = new Set(["squat", "bench", "deadlift", "press"])
+
+type VolumeBucket = "squat" | "bench" | "deadlift" | "press" | "accessories"
+
+/**
+ * Attribute one exercise's volume to a bucket.
+ *
+ * Primary signal is the workout's stable `programLift` field, which names the
+ * day's main lift. The main set and its supplemental (BBB) entry are stored
+ * under the localized lift name, so both are attributed to `programLift`.
+ * Known accessories (matched against the catalog by exact name) always go to
+ * the accessories bucket — even when their name contains a lift word.
+ *
+ * Legacy fallback (workouts saved before `programLift` existed): best-effort
+ * name matching so historical charts keep their main-lift volume.
+ */
+function categorizeExercise(name: string, programLift: string | undefined): VolumeBucket {
+  const lower = name.toLowerCase()
+
+  // Known accessory → accessories, regardless of lift-like words in the name
+  if (ACCESSORY_NAMES.has(lower)) return "accessories"
+
+  // Main lift + supplemental (BBB) belong to the day's programmed lift
+  if (programLift && MAIN_LIFTS.has(programLift)) return programLift as VolumeBucket
+
+  // Legacy fallback: workouts without programLift → best-effort name match
+  if (lower.includes("squat") || lower.includes("dřep")) return "squat"
+  if (lower.includes("bench") || lower.includes("tlak na lavici")) return "bench"
+  if (lower.includes("deadlift") || lower.includes("mrtvý tah")) return "deadlift"
+  if (lower.includes("press") || lower.includes("tlak")) return "press"
+  return "accessories"
+}
 
 // Get statistics data for charts
 export const getStatisticsData = query({
@@ -55,19 +94,9 @@ export const getStatisticsData = query({
 
         totalVolume += exerciseVolume
 
-        // Categorize by lift name
-        const lowerName = ex.name.toLowerCase()
-        if (lowerName.includes("squat") || lowerName.includes("dřep")) {
-          liftVolumes.squat += exerciseVolume
-        } else if (lowerName.includes("bench") || lowerName.includes("tlak na lavici")) {
-          liftVolumes.bench += exerciseVolume
-        } else if (lowerName.includes("deadlift") || lowerName.includes("mrtvý tah")) {
-          liftVolumes.deadlift += exerciseVolume
-        } else if (lowerName.includes("press") || lowerName.includes("tlak")) {
-          liftVolumes.press += exerciseVolume
-        } else {
-          liftVolumes.accessories += exerciseVolume
-        }
+        // Categorize by the workout's programmed lift + accessory catalog,
+        // not by fragile name substrings (see categorizeExercise).
+        liftVolumes[categorizeExercise(ex.name, w.programLift)] += exerciseVolume
       }
 
       return {

@@ -11,6 +11,7 @@ interface AccessorySectionProps {
   accessoriesSaved: boolean
   onOpenPicker: () => void
   onComplete: (logs: Array<{ accessoryId: string; sets: AccessorySetLog[] }>) => void
+  onStartRestTimer?: (sec: number) => void
 }
 
 export default function AccessorySection({
@@ -19,6 +20,7 @@ export default function AccessorySection({
   accessoriesSaved,
   onOpenPicker,
   onComplete,
+  onStartRestTimer,
 }: AccessorySectionProps) {
   const { t } = useTranslation()
 
@@ -50,6 +52,7 @@ export default function AccessorySection({
           <AccessoryTracker
             accessoryIds={todayAccessories}
             onComplete={onComplete}
+            onStartRestTimer={onStartRestTimer}
           />
         </div>
       )}

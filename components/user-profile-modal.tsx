@@ -145,7 +145,6 @@ export default function UserProfileModal({
   const genderOptions: Array<{ value: Gender; labelKey: string }> = [
     { value: "male", labelKey: "profile.genderMale" },
     { value: "female", labelKey: "profile.genderFemale" },
-    { value: "other", labelKey: "profile.genderOther" },
   ]
 
   // Stable enum value stored/compared; label from i18n for display only.

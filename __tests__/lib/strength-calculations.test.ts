@@ -299,19 +299,25 @@ describe("strength-calculations", () => {
     it("passes through stable enum values unchanged", () => {
       expect(normalizeGender("male")).toBe("male")
       expect(normalizeGender("female")).toBe("female")
-      expect(normalizeGender("other")).toBe("other")
+    })
+
+    it("maps removed 'other' option (and legacy 'Jiné') to female", () => {
+      // The "other" gender option was removed from the UI. Any legacy value —
+      // "other", "Other", or Czech "Jiné" — now normalizes to female, which is
+      // also how "other" was always scored (female coefficients/standards).
+      expect(normalizeGender("other")).toBe("female")
+      expect(normalizeGender("Other")).toBe("female")
+      expect(normalizeGender("Jiné")).toBe("female")
     })
 
     it("normalizes legacy Czech strings", () => {
       expect(normalizeGender("Muž")).toBe("male")
       expect(normalizeGender("Žena")).toBe("female")
-      expect(normalizeGender("Jiné")).toBe("other")
     })
 
     it("normalizes legacy English strings (case-insensitive)", () => {
       expect(normalizeGender("Male")).toBe("male")
       expect(normalizeGender("Female")).toBe("female")
-      expect(normalizeGender("Other")).toBe("other")
     })
 
     it("returns female for null/undefined/unknown (safe fallback)", () => {

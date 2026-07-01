@@ -26,7 +26,7 @@ export async function getServerI18n(lang: string) {
   const instance = createInstance()
   await instance.init({
     lng: resolvedLang,
-    fallbackLng: DEFAULT_LANG,
+    fallbackLng: "en",
     supportedLngs: ["cs", "en"],
     resources,
     defaultNS,

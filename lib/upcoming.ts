@@ -25,8 +25,8 @@ import {
   type SupplementalTemplate,
 } from "./templates"
 
-// Lokální definice — zrcadlí PHASE_WEEKS z convex/programs.ts
-const PHASE_WEEKS: Record<ProgramPhase, number> = {
+// Zrcadlí PHASE_WEEKS z convex/programs.ts — exportováno pro UI
+export const PHASE_WEEKS: Record<ProgramPhase, number> = {
   leader1: 6,
   leader2: 6,
   anchor: 3,

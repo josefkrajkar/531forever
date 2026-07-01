@@ -11,7 +11,7 @@ export const defaultNS = "common"
 
 export const SUPPORTED_LANGS = ["cs", "en"] as const
 export type SupportedLang = (typeof SUPPORTED_LANGS)[number]
-export const DEFAULT_LANG: SupportedLang = "cs"
+export const DEFAULT_LANG: SupportedLang = "en"
 
 export function isSupportedLang(x: unknown): x is SupportedLang {
   return SUPPORTED_LANGS.includes(x as SupportedLang)

@@ -34,9 +34,11 @@ const ACCESSORY_NAMES: Record<string, string> = Object.fromEntries(
 // Barva primary (orange)
 const ACCENT_COLOR = "#f97316"
 
+// Parse YYYY-MM-DD directly — new Date(str) parses as UTC midnight and renders
+// one day early in negative-offset timezones.
 function formatDate(dateStr: string): string {
-  const d = new Date(dateStr)
-  return `${d.getDate()}.${d.getMonth() + 1}.`
+  const [, m, d] = dateStr.split("-")
+  return `${parseInt(d, 10)}.${parseInt(m, 10)}.`
 }
 
 // Tooltip pro e1RM / reps trend

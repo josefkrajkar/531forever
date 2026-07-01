@@ -1,18 +1,27 @@
 "use client"
 
 /**
- * I18nProvider — inicializuje i18next jako side effect (import "@/lib/i18n")
- * a synchronně přepne jazyk dle prop `lang` ještě před vykreslením children.
+ * I18nProvider — synchronizuje i18next jazyk se serverovým prop `lang` (z cookie).
  *
- * Hydration-safe: changeLanguage je synchronní (inline resources), takže
- * i18n.language === lang platí už při prvním (hydratačním) renderu.
- * Tím se vyhýbáme mismatch vůči serverovému HTML.
+ * Proč useEffect místo přímého volání v renderu:
+ * i18n.changeLanguage() triggeruje state update v react-i18next subscriberech
+ * (každá komponenta s useTranslation). Volání v těle renderu by způsobilo React
+ * warning "Cannot update a component while rendering a different component".
  *
- * I18nextProvider záměrně NEPOUŽÍVÁME — react-i18next v17 + Next.js 16 RSC
- * nejsou kompatibilní. initReactI18next plugin registruje instanci globálně
- * přes setI18n(), takže useTranslation() funguje bez provideru.
+ * useEffect + ref pattern:
+ * - changeLanguage se volá až po commitu, mimo render fázi → žádná React chyba
+ * - ref sleduje, jaký lang byl naposledy aplikován z prop — změna proběhne jen
+ *   tehdy, kdy se prop skutečně změní (nový RSC payload po router.refresh)
+ * - tím se zabrání přepsání jazyka nastaveného uživatelem přes LanguageSwitcher
+ *   při re-renderech před dokončením router.refresh()
+ *
+ * Hydration-safe: lib/i18n.ts inicializuje klienta na DEFAULT_LANG (shodně se SSR),
+ * takže první render nezpůsobí hydration mismatch. Skutečný jazyk z cookie (server
+ * prop `lang`) se aplikuje zde v useEffect po hydrataci — u ne-defaultního jazyka
+ * proto může na první paint krátce probliknout DEFAULT_LANG (viz lib/i18n.ts).
  */
 
+import { useEffect, useRef } from "react"
 import i18n from "@/lib/i18n"
 import { isSupportedLang, DEFAULT_LANG } from "@/lib/i18n-config"
 
@@ -23,12 +32,17 @@ interface I18nProviderProps {
 
 export function I18nProvider({ lang, children }: I18nProviderProps) {
   const resolvedLang = isSupportedLang(lang) ? lang : DEFAULT_LANG
+  const lastAppliedRef = useRef<string | null>(null)
 
-  // Synchronní guard: přepne jazyk ještě před renderem children.
-  // changeLanguage je synchronní díky inline resources — nevzniká flicker ani loop.
-  if (i18n.language !== resolvedLang) {
-    i18n.changeLanguage(resolvedLang)
-  }
+  useEffect(() => {
+    // Aplikuj jazyk jen pokud se prop skutečně změnil (ne při každém re-renderu)
+    if (lastAppliedRef.current !== resolvedLang) {
+      lastAppliedRef.current = resolvedLang
+      if (i18n.language !== resolvedLang) {
+        i18n.changeLanguage(resolvedLang)
+      }
+    }
+  }, [resolvedLang])
 
   return <>{children}</>
 }

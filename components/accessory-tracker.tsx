@@ -23,11 +23,13 @@ import { Check, ChevronDown, ChevronUp, Minus, Plus } from "lucide-react"
 interface AccessoryTrackerProps {
   accessoryIds: string[]
   onComplete: (logs: Array<{ accessoryId: string; sets: AccessorySetLog[] }>) => void
+  onStartRestTimer?: (sec: number) => void
 }
 
 export default function AccessoryTracker({
   accessoryIds,
   onComplete,
+  onStartRestTimer,
 }: AccessoryTrackerProps) {
   // Track state per accessory
   const [accessoryStates, setAccessoryStates] = useState<
@@ -70,10 +72,17 @@ export default function AccessoryTracker({
       const current = prev[accessoryId]
       if (!current) return prev
       
+      const wasCompleted = current.sets[setIndex]?.completed
       const newSets = [...current.sets]
       newSets[setIndex] = {
         ...newSets[setIndex],
-        completed: !newSets[setIndex].completed,
+        completed: !wasCompleted,
+      }
+      
+      // Spustit rest timer při zaškrtnutí (ne při odškrtnutí)
+      if (!wasCompleted) {
+        navigator.vibrate?.(50)
+        onStartRestTimer?.(90)
       }
       
       return {

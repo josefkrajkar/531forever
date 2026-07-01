@@ -19,6 +19,7 @@ import { Doc } from "@/convex/_generated/dataModel"
 import CycleReviewModal from "./cycle-review-modal"
 import AccessoryPicker from "./accessory-picker"
 import { PhaseBadge } from "./template-selector"
+import { PHASE_WEEKS } from "@/lib/upcoming"
 import { SeventhWeekBadge } from "./seventh-week-selector"
 import { FlaskConical } from "lucide-react"
 
@@ -179,7 +180,7 @@ export default function ProgramWorkout({ program, onResetProgram }: Props) {
         <div className="bg-card border border-border rounded-lg p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <PhaseBadge phase={program.programPhase!} phaseWeek={program.phaseWeek || week} phaseWeekLimit={isSeventhWeek ? 1 : 3} />
+              <PhaseBadge phase={program.programPhase!} phaseWeek={program.phaseWeek || week} phaseWeekLimit={PHASE_WEEKS[program.programPhase as keyof typeof PHASE_WEEKS] ?? 3} />
               <div>
                 <p className="text-sm font-medium">{phaseName}</p>
                 {isSeventhWeek && selectedSeventhWeekType ? (
@@ -254,6 +255,7 @@ export default function ProgramWorkout({ program, onResetProgram }: Props) {
       <AccessorySection
         todayAccessories={todayAccessories} accessoryLogs={accessoryLogs} accessoriesSaved={accessoriesSaved}
         onOpenPicker={() => setShowAccessoryPicker(true)} onComplete={handleAccessoryComplete}
+        onStartRestTimer={restTimer.start}
       />
 
       <AutoregulationToggle autoregulated={autoregulated} deviationNote={deviationNote} onToggle={() => setAutoregulated(!autoregulated)} onNoteChange={setDeviationNote} />
