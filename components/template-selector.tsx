@@ -8,6 +8,8 @@ import { TEMPLATES, SupplementalTemplate } from "@/lib/templates"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Check, Dumbbell, Target, Zap, Weight } from "lucide-react"
+import { GlossaryTerm } from "@/components/glossary-term"
+import { type GlossaryKey } from "@/lib/glossary"
 
 interface Props {
   selectedTemplate?: SupplementalTemplate
@@ -89,7 +91,9 @@ export default function TemplateSelector({ selectedTemplate, onSelect, mode = "s
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Icon className="h-5 w-5" />
-                    <CardTitle className="text-base">{t(config.name)}</CardTitle>
+                    <CardTitle className="text-base">
+                      <GlossaryTerm term={id as GlossaryKey}>{t(config.name)}</GlossaryTerm>
+                    </CardTitle>
                   </div>
                   {isSelected && (
                     <Check className="h-5 w-5 text-primary" />
@@ -106,12 +110,12 @@ export default function TemplateSelector({ selectedTemplate, onSelect, mode = "s
                 <div className="flex gap-2 flex-wrap">
                   {isLeader && (
                     <Badge variant="outline" className={TEMPLATE_BADGE_COLORS[id]}>
-                      Leader
+                      <GlossaryTerm term="leader" noUnderline>Leader</GlossaryTerm>
                     </Badge>
                   )}
                   {isAnchor && (
                     <Badge variant="outline" className={TEMPLATE_BADGE_COLORS[id]}>
-                      Anchor
+                      <GlossaryTerm term="anchor" noUnderline>Anchor</GlossaryTerm>
                     </Badge>
                   )}
                 </div>

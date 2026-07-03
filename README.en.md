@@ -4,7 +4,7 @@
 
 A personal training journal for powerlifting built on Jim Wendler's **5/3/1 Forever** system. Deterministic weight calculations, offline-first architecture, and automatic Training Max progression.
 
-**Live demo:** _(TBD)_
+**Live demo:** https://www.531forever.app/
 
 ---
 

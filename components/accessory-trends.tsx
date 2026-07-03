@@ -25,6 +25,7 @@ import {
   ResponsiveContainer,
 } from "recharts"
 import { ACCESSORY_CATALOG } from "@/lib/accessory-catalog"
+import { usePreferredUnit } from "@/hooks/use-preferred-unit"
 
 // Mapa accessoryId → český název z katalogu
 const ACCESSORY_NAMES: Record<string, string> = Object.fromEntries(
@@ -47,11 +48,13 @@ function AccessoryTooltip({
   payload,
   label,
   isBodyweight,
+  unitLabel,
 }: {
   active?: boolean
   payload?: Array<{ value: number; color: string }>
   label?: string
   isBodyweight: boolean
+  unitLabel: string
 }) {
   const { t } = useTranslation()
 
@@ -61,7 +64,7 @@ function AccessoryTooltip({
     <div className="bg-card border border-border rounded p-2 shadow-lg">
       <p className="text-xs text-muted-foreground mb-1">{label}</p>
       <p className="text-xs font-bold" style={{ color: payload[0].color }}>
-        {isBodyweight ? t("charts.reps", { n: val }) : `${val} kg e1RM`}
+        {isBodyweight ? t("charts.reps", { n: val }) : `${val} ${unitLabel} e1RM`}
       </p>
     </div>
   )
@@ -73,6 +76,7 @@ function AccessoryTooltip({
 
 export function AccessoryTrends() {
   const { t } = useTranslation()
+  const { toDisplay, label: unitLabel } = usePreferredUnit()
   const usedAccessories = useQuery(api.accessories.getUsedAccessories)
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
@@ -94,7 +98,7 @@ export function AccessoryTrends() {
   )
 
   // Zpracování dat pro grafy — vždy voláme useMemo (bez podmínek)
-  const chartData = useMemo(() => {
+  const rawChartData = useMemo(() => {
     if (!trendsData) return []
     return trendsData.map((d) => ({
       date: formatDate(d.date),
@@ -104,6 +108,13 @@ export function AccessoryTrends() {
       weight: d.topWeight,
     }))
   }, [trendsData])
+
+  // Převod na zobrazovanou jednotku
+  const chartData = rawChartData.map((d) => ({
+    ...d,
+    e1rm: toDisplay(d.e1rm),
+    weight: toDisplay(d.weight),
+  }))
 
   const isBodyweight = useMemo(() => {
     if (!trendsData || trendsData.length === 0) return false
@@ -213,7 +224,7 @@ export function AccessoryTrends() {
                   tickLine={{ stroke: "hsl(var(--border))" }}
                 />
                 <Tooltip
-                  content={<AccessoryTooltip isBodyweight={true} />}
+                  content={<AccessoryTooltip isBodyweight={true} unitLabel={unitLabel} />}
                 />
                 <Area
                   type="monotone"
@@ -240,10 +251,10 @@ export function AccessoryTrends() {
                 <YAxis
                   tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
                   tickLine={{ stroke: "hsl(var(--border))" }}
-                  unit=" kg"
+                  unit={` ${unitLabel}`}
                 />
                 <Tooltip
-                  content={<AccessoryTooltip isBodyweight={false} />}
+                  content={<AccessoryTooltip isBodyweight={false} unitLabel={unitLabel} />}
                 />
                 <Line
                   type="monotone"
@@ -279,9 +290,9 @@ export function AccessoryTrends() {
                 </span>
               </div>
               <div className="font-heading font-bold text-lg">
-                {summary.lastValue}
+                {isBodyweight ? summary.lastValue : toDisplay(summary.lastValue)}
                 <span className="text-xs text-muted-foreground ml-1">
-                  {isBodyweight ? "rep" : "kg"}
+                  {isBodyweight ? "rep" : unitLabel}
                 </span>
               </div>
               <div className="text-[10px] text-muted-foreground">
@@ -298,9 +309,9 @@ export function AccessoryTrends() {
                 </span>
               </div>
               <div className="font-heading font-bold text-lg text-primary">
-                {summary.bestValue}
+                {isBodyweight ? summary.bestValue : toDisplay(summary.bestValue)}
                 <span className="text-xs text-muted-foreground ml-1">
-                  {isBodyweight ? "rep" : "kg"}
+                  {isBodyweight ? "rep" : unitLabel}
                 </span>
               </div>
               <div className="text-[10px] text-muted-foreground">

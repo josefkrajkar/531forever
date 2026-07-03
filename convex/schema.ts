@@ -154,6 +154,8 @@ export default defineSchema({
       })
     ),
     trainingDays: v.optional(v.array(v.string())), // deprecated, kept for backwards compatibility
+    // Preferovaná jednotka hmotnosti — kg (výchozí) nebo lb
+    preferredUnit: v.optional(v.union(v.literal("kg"), v.literal("lb"))),
   }).index("email", ["email"]),
 
   // Bodyweight time series — UPSERT per (user, date), index by_user_date

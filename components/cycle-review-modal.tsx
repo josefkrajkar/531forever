@@ -3,6 +3,7 @@
 import { useTranslation } from "react-i18next"
 import { Lift, getLiftDisplayName, DEFAULT_SPLIT } from "@/lib/531"
 import type { CycleProgressionSummary } from "@/lib/531"
+import { usePreferredUnit } from "@/hooks/use-preferred-unit"
 
 interface Props {
   progressionSummary: CycleProgressionSummary
@@ -17,6 +18,7 @@ interface Props {
  */
 export default function CycleReviewModal({ progressionSummary, onClose }: Props) {
   const { t } = useTranslation()
+  const { toDisplay, label: unitLabel } = usePreferredUnit()
   const { completedCycle, lifts } = progressionSummary
 
   return (
@@ -85,7 +87,7 @@ export default function CycleReviewModal({ progressionSummary, onClose }: Props)
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="text-muted-foreground text-sm">{summary.oldTM}</span>
+                    <span className="text-muted-foreground text-sm">{toDisplay(summary.oldTM)} {unitLabel}</span>
                     <span className="text-muted-foreground mx-2">→</span>
                     <span
                       className={`font-heading font-bold ${
@@ -96,7 +98,7 @@ export default function CycleReviewModal({ progressionSummary, onClose }: Props)
                             : "text-yellow-400"
                       }`}
                     >
-                      {summary.newTM} kg
+                      {toDisplay(summary.newTM)} {unitLabel}
                     </span>
                   </div>
                 </div>

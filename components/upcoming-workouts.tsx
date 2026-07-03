@@ -8,6 +8,7 @@ import {
   type ProgramSnapshot,
   type UpcomingWorkout,
 } from "@/lib/upcoming"
+import { usePreferredUnit } from "@/hooks/use-preferred-unit"
 // ============================================================================
 // Typy pro props
 // ============================================================================
@@ -69,6 +70,7 @@ function SeventhWeekBadge({ protocol }: { protocol: string | null }) {
 
 function WorkoutCard({ workout }: { workout: UpcomingWorkout }) {
   const { t } = useTranslation()
+  const { toDisplay, label: unitLabel } = usePreferredUnit()
   const weekLabel = getWeekLabel(workout.week, workout.isSeventhWeek)
   const phaseLabel = getPhaseLabelShort(workout.phase)
 
@@ -101,8 +103,8 @@ function WorkoutCard({ workout }: { workout: UpcomingWorkout }) {
           <div className="text-right bg-secondary rounded px-3 py-2 shrink-0">
             <p className="text-xs text-muted-foreground uppercase tracking-widest">{t("upcoming.topSet")}</p>
             <p className="font-heading font-bold text-lg leading-tight">
-              {workout.topSetWeight}
-              <span className="text-sm font-normal text-muted-foreground"> kg</span>
+              {workout.topSetWeight !== null ? toDisplay(workout.topSetWeight) : ""}
+              <span className="text-sm font-normal text-muted-foreground"> {unitLabel}</span>
             </p>
           </div>
         ) : null}
@@ -120,7 +122,7 @@ function WorkoutCard({ workout }: { workout: UpcomingWorkout }) {
                   : "bg-secondary border-transparent text-foreground"
               }`}
             >
-              {set.weight} × {set.targetReps}{set.isAmrap ? "+" : ""}
+              {toDisplay(set.weight)} × {set.targetReps}{set.isAmrap ? "+" : ""}
             </span>
           ))}
         </div>

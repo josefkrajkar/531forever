@@ -53,3 +53,15 @@ export const updateAthleteProfile = mutation({
   },
 })
 
+export const updatePreferredUnit = mutation({
+  args: {
+    unit: v.union(v.literal("kg"), v.literal("lb")),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx)
+    if (!userId) throw new Error("Not authenticated")
+    await ctx.db.patch(userId, { preferredUnit: args.unit })
+    console.log("[users] preferredUnit updated for:", userId, "→", args.unit)
+  },
+})
+

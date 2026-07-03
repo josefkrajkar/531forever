@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useQuery, useMutation } from "convex/react"
 import { toast } from "sonner"
 import { useTranslation } from "react-i18next"
@@ -13,6 +13,8 @@ import {
   normalizeGender,
   normalizeExperience,
 } from "@/lib/profile"
+import { type WeightUnit } from "@/lib/units"
+import { usePreferredUnit } from "@/hooks/use-preferred-unit"
 
 export interface UserProfile {
   gender: string
@@ -50,14 +52,31 @@ export default function UserProfileModal({
   const [downloadingJson, setDownloadingJson] = useState(false)
   const [downloadingCsv, setDownloadingCsv] = useState(false)
   const [loggingWeight, setLoggingWeight] = useState(false)
+  const { toDisplay, label: unitLabel } = usePreferredUnit()
 
   // Modal je podmíněně mountován — query/mutation je aktivní jen když je modal otevřen
+  const currentUser = useQuery(api.users.currentLoggedInUser)
+  const [preferredUnit, setPreferredUnit] = useState<WeightUnit>("kg")
+  const updatePreferredUnit = useMutation(api.users.updatePreferredUnit)
+
+  // Inicializuj ze serveru po načtení
+  useEffect(() => {
+    if (currentUser?.preferredUnit) {
+      setPreferredUnit(currentUser.preferredUnit as WeightUnit)
+    }
+  }, [currentUser?.preferredUnit])
   const exportData = useQuery(api.exports.exportData, {})
   const lastBwLog = useQuery(api.bodyweight.getBodyweightHistory)
   const logBodyweight = useMutation(api.bodyweight.logBodyweight)
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    // Uloží preferovanou jednotku (může se lišit od stavu při otevření)
+    if (preferredUnit !== (currentUser?.preferredUnit ?? "kg")) {
+      await updatePreferredUnit({ unit: preferredUnit }).catch(() => {
+        toast.error(t("profile.unitSaveFailed"))
+      })
+    }
     onSubmit({
       gender,
       age: parseInt(age) || 25,
@@ -247,7 +266,7 @@ export default function UserProfileModal({
               <p className="text-xs text-muted-foreground/50 mt-1 text-center">{t("profile.weightSuffix")}</p>
               {latestLog && (
                 <p className="text-[10px] text-muted-foreground/40 mt-0.5 text-center leading-tight">
-                  Log: {latestLog.weightKg} kg<br />{latestLog.date}
+                  Log: {toDisplay(latestLog.weightKg)} {unitLabel}<br />{latestLog.date}
                 </p>
               )}
               <button
@@ -278,6 +297,28 @@ export default function UserProfileModal({
                   }`}
                 >
                   {t(exp.labelKey)}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Jednotky */}
+          <div>
+            <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">{t("profile.unitLabel")}</label>
+            <div className="flex gap-2">
+              {([{ value: "kg" as WeightUnit, labelKey: "profile.unitKg" }, { value: "lb" as WeightUnit, labelKey: "profile.unitLb" }]).map((u) => (
+                <button
+                  key={u.value}
+                  type="button"
+                  onClick={() => setPreferredUnit(u.value)}
+                  aria-pressed={preferredUnit === u.value}
+                  className={`flex-1 py-2.5 text-xs font-heading font-bold uppercase tracking-widest rounded border transition-all ${
+                    preferredUnit === u.value
+                      ? "bg-primary border-primary text-primary-foreground"
+                      : "bg-background border-border text-muted-foreground hover:border-primary hover:text-foreground"
+                  }`}
+                >
+                  {t(u.labelKey)}
                 </button>
               ))}
             </div>

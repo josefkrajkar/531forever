@@ -3,6 +3,8 @@
 import { useTranslation } from "react-i18next"
 import { SEVENTH_WEEK_PROTOCOLS, type SeventhWeekType } from "@/lib/templates"
 import { FlaskConical, Battery } from "lucide-react"
+import { GlossaryTerm } from "@/components/glossary-term"
+import { type GlossaryKey } from "@/lib/glossary"
 
 interface SeventhWeekSelectorProps {
   selected: SeventhWeekType | null
@@ -72,7 +74,7 @@ export default function SeventhWeekSelector({
                 </div>
                 <div className="flex-1">
                   <h4 className="font-heading font-bold text-base">
-                    {t(protocol.name)}
+                    <GlossaryTerm term={protocol.id as GlossaryKey}>{t(protocol.name)}</GlossaryTerm>
                   </h4>
                   <p className="text-sm text-muted-foreground mt-1">
                     {t(protocol.description)}

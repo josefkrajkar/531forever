@@ -6,6 +6,7 @@ import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Id } from "@/convex/_generated/dataModel"
 import { toast } from "sonner"
+import { usePreferredUnit } from "@/hooks/use-preferred-unit"
 
 // Per-exercise draft state for edit mode
 type EditExerciseDraft = {
@@ -43,6 +44,7 @@ export default function WorkoutHistory() {
   const workouts = useQuery(api.workouts.getCompletedWorkouts, {})
   const deleteWorkout = useMutation(api.workouts.deleteDraft)
   const updateWorkout = useMutation(api.workouts.updateCompletedWorkout)
+  const { toDisplay, fromDisplay, label: unitLabel, unit } = usePreferredUnit()
 
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [confirmDeleteId, setConfirmDeleteId] = useState<Id<"workouts"> | null>(null)
@@ -73,7 +75,18 @@ export default function WorkoutHistory() {
 
   function handleStartEdit(workout: NonNullable<typeof workouts>[number]) {
     setEditingId(workout._id)
-    setEditDraft(buildEditDraft(workout))
+    const draft = buildEditDraft(workout)
+    const convertedDraft: EditDraft = {
+      ...draft,
+      exercises: draft.exercises.map((ex) => ({
+        ...ex,
+        sets: ex.sets.map((s) => ({
+          ...s,
+          weight: String(toDisplay(parseFloat(s.weight) || 0)),
+        })),
+      })),
+    }
+    setEditDraft(convertedDraft)
   }
 
   function handleCancelEdit() {
@@ -89,7 +102,7 @@ export default function WorkoutHistory() {
       const exercises = editDraft.exercises.map((ex) => ({
         id: ex.id,
         sets: ex.sets.map((s) => ({
-          weight: parseFloat(s.weight) || 0,
+          weight: fromDisplay(parseFloat(s.weight) || 0),
           reps: parseInt(s.reps, 10) || 0,
           completed: s.completed,
         })),
@@ -229,7 +242,7 @@ export default function WorkoutHistory() {
                             )}
                           </div>
                           <span className="text-muted-foreground text-xs">
-                            {exercise.sets[0]?.weight} kg &middot;{" "}
+                            {toDisplay(exercise.sets[0]?.weight ?? 0)} {unitLabel} &middot;{" "}
                             <span className="text-primary">{doneCount}</span>
                             /{exercise.sets.length} {t("history.setsSuffix")}
                           </span>
@@ -238,7 +251,7 @@ export default function WorkoutHistory() {
                           {exercise.sets.map((set, idx) => (
                             <div
                               key={idx}
-                              title={t("history.setTitle", { weight: set.weight, reps: set.reps })}
+                              title={t("history.setTitle", { weight: toDisplay(set.weight), reps: set.reps })}
                               className={`w-9 h-9 rounded-full border flex items-center justify-center text-xs font-bold font-heading ${
                                 set.completed
                                   ? "bg-primary border-primary text-primary-foreground"
@@ -326,13 +339,13 @@ export default function WorkoutHistory() {
                                 inputMode="decimal"
                                 value={set.weight}
                                 min={0}
-                                max={1000}
-                                step={0.5}
+                                max={unit === "lb" ? 2205 : 1000}
+                                step={unit === "lb" ? 1 : 0.5}
                                 aria-label={t("history.setWeightAria", { name: exercise.name, num: setIdx + 1 })}
                                 onChange={(e) => updateDraftSet(exIdx, setIdx, "weight", e.target.value)}
                                 className="w-20 bg-background border border-border rounded px-2 py-1.5 text-sm text-right font-heading font-bold focus:outline-none focus:border-primary transition-colors"
                               />
-                              <span className="text-muted-foreground text-xs">kg</span>
+                              <span className="text-muted-foreground text-xs">{unitLabel}</span>
                               <span className="text-muted-foreground text-xs mx-1">×</span>
                               <input
                                 type="number"

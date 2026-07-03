@@ -7,6 +7,8 @@ import { api } from "@/convex/_generated/api"
 import { Lift, getLiftDisplayName, calibrateStartTM, DEFAULT_SPLIT, SupplementalTemplate } from "@/lib/531"
 import TemplateSelector from "./template-selector"
 import { ArrowLeft, ArrowRight } from "lucide-react"
+import { usePreferredUnit } from "@/hooks/use-preferred-unit"
+import { GlossaryTerm } from "@/components/glossary-term"
 
 interface CalibrationFlowProps {
   onComplete: () => void
@@ -48,12 +50,17 @@ export default function CalibrationFlow({ onComplete }: CalibrationFlowProps) {
   )
   const canFinish = isLastLift || (allPreviousCalibrated && calibratedLifts.length === LIFT_ORDER.length - 1)
 
+  const { toDisplay, fromDisplay, label: unitLabel } = usePreferredUnit()
+
   // Show preview of TM that will be calculated
+  // weight state je v preferované jednotce; pro výpočet konvertujeme na kg
   const weightNum = parseFloat(weight) || 0
   const repsNum = parseInt(reps) || 0
-  const previewTM = weightNum > 0 && repsNum > 0 
-    ? calibrateStartTM({ weight: weightNum, reps: repsNum }) 
+  const weightNumKg = weightNum > 0 ? fromDisplay(weightNum) : 0
+  const previewTMkg = weightNumKg > 0 && repsNum > 0
+    ? calibrateStartTM({ weight: weightNumKg, reps: repsNum })
     : null
+  const previewTM = previewTMkg !== null ? toDisplay(previewTMkg) : null
 
   // Handle clicking on already calibrated lift to edit it
   const handleEditLift = (lift: Lift) => {
@@ -62,9 +69,9 @@ export default function CalibrationFlow({ onComplete }: CalibrationFlowProps) {
     
     setCurrentLiftIndex(liftIndex)
     
-    // Pre-fill with existing values
+    // Pre-fill with existing values (DB je v kg, zobrazíme v preferované jednotce)
     if (cal) {
-      setWeight(cal.weight.toString())
+      setWeight(toDisplay(cal.weight).toString())
       setReps(cal.reps.toString())
     }
     
@@ -73,10 +80,10 @@ export default function CalibrationFlow({ onComplete }: CalibrationFlowProps) {
   }
 
   const handleSaveSet = async () => {
-    const w = parseFloat(weight)
+    const wDisplay = parseFloat(weight)
     const r = parseInt(reps)
 
-    if (!w || w <= 0) {
+    if (!wDisplay || wDisplay <= 0) {
       setError(t("calibration.errorWeight"))
       return
     }
@@ -85,17 +92,20 @@ export default function CalibrationFlow({ onComplete }: CalibrationFlowProps) {
       return
     }
 
+    // Konverze na kg pro uložení
+    const wKg = fromDisplay(wDisplay)
+
     setError("")
     setSaving(true)
 
     try {
       await saveCalibrationSet({
         lift: currentLift,
-        weight: w,
+        weight: wKg,
         reps: r,
       })
 
-      console.log("[calibration] Saved", currentLift, w, "kg x", r)
+      console.log("[calibration] Saved", currentLift, wKg, "kg x", r)
 
       // Build the definitive calibrated-lifts set synchronously:
       // don't wait for the query to refetch — treat the just-saved lift as
@@ -184,23 +194,23 @@ export default function CalibrationFlow({ onComplete }: CalibrationFlowProps) {
           <h4 className="text-sm font-semibold">{t("template.howItWorks")}</h4>
           <div className="text-sm text-muted-foreground space-y-2">
             <div className="flex gap-3">
-              <span className="text-primary font-bold">Leader</span>
+              <span className="text-primary font-bold"><GlossaryTerm term="leader">Leader</GlossaryTerm></span>
               <span>{t("template.leaderPhase")}</span>
             </div>
             <div className="flex gap-3">
-              <span className="text-orange-400 font-bold">{t("program.phases.seventh_week")}</span>
+              <span className="text-orange-400 font-bold"><GlossaryTerm term="seventh_week">{t("program.phases.seventh_week")}</GlossaryTerm></span>
               <span>{t("template.seventhWeekProtocol")}</span>
             </div>
             <div className="flex gap-3">
-              <span className="text-primary font-bold">Leader</span>
+              <span className="text-primary font-bold"><GlossaryTerm term="leader">Leader</GlossaryTerm></span>
               <span>{t("template.leaderPhase2")}</span>
             </div>
             <div className="flex gap-3">
-              <span className="text-orange-400 font-bold">{t("program.phases.seventh_week")}</span>
+              <span className="text-orange-400 font-bold"><GlossaryTerm term="seventh_week">{t("program.phases.seventh_week")}</GlossaryTerm></span>
               <span>{t("template.seventhWeekProtocol")}</span>
             </div>
             <div className="flex gap-3">
-              <span className="text-green-400 font-bold">{t("program.phases.anchor")}</span>
+              <span className="text-green-400 font-bold"><GlossaryTerm term="anchor">{t("program.phases.anchor")}</GlossaryTerm></span>
               <span>{t("template.anchorPhase")}</span>
             </div>
           </div>
@@ -295,7 +305,7 @@ export default function CalibrationFlow({ onComplete }: CalibrationFlowProps) {
             {t(`calibration.tips.${currentLift}`)}
           </p>
           <p className="text-xs text-muted-foreground/60 mt-2">
-            {t("calibration.rpeHint")}
+            <GlossaryTerm term="rpe">{t("calibration.rpeHint")}</GlossaryTerm>
           </p>
         </div>
 
@@ -313,7 +323,7 @@ export default function CalibrationFlow({ onComplete }: CalibrationFlowProps) {
                 placeholder={t("calibration.weightPlaceholder")}
                 className="w-full bg-background border border-border rounded px-4 py-3 text-lg font-heading font-bold focus:border-primary focus:outline-none transition-colors"
                 min="0"
-                step="2.5"
+                step={unitLabel === "lb" ? "5" : "2.5"}
               />
             </div>
             <div className="flex-1">
@@ -339,7 +349,7 @@ export default function CalibrationFlow({ onComplete }: CalibrationFlowProps) {
                 {t("calibration.startingTM")}
               </p>
               <p className="font-heading font-extrabold text-3xl text-primary">
-                {previewTM} kg
+                {previewTM} {unitLabel}
               </p>
               <p className="text-xs text-muted-foreground/60 mt-1">
                 {t("calibration.conservativeStart")}
@@ -374,7 +384,7 @@ export default function CalibrationFlow({ onComplete }: CalibrationFlowProps) {
             {calibratedLifts.map((lift) => {
               const cal = program.calibration?.[lift]
               if (!cal) return null
-              const tm = calibrateStartTM({ weight: cal.weight, reps: cal.reps })
+              const tmKg = calibrateStartTM({ weight: cal.weight, reps: cal.reps })
               const isEditing = LIFT_ORDER[currentLiftIndex] === lift
               return (
                 <button
@@ -388,7 +398,7 @@ export default function CalibrationFlow({ onComplete }: CalibrationFlowProps) {
                   }`}
                 >
                   <span className="text-sm">{t(getLiftDisplayName(lift))}</span>
-                  <span className="font-heading font-bold text-primary">{tm} kg</span>
+                  <span className="font-heading font-bold text-primary">{toDisplay(tmKg)} {unitLabel}</span>
                 </button>
               )
             })}

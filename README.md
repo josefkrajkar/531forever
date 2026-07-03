@@ -4,7 +4,7 @@
 
 Osobní tréninkový deník pro powerlifting postavený na systému **5/3/1 Forever** od Jima Wendlera. Deterministický výpočet vah, offline-first architektura, automatická TM progrese.
 
-**Live demo:** _(live demo TBD)_
+**Live demo:** https://www.531forever.app/
 
 ---
 

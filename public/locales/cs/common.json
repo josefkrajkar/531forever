@@ -395,7 +395,11 @@
     "downloadingLabel": "Stahování...",
     "loadingLabel": "Načítání...",
     "downloadJson": "Stáhnout JSON",
-    "downloadCsv": "Stáhnout CSV"
+    "downloadCsv": "Stáhnout CSV",
+    "unitLabel": "Preferovaná jednotka váhy",
+    "unitKg": "kg (kilogramy)",
+    "unitLb": "lb (libry)",
+    "unitSaveFailed": "Nepodařilo se uložit jednotku"
   },
   "autoreg": {
     "title": "Autoregulovaný den",
@@ -541,9 +545,27 @@
         "desc": "Kdykoli si stáhneš celou historii v CSV nebo JSON. Žádný zámek, žádné prodávání dat."
       },
       "2": {
-        "title": "Lepší než spreadsheet",
-        "desc": "Žádné scrollování a překlepy ve vzorcích. Jedno ťuknutí zaloguje sérii, appka udělá zbytek."
+        "title": "Open Source",
+        "desc": "Celý zdrojový kód je na GitHubu. Žádná černá skříňka — vidíš přesně, jak appka funguje, můžeš ji forkovat nebo přispět."
       }
+    },
+    "badges": {
+      "free": "Zdarma",
+      "pwa": "Instalovatelná appka",
+      "openSource": "Open Source"
+    },
+    "faq": {
+      "heading": "Časté otázky",
+      "items": [
+        { "q": "Musím mít knihu 5/3/1 Forever, abych mohl appku používat?", "a": "Ne. Aplikace tě celým programem provede — Leader/Anchor cykly, 7. týden i postup Training Maxů. Přečíst si Wendlerovu knihu se ale vyplatí, abys pochopil filozofii za čísly." },
+        { "q": "Je aplikace opravdu zdarma?", "a": "Ano, zcela zdarma. Žádné předplatné, žádný prémiový plán, žádné skryté poplatky. Celý zdrojový kód je na GitHubu." },
+        { "q": "Funguje offline / bez internetu?", "a": "Ano. 531Forever je Progressive Web App (PWA). Po prvním načtení funguje plně offline — ideální pro suterény, garáže nebo posilovny bez signálu." },
+        { "q": "Jak ji nainstaluji na telefon?", "a": "Otevři appku v prohlížeči a použij možnost 'Přidat na plochu'. Na iOS klepni na ikonu Sdílení → Přidat na plochu. Na Androidu klepni na menu prohlížeče → Nainstalovat appku. Pak se chová jako nativní aplikace." },
+        { "q": "Jsou moje data v bezpečí? Mohu je exportovat?", "a": "Tvoje data jsou uložena v tvém účtu a nikdy nejsou prodávána. Celou historii si kdykoli stáhneš jako CSV nebo JSON — jedno ťuknutí v menu profilu. Žádný zámek." },
+        { "q": "Podporuje kilogramy i libry?", "a": "Ano. Při nastavení si vybereš preferovanou jednotku a appka podle toho provádí všechny výpočty." },
+        { "q": "Jaké cviky aplikace sleduje?", "a": "Čtyři hlavní cviky 5/3/1: dřep, bench press, mrtvý tah a tlak nad hlavu. Každý cvik má vlastní Training Max, progresi a historii. Doplňkové cviky se logují zvlášť." },
+        { "q": "Mohu ji používat pro základní 5/3/1, ne Forever?", "a": "Aplikace je postavena specificky pro 5/3/1 Forever s Leader a Anchor cykly. Základní 5/3/1 bez této struktury v ní také zvládneš, ale správa cyklů je navržena s Forever v mysli." }
+      ]
     },
     "cta": {
       "heading": "Příští trénink veď tady",

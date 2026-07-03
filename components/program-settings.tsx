@@ -10,6 +10,9 @@ import { TEMPLATES } from "@/lib/templates"
 import type { SupplementalTemplate } from "@/lib/templates"
 import { Doc } from "@/convex/_generated/dataModel"
 import TemplateSelector from "./template-selector"
+import { usePreferredUnit } from "@/hooks/use-preferred-unit"
+import { GlossaryTerm } from "@/components/glossary-term"
+import type { GlossaryKey } from "@/lib/glossary"
 
 type Program = Doc<"programs">
 type Lift = "squat" | "bench" | "deadlift" | "press"
@@ -67,12 +70,16 @@ interface TMEditorProps {
 
 function TMEditor({ lift, currentTM, rounding, onSave, onCancel }: TMEditorProps) {
   const { t } = useTranslation()
-  const [value, setValue] = useState<string>(String(currentTM))
+  const { toDisplay, fromDisplay, label: unitLabel } = usePreferredUnit()
+  const [value, setValue] = useState<string>(String(toDisplay(currentTM)))
   const [saving, setSaving] = useState(false)
 
-  const parsed = parseFloat(value)
-  const isValid = Number.isFinite(parsed) && parsed >= 20 && parsed <= 1000
-  const preview = isValid ? roundToPlate(parsed, rounding) : null
+  const parsedDisplay = parseFloat(value)
+  const parsedKg = Number.isFinite(parsedDisplay) ? fromDisplay(parsedDisplay) : NaN
+  const isValid = Number.isFinite(parsedKg) && parsedKg >= 20 && parsedKg <= 1000
+  // preview je v kg (zaokrouhleno), pak zobrazíme v preferované jednotce
+  const previewKg = isValid ? roundToPlate(parsedKg, rounding) : null
+  const previewDisplay = previewKg !== null ? toDisplay(previewKg) : null
 
   const quick = [
     { label: "−10 %", factor: 0.9 },
@@ -80,10 +87,10 @@ function TMEditor({ lift, currentTM, rounding, onSave, onCancel }: TMEditorProps
   ]
 
   const handleSave = async () => {
-    if (!isValid || preview === null) return
+    if (!isValid || previewKg === null) return
     setSaving(true)
     try {
-      await onSave(lift, preview)
+      await onSave(lift, previewKg)
     } finally {
       setSaving(false)
     }
@@ -94,15 +101,16 @@ function TMEditor({ lift, currentTM, rounding, onSave, onCancel }: TMEditorProps
       {/* Rychlé volby */}
       <div className="flex gap-2 flex-wrap">
         {quick.map(({ label, factor }) => {
-          const quickVal = roundToPlate(currentTM * factor, rounding)
+          const quickKg = roundToPlate(currentTM * factor, rounding)
+          const quickDisplay = toDisplay(quickKg)
           return (
             <button
               key={label}
               type="button"
-              onClick={() => setValue(String(quickVal))}
+              onClick={() => setValue(String(quickDisplay))}
               className="text-xs bg-secondary hover:bg-secondary/80 border border-border rounded px-3 py-1.5 transition-colors"
             >
-              {label} → {quickVal} kg
+              {label} → {quickDisplay} {unitLabel}
             </button>
           )
         })}
@@ -113,18 +121,18 @@ function TMEditor({ lift, currentTM, rounding, onSave, onCancel }: TMEditorProps
         <input
           type="number"
           inputMode="decimal"
-          step={rounding}
-          min={20}
-          max={1000}
+          step={unitLabel === "lb" ? 5 : rounding}
+          min={unitLabel === "lb" ? 44 : 20}
+          max={unitLabel === "lb" ? 2205 : 1000}
           value={value}
           onChange={(e) => setValue(e.target.value)}
           className="w-28 bg-secondary border border-border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
           aria-label={t("settings.newTM")}
         />
-        <span className="text-xs text-muted-foreground">kg</span>
-        {preview !== null && preview !== parsed && (
+        <span className="text-xs text-muted-foreground">{unitLabel}</span>
+        {previewDisplay !== null && previewDisplay !== parsedDisplay && (
           <span className="text-xs text-muted-foreground">
-            {t("settings.roundedTo")} <strong>{preview} kg</strong>
+            {t("settings.roundedTo")} <strong>{previewDisplay} {unitLabel}</strong>
           </span>
         )}
       </div>
@@ -175,6 +183,7 @@ interface LiftCardProps {
 
 function LiftCard({ lift, currentTM, misses, e1rmHistory, rounding, onSave }: LiftCardProps) {
   const { t } = useTranslation()
+  const { toDisplay, label: unitLabel } = usePreferredUnit()
   const [editing, setEditing] = useState(false)
   const trend = e1rmTrend(e1rmHistory)
 
@@ -186,7 +195,7 @@ function LiftCard({ lift, currentTM, misses, e1rmHistory, rounding, onSave }: Li
             {t(`lifts.${lift}`)}
           </p>
           <div className="flex items-center gap-2 mt-1">
-            <span className="text-xl font-bold font-heading">{currentTM} kg</span>
+            <span className="text-xl font-bold font-heading">{toDisplay(currentTM)} {unitLabel}</span>
             <TrendIcon trend={trend} />
           </div>
           <MissesIndicator misses={misses} />
@@ -244,7 +253,7 @@ function TemplateSection({
             {t("template.supplementalLabel")}
           </p>
           <p className="font-heading font-bold uppercase tracking-wider text-sm">
-            {t(config.name)}
+            <GlossaryTerm term={currentTemplate as GlossaryKey}>{t(config.name)}</GlossaryTerm>
           </p>
           <p className="text-xs text-muted-foreground mt-0.5">{t(config.shortDescription)}</p>
         </div>

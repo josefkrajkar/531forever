@@ -8,6 +8,8 @@ import {
   REST_TIMER_AMRAP,
   REST_TIMER_BBB,
 } from "@/hooks/use-rest-timer"
+import { usePreferredUnit } from "@/hooks/use-preferred-unit"
+import { GlossaryTerm } from "@/components/glossary-term"
 
 interface MainSet {
   weight: number
@@ -77,6 +79,7 @@ export default function MainLiftCard({
   onStartRestTimer,
 }: MainLiftCardProps) {
   const { t } = useTranslation()
+  const { toDisplay, label } = usePreferredUnit()
   // Index rozbaleného plate-displayu u hlavních setů (null = vše sbaleno)
   const [expandedMainPlate, setExpandedMainPlate] = useState<number | null>(null)
   // Zda je rozbalen plate-display BBB setů (všechny BBB sety mají stejnou váhu)
@@ -129,7 +132,7 @@ export default function MainLiftCard({
               {liftDisplayName}
             </a>
           </h2>
-          <p className="text-sm text-muted-foreground mt-1">TM: {tm} kg</p>
+          <p className="text-sm text-muted-foreground mt-1">TM: {tm !== undefined ? toDisplay(tm) : "—"} {label}</p>
         </div>
         <div className="text-right bg-secondary rounded px-3 py-2">
           <p className="text-xs text-muted-foreground uppercase tracking-widest">{t("workout.sets")}</p>
@@ -144,9 +147,9 @@ export default function MainLiftCard({
       <div className="space-y-2 mb-4">
         <p className="text-xs text-muted-foreground uppercase tracking-widest">
           {isSeventhWeek && isTMTest
-            ? t("workout.tmTestSets")
+            ? <GlossaryTerm term="tm_test">{t("workout.tmTestSets")}</GlossaryTerm>
             : isSeventhWeek
-              ? t("workout.deloadSets")
+              ? <GlossaryTerm term="deload">{t("workout.deloadSets")}</GlossaryTerm>
               : t("workout.workingSets")}
         </p>
         {displayMainSets.map((set, idx) => (
@@ -191,15 +194,15 @@ export default function MainLiftCard({
                     aria-expanded={expandedMainPlate === idx}
                     aria-label={t("workout.expandPlates", { weight: set.weight })}
                   >
-                    {set.weight} kg × {set.targetReps}
+                    {toDisplay(set.weight)} {label} × {set.targetReps}
                     {set.isAmrap ? "+" : ""}
                     <span className="ml-1 text-xs text-muted-foreground/60">
                       {expandedMainPlate === idx ? "▲" : "▼"}
                     </span>
                   </button>
                   <p className="text-xs text-muted-foreground">
-                    {set.percentage}% TM
-                    {set.isAmrap && " · AMRAP"}
+                    {set.percentage}% <GlossaryTerm term="tm">TM</GlossaryTerm>
+                    {set.isAmrap && <> · <GlossaryTerm term="amrap">AMRAP</GlossaryTerm></>}
                   </p>
                 </div>
               </div>
@@ -221,7 +224,7 @@ export default function MainLiftCard({
       {amrapSet && completedMainSets[amrapSetIndex] && !amrapSaved && (
         <div className="bg-primary/10 border border-primary/30 rounded p-4 mb-4">
           <p className="text-xs text-muted-foreground uppercase tracking-widest mb-2">
-            {t("workout.amrapQuestion")}
+            <GlossaryTerm term="amrap">{t("workout.amrapQuestion")}</GlossaryTerm>
           </p>
           <div className="flex gap-2">
             <input
@@ -268,7 +271,7 @@ export default function MainLiftCard({
                     ? "bg-primary border-primary text-primary-foreground"
                     : "bg-transparent border-border hover:border-primary text-muted-foreground hover:text-foreground"
                 }`}
-                title={`${set.weight} kg × ${set.reps}`}
+                title={`${toDisplay(set.weight)} ${label} × ${set.reps}`}
               >
                 {idx + 1}
               </button>
@@ -282,7 +285,7 @@ export default function MainLiftCard({
             aria-expanded={bbbPlateExpanded}
             aria-label={t("workout.expandPlates", { weight: displayBbbSets[0]?.weight })}
           >
-            {displayBbbSets[0]?.weight} kg × {displayBbbSets[0]?.reps} {t("workout.repsSuffix")}
+            {displayBbbSets[0] ? toDisplay(displayBbbSets[0].weight) : ""} {label} × {displayBbbSets[0]?.reps} {t("workout.repsSuffix")}
             <span className="text-[10px]">{bbbPlateExpanded ? "▲" : "▼"}</span>
           </button>
           {bbbPlateExpanded && displayBbbSets[0] && (

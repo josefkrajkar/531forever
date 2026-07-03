@@ -16,6 +16,7 @@ import {
 } from "./statistics-charts"
 import { AccessoryTrends } from "./accessory-trends"
 import { ReadinessTrendChart } from "./readiness-trend-chart"
+import { GlossaryTerm } from "@/components/glossary-term"
 import {
   calculateWilks,
   calculateDOTS,
@@ -28,11 +29,13 @@ import {
   type Gender,
 } from "@/lib/strength-calculations"
 import { genderLabelKey, experienceLabelKey } from "@/lib/profile"
+import { usePreferredUnit } from "@/hooks/use-preferred-unit"
 
 type Lift = "squat" | "bench" | "deadlift" | "press"
 
 export default function StatisticsPageContent() {
   const { t } = useTranslation()
+  const { toDisplay, label: unitLabel } = usePreferredUnit()
   const currentUser = useQuery(api.users.currentLoggedInUser)
   const currentProgram = useQuery(api.programs.getCurrentProgram)
   const statsData = useQuery(api.statistics.getStatisticsData)
@@ -280,7 +283,7 @@ export default function StatisticsPageContent() {
                 <div className="relative">
                   <div className="flex items-center gap-2 mb-3">
                     <Award className="w-4 h-4 text-primary" />
-                    <span className="text-xs text-muted-foreground uppercase tracking-widest">Wilks</span>
+                    <span className="text-xs text-muted-foreground uppercase tracking-widest"><GlossaryTerm term="wilks">Wilks</GlossaryTerm></span>
                   </div>
                   <div className="font-heading font-extrabold text-4xl text-foreground mb-1">
                     {wilks.toFixed(0)}
@@ -296,7 +299,7 @@ export default function StatisticsPageContent() {
                 <div className="relative">
                   <div className="flex items-center gap-2 mb-3">
                     <TrendingUp className="w-4 h-4 text-primary" />
-                    <span className="text-xs text-muted-foreground uppercase tracking-widest">DOTS</span>
+                    <span className="text-xs text-muted-foreground uppercase tracking-widest"><GlossaryTerm term="dots">DOTS</GlossaryTerm></span>
                   </div>
                   <div className="font-heading font-extrabold text-4xl text-foreground mb-1">
                     {dots.toFixed(0)}
@@ -316,18 +319,18 @@ export default function StatisticsPageContent() {
                   <span className="text-xs text-muted-foreground uppercase tracking-widest">SBD Total</span>
                 </div>
                 <div className="text-xs text-muted-foreground">
-                  {bodyweight} kg @ {t(genderLabelKey(gender))}
+                  {toDisplay(bodyweight)} {unitLabel} @ {t(genderLabelKey(gender))}
                 </div>
               </div>
               <div className="font-heading font-extrabold text-5xl text-foreground mb-2">
-                {sbdTotal} <span className="text-xl text-muted-foreground">kg</span>
+                {toDisplay(sbdTotal)} <span className="text-xl text-muted-foreground">{unitLabel}</span>
               </div>
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                <span>S: {e1rms.squat}</span>
+                <span>S: {toDisplay(e1rms.squat)}</span>
                 <span className="text-border">|</span>
-                <span>B: {e1rms.bench}</span>
+                <span>B: {toDisplay(e1rms.bench)}</span>
                 <span className="text-border">|</span>
-                <span>D: {e1rms.deadlift}</span>
+                <span>D: {toDisplay(e1rms.deadlift)}</span>
               </div>
             </div>
 
@@ -364,7 +367,7 @@ export default function StatisticsPageContent() {
 
                     <div className="flex items-baseline gap-3 mb-3">
                       <span className="font-heading font-extrabold text-2xl">
-                        {e1rm} <span className="text-base text-muted-foreground">kg</span>
+                        {toDisplay(e1rm)} <span className="text-base text-muted-foreground">{unitLabel}</span>
                       </span>
                       <span className="text-sm text-muted-foreground">
                         {t("stats.bwMultiple", { value: bwMultiple.toFixed(2) })}
@@ -410,7 +413,7 @@ export default function StatisticsPageContent() {
               <div className="flex items-center gap-3 text-sm text-muted-foreground">
                 <User className="w-4 h-4" />
                 <span>
-                  {t(genderLabelKey(gender))}, {athleteProfile?.age} {t("profile.ageSuffix")}, {bodyweight} kg
+                  {t(genderLabelKey(gender))}, {athleteProfile?.age} {t("profile.ageSuffix")}, {toDisplay(bodyweight)} {unitLabel}
                 </span>
                 <span className="text-border">•</span>
                 <span>{t(experienceLabelKey(athleteProfile?.experience))}</span>
@@ -430,7 +433,7 @@ export default function StatisticsPageContent() {
                   <div className="flex items-center gap-2 mb-4">
                     <TrendingUp className="w-4 h-4 text-primary" />
                     <h3 className="font-heading font-bold uppercase tracking-widest text-sm">
-                      {t("stats.e1rmProgressTitle")}
+                      <GlossaryTerm term="e1rm">{t("stats.e1rmProgressTitle")}</GlossaryTerm>
                     </h3>
                   </div>
                   <E1RMProgressChart amrapResults={statsData.amrapResults} />
@@ -441,7 +444,7 @@ export default function StatisticsPageContent() {
                   <div className="flex items-center gap-2 mb-4">
                     <Award className="w-4 h-4 text-primary" />
                     <h3 className="font-heading font-bold uppercase tracking-widest text-sm">
-                      {t("stats.wilksTrendTitle")}
+                      <GlossaryTerm term="wilks">{t("stats.wilksTrendTitle")}</GlossaryTerm>
                     </h3>
                   </div>
                   <WilksTrendChart
@@ -457,7 +460,7 @@ export default function StatisticsPageContent() {
                   <div className="flex items-center gap-2 mb-4">
                     <Target className="w-4 h-4 text-primary" />
                     <h3 className="font-heading font-bold uppercase tracking-widest text-sm">
-                      {t("stats.amrapPerformanceTitle")}
+                      <GlossaryTerm term="amrap">{t("stats.amrapPerformanceTitle")}</GlossaryTerm>
                     </h3>
                   </div>
                   <p className="text-xs text-muted-foreground mb-4">

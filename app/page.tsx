@@ -10,13 +10,70 @@ import {
   WifiOff,
   Download,
   ShieldCheck,
+  Database,
+  Code2,
+  Smartphone,
   ArrowRight,
   Check,
 } from "lucide-react"
 import { getServerI18n } from "@/lib/i18n-server"
 import { isSupportedLang, DEFAULT_LANG } from "@/lib/i18n-config"
-import { OG_IMAGE } from "@/lib/site"
+import { SITE_URL, OG_IMAGE } from "@/lib/site"
 
+const FAQ_ITEMS_EN = [
+  { q: "Do I need the 5/3/1 Forever book to use this app?", a: "No. The app guides you through the full program — Leader/Anchor cycles, the 7th Week Protocol, and Training Max progression. That said, reading Jim Wendler's book is always worth it to understand the philosophy behind the numbers." },
+  { q: "Is the app really free?", a: "Yes, completely free. No subscription, no premium tier, no hidden fees. The full source code is on GitHub." },
+  { q: "Does it work offline / without internet?", a: "Yes. 531Forever is a Progressive Web App (PWA). Once loaded, it works fully offline — perfect for basements, garages, or gyms with no signal." },
+  { q: "How do I install it on my phone?", a: "Open the app in your browser, then use the \"Add to Home Screen\" option. On iOS tap the Share icon → Add to Home Screen. On Android tap the browser menu → Install app." },
+  { q: "Is my training data safe? Can I export it?", a: "Your data is stored in your account and never sold. You can export your entire history at any time as CSV or JSON — one tap in the profile menu." },
+  { q: "Does it support kilograms and pounds?", a: "Yes. You choose your preferred unit during setup and the app handles all calculations accordingly." },
+  { q: "Which lifts does it track?", a: "The four main 5/3/1 lifts: squat, bench press, deadlift and overhead press. Each lift has its own Training Max, progression, and history." },
+  { q: "Can I use it for basic 5/3/1, not Forever?", a: "The app is built specifically for 5/3/1 Forever with Leader and Anchor cycles. If you run standard 5/3/1 you can still use it, but the cycle management features are designed with Forever in mind." },
+]
+
+const FAQ_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQ_ITEMS_EN.map(({ q, a }) => ({
+    "@type": "Question",
+    name: q,
+    acceptedAnswer: { "@type": "Answer", text: a },
+  })),
+}
+
+const JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "531Forever",
+  applicationCategory: "SportsApplication",
+  operatingSystem: "Any",
+  url: SITE_URL,
+  description:
+    "Free, open-source training log for Jim Wendler's 5/3/1 Forever program. Tracks Training Max, AMRAP results, plate calculator, rest timer and full macrocycle planning. Works offline as a PWA.",
+  featureList: [
+    "5/3/1 Forever Leader/Anchor/7th Week protocol",
+    "Automatic Training Max progression",
+    "Plate calculator",
+    "Built-in rest timer",
+    "Wilks and DOTS statistics",
+    "Offline PWA — works without internet",
+    "CSV and JSON data export",
+  ],
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD",
+  },
+  isAccessibleForFree: true,
+  applicationSubCategory: "Strength Training",
+  author: {
+    "@type": "Person",
+    name: "Josef Krajkář",
+    url: "https://github.com/josefkrajkar",
+  },
+  codeRepository: "https://github.com/josefkrajkar/531forever",
+  license: "https://opensource.org/licenses/MIT",
+}
 export async function generateMetadata(): Promise<Metadata> {
   const cookieStore = await cookies()
   const rawLang = cookieStore.get("lang")?.value
@@ -137,6 +194,14 @@ export default async function LandingPage() {
 
   return (
     <main className="min-h-screen bg-background text-foreground">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_JSON_LD) }}
+      />
       {/* ─── Navbar ─────────────────────────────────────────── */}
       <nav className="border-b border-border">
         <div className="max-w-5xl mx-auto px-5 h-16 flex items-center justify-between">
@@ -191,6 +256,29 @@ export default async function LandingPage() {
                 className="font-heading font-bold uppercase tracking-widest text-xs text-muted-foreground hover:text-foreground transition-colors"
               >
                 {i18n.t("landing.hero.ctaSecondary")}
+              </a>
+            </div>
+
+            {/* ── Trust badges ── */}
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <span className="inline-flex items-center gap-1.5 text-xs font-heading font-bold uppercase tracking-widest text-emerald-400 border border-emerald-400/30 bg-emerald-400/5 px-3 py-1.5 rounded-full">
+                <Check className="w-3 h-3" strokeWidth={3} />
+                {i18n.t("landing.badges.free")}
+              </span>
+              <span className="inline-flex items-center gap-1.5 text-xs font-heading font-bold uppercase tracking-widest text-primary border border-primary/30 bg-primary/5 px-3 py-1.5 rounded-full">
+                <Smartphone className="w-3 h-3" />
+                {i18n.t("landing.badges.pwa")}
+              </span>
+              <a
+                href="https://github.com/josefkrajkar/531forever"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs font-heading font-bold uppercase tracking-widest text-muted-foreground border border-border bg-secondary/30 hover:border-muted-foreground/50 hover:text-foreground px-3 py-1.5 rounded-full transition-colors"
+              >
+                <svg viewBox="0 0 24 24" className="w-3 h-3 fill-current" aria-hidden="true">
+                  <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+                </svg>
+                {i18n.t("landing.badges.openSource")}
               </a>
             </div>
           </div>
@@ -353,9 +441,13 @@ export default async function LandingPage() {
       <section className="border-y border-border bg-card/30">
         <div className="max-w-5xl mx-auto px-5 py-16 sm:py-20">
           <div className="grid md:grid-cols-3 gap-px bg-border rounded-sm overflow-hidden">
-            {DIFFERENTIATORS.map(({ title, desc }) => (
+            {[
+              { icon: ShieldCheck, ...DIFFERENTIATORS[0] },
+              { icon: Database, ...DIFFERENTIATORS[1] },
+              { icon: Code2, ...DIFFERENTIATORS[2] },
+            ].map(({ icon: Icon, title, desc }) => (
               <div key={title} className="bg-background p-6">
-                <ShieldCheck className="w-5 h-5 text-primary mb-4" />
+                <Icon className="w-5 h-5 text-primary mb-4" />
                 <h3 className="font-heading font-bold uppercase tracking-widest text-sm mb-2">
                   {title}
                 </h3>
@@ -365,6 +457,26 @@ export default async function LandingPage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ─── FAQ ────────────────────────────────────────────── */}
+      <section className="max-w-3xl mx-auto px-5 py-16 sm:py-24">
+        <h2 className="font-heading font-extrabold uppercase tracking-tight text-3xl sm:text-4xl text-center mb-12">
+          {i18n.t("landing.faq.heading")}
+        </h2>
+        <div className="divide-y divide-border border border-border rounded-sm overflow-hidden">
+          {(i18n.t("landing.faq.items", { returnObjects: true }) as Array<{ q: string; a: string }>).map(({ q, a }) => (
+            <details key={q} className="group bg-background">
+              <summary className="flex items-center justify-between gap-4 px-6 py-4 cursor-pointer list-none select-none hover:bg-secondary/30 transition-colors">
+                <span className="font-heading font-bold text-sm uppercase tracking-widest pr-4">{q}</span>
+                <span className="shrink-0 w-5 h-5 rounded-full border border-border flex items-center justify-center text-primary text-xs font-bold transition-transform group-open:rotate-45">+</span>
+              </summary>
+              <div className="px-6 pb-5 pt-1 text-sm text-muted-foreground leading-relaxed border-t border-border">
+                {a}
+              </div>
+            </details>
+          ))}
         </div>
       </section>
 

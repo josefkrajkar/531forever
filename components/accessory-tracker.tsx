@@ -19,6 +19,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 import { Check, ChevronDown, ChevronUp, Minus, Plus } from "lucide-react"
+import { usePreferredUnit } from "@/hooks/use-preferred-unit"
 
 interface AccessoryTrackerProps {
   accessoryIds: string[]
@@ -40,6 +41,7 @@ export default function AccessoryTracker({
     }>
   >({})
   const [expandedId, setExpandedId] = useState<string | null>(accessoryIds[0] || null)
+  const { toDisplay, fromDisplay, label: unitLabel } = usePreferredUnit()
 
   // Initialize state for all accessories
   useEffect(() => {
@@ -215,23 +217,23 @@ export default function AccessoryTracker({
                         variant="outline"
                         size="icon"
                         className="h-8 w-8"
-                        onClick={() => handleWeightChange(id, state.weight - exercise.increment)}
+                        onClick={() => handleWeightChange(id, fromDisplay(Math.max(0, toDisplay(state.weight) - toDisplay(exercise.increment))))}
                       >
                         <Minus className="h-4 w-4" />
                       </Button>
                       <Input
                         type="number"
-                        value={state.weight || ""}
-                        onChange={(e) => handleWeightChange(id, parseFloat(e.target.value) || 0)}
+                        value={toDisplay(state.weight) || ""}
+                        onChange={(e) => handleWeightChange(id, fromDisplay(parseFloat(e.target.value) || 0))}
                         className="w-20 h-8 text-center"
                         placeholder="0"
                       />
-                      <span className="text-sm text-muted-foreground">kg</span>
+                      <span className="text-sm text-muted-foreground">{unitLabel}</span>
                       <Button
                         variant="outline"
                         size="icon"
                         className="h-8 w-8"
-                        onClick={() => handleWeightChange(id, state.weight + exercise.increment)}
+                        onClick={() => handleWeightChange(id, fromDisplay(toDisplay(state.weight) + toDisplay(exercise.increment)))}
                       >
                         <Plus className="h-4 w-4" />
                       </Button>
@@ -265,7 +267,7 @@ export default function AccessoryTracker({
                         </Button>
 
                         <span className="text-sm font-medium min-w-[60px]">
-                          {state.weight > 0 ? `${state.weight}kg` : "—"}
+                          {state.weight > 0 ? `${toDisplay(state.weight)}${unitLabel}` : "—"}
                         </span>
 
                         <div className="flex items-center gap-1">
@@ -330,7 +332,8 @@ export function AccessoryCard({
 }) {
   const exercise = getExerciseById(accessoryId)
   const lastLog = useQuery(api.accessories.getLastAccessoryLog, { accessoryId })
-  
+  const { toDisplay, label: unitLabel } = usePreferredUnit()
+
   const [weight, setWeight] = useState(0)
   const [sets, setSets] = useState<AccessorySetLog[]>([])
   const [targetReps, setTargetReps] = useState(0)
@@ -407,7 +410,7 @@ export function AccessoryCard({
           </Badge>
         </div>
         <p className="text-xs text-muted-foreground">
-          {weight}kg × {targetReps} opak.
+          {toDisplay(weight)}{unitLabel} × {targetReps} opak.
         </p>
       </CardHeader>
       <CardContent className="pt-0">

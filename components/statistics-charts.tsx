@@ -2,6 +2,7 @@
 
 import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
+import { usePreferredUnit } from "@/hooks/use-preferred-unit"
 import {
   LineChart,
   Line,
@@ -51,6 +52,7 @@ interface E1RMChartProps {
  */
 export function E1RMProgressChart({ amrapResults }: E1RMChartProps) {
   const { t } = useTranslation()
+  const { toDisplay, label: unitLabel } = usePreferredUnit()
 
   const liftNames: Record<string, string> = {
     squat: t("lifts.squat"),
@@ -60,7 +62,7 @@ export function E1RMProgressChart({ amrapResults }: E1RMChartProps) {
     accessories: t("charts.accessory"),
   }
 
-  const chartData = useMemo(() => {
+  const rawChartData = useMemo(() => {
     // Group by date and calculate e1RM for each lift
     const byDate: Record<string, Record<string, number>> = {}
 
@@ -95,6 +97,14 @@ export function E1RMProgressChart({ amrapResults }: E1RMChartProps) {
     return data
   }, [amrapResults])
 
+  const chartData = rawChartData.map((d) => ({
+    ...d,
+    squat: d.squat != null ? toDisplay(d.squat) : undefined,
+    bench: d.bench != null ? toDisplay(d.bench) : undefined,
+    deadlift: d.deadlift != null ? toDisplay(d.deadlift) : undefined,
+    press: d.press != null ? toDisplay(d.press) : undefined,
+  }))
+
   if (chartData.length < 2) {
     return <EmptyChartMessage message={t("charts.needAmrap2")} />
   }
@@ -112,9 +122,9 @@ export function E1RMProgressChart({ amrapResults }: E1RMChartProps) {
           <YAxis
             tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
             tickLine={{ stroke: "hsl(var(--border))" }}
-            unit=" kg"
+            unit={` ${unitLabel}`}
           />
-          <Tooltip content={<CustomTooltip unit="kg" liftNames={liftNames} />} />
+          <Tooltip content={<CustomTooltip unit={unitLabel} liftNames={liftNames} />} />
           <Legend
             formatter={(value) => liftNames[value] || value}
             wrapperStyle={{ fontSize: 11 }}
@@ -470,6 +480,7 @@ interface BodyweightChartProps {
  */
 export function BodyweightChart({ logs }: BodyweightChartProps) {
   const { t } = useTranslation()
+  const { toDisplay, label: unitLabel } = usePreferredUnit()
 
   const chartData = useMemo(() => {
     return logs
@@ -481,6 +492,8 @@ export function BodyweightChart({ logs }: BodyweightChartProps) {
       }))
   }, [logs])
 
+  const displayChartData = chartData.map((d) => ({ ...d, weight: toDisplay(d.weight) }))
+
   if (chartData.length < 2) {
     return <EmptyChartMessage message={t("charts.needBodyweight2")} />
   }
@@ -488,7 +501,7 @@ export function BodyweightChart({ logs }: BodyweightChartProps) {
   return (
     <div className="h-64">
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={chartData} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
+        <LineChart data={displayChartData} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
           <defs>
             <linearGradient id="bodyweightGradient" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
@@ -504,10 +517,10 @@ export function BodyweightChart({ logs }: BodyweightChartProps) {
           <YAxis
             tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
             tickLine={{ stroke: "hsl(var(--border))" }}
-            unit=" kg"
+            unit={` ${unitLabel}`}
             domain={["dataMin - 2", "dataMax + 2"]}
           />
-          <Tooltip content={<CustomTooltip unit="kg" liftNames={{}} />} />
+          <Tooltip content={<CustomTooltip unit={unitLabel} liftNames={{}} />} />
           <Line
             type="monotone"
             dataKey="weight"

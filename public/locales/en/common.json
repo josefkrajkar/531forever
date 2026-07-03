@@ -392,7 +392,11 @@
     "downloadingLabel": "Downloading...",
     "loadingLabel": "Loading...",
     "downloadJson": "Download JSON",
-    "downloadCsv": "Download CSV"
+    "downloadCsv": "Download CSV",
+    "unitLabel": "Preferred weight unit",
+    "unitKg": "kg (kilograms)",
+    "unitLb": "lb (pounds)",
+    "unitSaveFailed": "Failed to save unit preference"
   },
   "autoreg": {
     "title": "Autoregulated day",
@@ -536,9 +540,27 @@
         "desc": "Download your full history in CSV or JSON at any time. No lock-in, no data selling."
       },
       "2": {
-        "title": "Better than a spreadsheet",
-        "desc": "No scrolling or typos in formulas. One tap logs a set, the app does the rest."
+        "title": "Open Source",
+        "desc": "The full source code is on GitHub. No black box, no hidden agenda — see exactly how the app works, fork it, or contribute."
       }
+    },
+    "badges": {
+      "free": "Free",
+      "pwa": "Installable app",
+      "openSource": "Open Source"
+    },
+    "faq": {
+      "heading": "Frequently Asked Questions",
+      "items": [
+        { "q": "Do I need the 5/3/1 Forever book to use this app?", "a": "No. The app guides you through the full program — Leader/Anchor cycles, the 7th Week Protocol, and Training Max progression. That said, reading Jim Wendler's book is always worth it to understand the philosophy behind the numbers." },
+        { "q": "Is the app really free?", "a": "Yes, completely free. No subscription, no premium tier, no hidden fees. The full source code is on GitHub." },
+        { "q": "Does it work offline / without internet?", "a": "Yes. 531Forever is a Progressive Web App (PWA). Once loaded, it works fully offline — perfect for basements, garages, or gyms with no signal." },
+        { "q": "How do I install it on my phone?", "a": "Open the app in your browser, then use the \"Add to Home Screen\" option. On iOS tap the Share icon → Add to Home Screen. On Android tap the browser menu → Install app. It behaves like a native app after that." },
+        { "q": "Is my training data safe? Can I export it?", "a": "Your data is stored in your account and never sold. You can export your entire history at any time as CSV or JSON — one tap in the profile menu. No lock-in." },
+        { "q": "Does it support kilograms and pounds?", "a": "Yes. You choose your preferred unit during setup and the app handles all calculations accordingly." },
+        { "q": "Which lifts does it track?", "a": "The four main 5/3/1 lifts: squat, bench press, deadlift and overhead press. Each lift has its own Training Max, progression, and history. Accessories are logged separately." },
+        { "q": "Can I use it for basic 5/3/1, not Forever?", "a": "The app is built specifically for 5/3/1 Forever with Leader and Anchor cycles. If you run standard 5/3/1 without the Leader/Anchor structure you can still use it, but the cycle management features are designed with Forever in mind." }
+      ]
     },
     "cta": {
       "heading": "Run your next workout here",
