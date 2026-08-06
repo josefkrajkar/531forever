@@ -630,7 +630,9 @@
     "cable_crunch": "Sklapovačky na kladce",
     "dead_bug": "Dead bug",
     "bird_dog": "Bird dog",
-    "side_plank": "Boční plank"
+    "side_plank": "Boční plank",
+    "kettlebell_swing": "Kettlebell swing",
+    "turkish_get_up": "Turkish get-up"
   },
   "categories": {
     "push": "Tlak",
@@ -647,7 +649,11 @@
     "bench": "Lavička",
     "machine": "Stroje",
     "band": "Guma",
-    "ab_wheel": "Ab wheel"
+    "ab_wheel": "Ab wheel",
+    "kettlebell": "Kettlebell"
+  },
+  "accessoryTracker": {
+    "perSide": "na stranu"
   },
   "excludableTags": {
     "overhead": {

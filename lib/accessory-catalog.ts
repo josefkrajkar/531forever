@@ -19,6 +19,7 @@ export interface AccessoryExercise {
     repRange: [number, number]  // [min, max]
   }
   increment: number          // Smallest reasonable weight jump (kg)
+  perSide?: boolean
 }
 
 /**
@@ -271,6 +272,15 @@ export const ACCESSORY_CATALOG: AccessoryExercise[] = [
     defaultScheme: { sets: 3, repRange: [10, 15] },
     increment: 2,
   },
+  {
+    id: "kettlebell_swing",
+    name: "Kettlebell swing",
+    category: "legs",
+    equipment: ["kettlebell"],
+    tags: ["compound", "posterior_chain", "conditioning", "grip_intensive", "spinal_loading", "ballistic"],
+    defaultScheme: { sets: 5, repRange: [10, 20] },
+    increment: 4,
+  },
 
   // ============================================================================
   // CORE (Abs, Obliques, Lower back support)
@@ -346,6 +356,16 @@ export const ACCESSORY_CATALOG: AccessoryExercise[] = [
     tags: ["isometric", "obliques"],
     defaultScheme: { sets: 3, repRange: [20, 45] }, // Seconds per side
     increment: 0,
+  },
+  {
+    id: "turkish_get_up",
+    name: "Turkish get-up",
+    category: "core",
+    equipment: ["kettlebell"],
+    tags: ["compound", "unilateral", "overhead", "anti_rotation", "shoulder_health"],
+    defaultScheme: { sets: 3, repRange: [3, 5] },
+    increment: 4,
+    perSide: true,
   },
 ]
 
@@ -423,6 +443,7 @@ export const EQUIPMENT_OPTIONS: { id: string; name: string }[] = [
   { id: "machine", name: "equipment.machine" },
   { id: "band", name: "equipment.band" },
   { id: "ab_wheel", name: "equipment.ab_wheel" },
+  { id: "kettlebell", name: "equipment.kettlebell" },
 ]
 
 /**

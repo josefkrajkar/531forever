@@ -74,7 +74,7 @@ describe("ACCESSORY_CATALOG", () => {
       const [minReps, maxReps] = repRange
       expect(sets).toBeGreaterThanOrEqual(2)
       expect(sets).toBeLessThanOrEqual(5)
-      expect(minReps).toBeGreaterThanOrEqual(5)
+      expect(minReps).toBeGreaterThanOrEqual(exercise.perSide ? 3 : 5)
       expect(maxReps).toBeLessThanOrEqual(60) // Planks can be in seconds
       expect(minReps).toBeLessThanOrEqual(maxReps)
     }
@@ -93,6 +93,7 @@ describe("EQUIPMENT_OPTIONS", () => {
     expect(ids).toContain("dumbbells")
     expect(ids).toContain("cable")
     expect(ids).toContain("pull_up_bar")
+    expect(ids).toContain("kettlebell")
   })
 
   it("has unique equipment IDs", () => {
@@ -107,6 +108,36 @@ describe("EQUIPMENT_OPTIONS", () => {
       expect(typeof equipment.name).toBe("string")
       expect(equipment.name).toBe(`equipment.${equipment.id}`)
     }
+  })
+})
+
+describe("kettlebell accessories", () => {
+  it("includes kettlebell swing with Wendler-aligned volume", () => {
+    expect(getExerciseById("kettlebell_swing")).toMatchObject({
+      category: "legs",
+      equipment: ["kettlebell"],
+      defaultScheme: { sets: 5, repRange: [10, 20] },
+      increment: 4,
+    })
+  })
+
+  it("includes Turkish get-up as a per-side core exercise", () => {
+    expect(getExerciseById("turkish_get_up")).toMatchObject({
+      category: "core",
+      equipment: ["kettlebell"],
+      defaultScheme: { sets: 3, repRange: [3, 5] },
+      increment: 4,
+      perSide: true,
+    })
+  })
+
+  it("filters kettlebell exercises by equipment and safety tags", () => {
+    expect(filterCatalog([], []).map((exercise) => exercise.id)).not.toContain("kettlebell_swing")
+    expect(filterCatalog(["kettlebell"], []).map((exercise) => exercise.id)).toEqual(
+      expect.arrayContaining(["kettlebell_swing", "turkish_get_up"])
+    )
+    expect(filterCatalog(["kettlebell"], ["spinal_loading"]).map((exercise) => exercise.id)).not.toContain("kettlebell_swing")
+    expect(filterCatalog(["kettlebell"], ["overhead"]).map((exercise) => exercise.id)).not.toContain("turkish_get_up")
   })
 })
 

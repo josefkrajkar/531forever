@@ -625,7 +625,9 @@
     "cable_crunch": "Cable crunch",
     "dead_bug": "Dead bug",
     "bird_dog": "Bird dog",
-    "side_plank": "Side plank"
+    "side_plank": "Side plank",
+    "kettlebell_swing": "Kettlebell swing",
+    "turkish_get_up": "Turkish get-up"
   },
   "categories": {
     "push": "Push",
@@ -642,7 +644,11 @@
     "bench": "Bench",
     "machine": "Machine",
     "band": "Band",
-    "ab_wheel": "Ab wheel"
+    "ab_wheel": "Ab wheel",
+    "kettlebell": "Kettlebell"
+  },
+  "accessoryTracker": {
+    "perSide": "per side"
   },
   "excludableTags": {
     "overhead": {

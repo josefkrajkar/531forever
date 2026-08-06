@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useQuery } from "convex/react"
+import { useTranslation } from "react-i18next"
 import { api } from "@/convex/_generated/api"
 import { getExerciseById } from "@/lib/accessory-catalog"
 import {
@@ -32,6 +33,7 @@ export default function AccessoryTracker({
   onComplete,
   onStartRestTimer,
 }: AccessoryTrackerProps) {
+  const { t } = useTranslation()
   // Track state per accessory
   const [accessoryStates, setAccessoryStates] = useState<
     Record<string, {
@@ -291,7 +293,7 @@ export default function AccessoryTracker({
                             <Plus className="h-3 w-3" />
                           </Button>
                           <span className="text-xs text-muted-foreground">
-                            / {minReps}-{maxReps}
+                            / {minReps}-{maxReps}{exercise.perSide ? ` ${t("accessoryTracker.perSide")}` : ""}
                           </span>
                         </div>
                       </div>
