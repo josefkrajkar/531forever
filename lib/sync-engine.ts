@@ -7,10 +7,16 @@
  * Klíčová rozhodnutí:
  * - SÉRIOVÝ FIFO flush: každá mutace se čeká před další (kauzální integrita)
  * - Konflikt (server vrátí { alreadyCompleted: true }) → server wins, položka zahozena
- * - Chyba (mutace vyhodí výjimku) → položka označena jako failed, flush ZASTAVEN
- *   (neskáčeme dál — items za chybou závisí na ní)
+ * - Chyba (mutace vyhodí výjimku) → attempts++; pokud attempts >= MAX_ATTEMPTS,
+ *   položka je dead-lettered (state: "dead") a flush POKRAČUJE dál (neblokuje
+ *   FIFO frontu trvale rozbitou položkou); jinak je jen "failed" a flush ZASTAVEN
+ *   (transientní chyby zachovávají kauzální pořadí — zkusí se celá fronta znovu)
+ * - Dead položky (state: "dead") se při dalším flushi PŘESKAKUJÍ, nikdy se
+ *   znovu nezkouší (dokud uživatel nezvolí retryFailure)
  * - NEzahazovat při auth/network chybě (retry příště)
- * - Guard proti souběhu: modul-level `flushing` flag
+ * - Guard proti souběhu: modul-level `flushing` flag; souběžný požadavek
+ *   během běžícího flushe se nezahazuje — nastaví `rerunRequested` a po
+ *   dokončení aktuálního průchodu proběhne ještě jeden navíc (coalesced rerun)
  */
 
 import type { FunctionReference } from "convex/server"
@@ -44,6 +50,8 @@ export interface FlushResult {
   conflicts: number
   /** true = flush byl zastaven kvůli chybě mutace */
   failedStopped: boolean
+  /** Počet položek, které vyčerpaly MAX_ATTEMPTS a byly dead-lettered */
+  deadLettered: number
 }
 
 /** Závislosti předávané do flushOutbox */
@@ -62,7 +70,20 @@ export interface FlushDeps {
    * UI ho může použít k zobrazení banneru.
    */
   onConflict?: (item: OutboxItem) => void
+  /**
+   * Callback volaný při dead-letterování položky (vyčerpán MAX_ATTEMPTS,
+   * nebo neznámá mutace v registry).
+   * UI ho může použít k zobrazení failure banneru s Retry/Discard akcemi.
+   */
+  onDeadLetter?: (item: OutboxItem) => void
 }
+
+/**
+ * Maximální počet pokusů o odeslání mutace, než je položka dead-lettered.
+ * Po dosažení tohoto počtu se položka trvale přeskočí (state: "dead") a
+ * flush pokračuje dál, aby nezablokoval zbytek FIFO fronty navždy.
+ */
+export const MAX_ATTEMPTS = 5
 
 // ─── Výchozí detektor konfliktu ──────────────────────────────────────────────
 
@@ -83,6 +104,14 @@ function defaultIsConflict(_mutationName: string, result: unknown): boolean {
 
 /** Příznak: právě probíhá flush (zabránění souběžným voláním) */
 let flushing = false
+
+/**
+ * Příznak: flush byl vyžádán, zatímco jiný již běžel — po dokončení
+ * aktuálního průchodu se provede ještě jeden navíc, aby položky zařazené/
+ * resetované během běžícího flushe (např. retryFailure) nečekaly na další
+ * externí trigger.
+ */
+let rerunRequested = false
 
 // ─── Kanonický registry builder ──────────────────────────────────────────────
 
@@ -135,82 +164,50 @@ export function buildRegistry(api: {
  *
  * Chování:
  * - Načte getAll() (seřazeno dle autoIncrement = FIFO).
- * - Pro každou položku sériově (await každou před další):
- *   - Najde FunctionReference v registry (chybí → bug, zastav flush).
+ * - Dead položky (state: "dead") jsou přeskočeny — nikdy znovu nezkoušeny.
+ * - Pro každou (nedead) položku sériově (await každou před další):
+ *   - Najde FunctionReference v registry (chybí → neznámá mutace, dead-letter + pokračuj).
  *   - Zavolá client.mutation(ref, args).
  *   - Úspěch → outbox.remove(id).
  *   - Konflikt (isConflict vrátí true) → remove + onConflict(item).
- *   - Chyba (výjimka) → update(id, failed) + ZASTAV flush (FIFO integrita).
- * - Guard: pokud již probíhá flush, druhé volání je no-op.
+ *   - Chyba (výjimka):
+ *     - attempts >= MAX_ATTEMPTS → dead-letter (state: "dead") + onDeadLetter(item) + POKRAČUJ
+ *       (dead položka už dál neblokuje FIFO frontu).
+ *     - jinak → update(id, failed) + ZASTAV flush (transientní chyba zachovává FIFO pořadí).
+ * - Guard: pokud již probíhá flush, druhé volání je no-op, ALE nastaví
+ *   `rerunRequested` — po dokončení aktuálního průchodu proběhne ještě
+ *   jeden navíc (coalesced rerun), takže položky zařazené/resetované
+ *   souběžně (např. retryFailure) nečekají na další externí trigger.
  *
- * @param deps Závislosti (client, registry, volitelné isConflict/onConflict)
- * @returns Výsledek flush průchodu
+ * @param deps Závislosti (client, registry, volitelné isConflict/onConflict/onDeadLetter)
+ * @returns Výsledek flush průchodu (agregace přes všechny coalesced průchody)
  */
 export async function flushOutbox(deps: FlushDeps): Promise<FlushResult> {
-  // Guard proti souběhu — druhé volání vrátí prázdný výsledek
+  // Guard proti souběhu — souběžné volání se neztratí, jen se doraz
   if (flushing) {
-    return { flushed: 0, conflicts: 0, failedStopped: false }
+    rerunRequested = true
+    return { flushed: 0, conflicts: 0, failedStopped: false, deadLettered: 0 }
   }
 
   flushing = true
 
-  const result: FlushResult = { flushed: 0, conflicts: 0, failedStopped: false }
+  const result: FlushResult = {
+    flushed: 0,
+    conflicts: 0,
+    failedStopped: false,
+    deadLettered: 0,
+  }
   const isConflict = deps.isConflict ?? defaultIsConflict
 
   try {
-    const items = await outbox.getAll()
-
-    for (const item of items) {
-      if (item.id === undefined) {
-        // Nemělo by nastat — ale defenzivně přeskočíme
-        continue
-      }
-
-      // Najdi FunctionReference v registry
-      const ref = deps.registry[item.mutationName]
-      if (!ref) {
-        // Neznámá mutace je bug — zaznamenej jako failed a ZASTAV
-        console.error(
-          `[sync-engine] Neznámá mutace v registry: "${item.mutationName}" — flush zastaven`
-        )
-        await outbox.update(item.id, {
-          state: "failed",
-          attempts: item.attempts + 1,
-          lastError: `Neznámá mutace: ${item.mutationName}`,
-        })
-        result.failedStopped = true
-        break
-      }
-
-      try {
-        const mutationResult = await deps.client.mutation(ref, item.args)
-
-        if (isConflict(item.mutationName, mutationResult)) {
-          // Konflikt: server wins — zahoď položku a informuj UI
-          await outbox.remove(item.id)
-          result.conflicts++
-          deps.onConflict?.(item)
-        } else {
-          // Úspěch — odstraň z fronty
-          await outbox.remove(item.id)
-          result.flushed++
-        }
-      } catch (err) {
-        // Chyba mutace (síť, auth, server error) — NEzahazujeme, zkusíme příště
-        const errorMessage =
-          err instanceof Error ? err.message : String(err)
-
-        await outbox.update(item.id, {
-          state: "failed",
-          attempts: item.attempts + 1,
-          lastError: errorMessage,
-        })
-
-        // ZASTAV flush — položky za touto závisí na FIFO pořadí
-        result.failedStopped = true
-        break
-      }
-    }
+    do {
+      rerunRequested = false
+      const pass = await runFlushPass(deps, isConflict)
+      result.flushed += pass.flushed
+      result.conflicts += pass.conflicts
+      result.deadLettered += pass.deadLettered
+      result.failedStopped = pass.failedStopped
+    } while (rerunRequested)
   } finally {
     flushing = false
   }
@@ -219,9 +216,95 @@ export async function flushOutbox(deps: FlushDeps): Promise<FlushResult> {
 }
 
 /**
- * Vyexportuje interní flushing příznak pro reset v testech.
+ * Jeden sériový průchod frontou (bez guardu proti souběhu — ten řeší
+ * flushOutbox). Volán z flushOutbox jednou, případně vícekrát při
+ * coalesced rerunu.
+ */
+async function runFlushPass(
+  deps: FlushDeps,
+  isConflict: (mutationName: string, result: unknown) => boolean
+): Promise<FlushResult> {
+  const result: FlushResult = {
+    flushed: 0,
+    conflicts: 0,
+    failedStopped: false,
+    deadLettered: 0,
+  }
+
+  const items = await outbox.getAll()
+
+  for (const item of items) {
+    if (item.id === undefined) {
+      // Nemělo by nastat — ale defenzivně přeskočíme
+      continue
+    }
+
+    if (item.state === "dead") {
+      // Trvale vynechaná položka — nikdy znovu nezkoušet (jen retryFailure z UI)
+      continue
+    }
+
+    // Bezpečný výchozí počet pokusů — chrání proti NaN/undefined z poškozeného záznamu
+    const priorAttempts = Number.isFinite(item.attempts) ? item.attempts : 0
+
+    // Najdi FunctionReference v registry
+    const ref = deps.registry[item.mutationName]
+    if (!ref) {
+      // Neznámá mutace je bug — okamžitě dead-letter, ale POKRAČUJ (neblokuj frontu)
+      console.error(
+        `[sync-engine] Neznámá mutace v registry: "${item.mutationName}" — položka dead-lettered`
+      )
+      const lastError = `Neznámá mutace: ${item.mutationName}`
+      const attempts = priorAttempts + 1
+      await outbox.update(item.id, { state: "dead", attempts, lastError })
+      result.deadLettered++
+      deps.onDeadLetter?.({ ...item, state: "dead", attempts, lastError })
+      continue
+    }
+
+    try {
+      const mutationResult = await deps.client.mutation(ref, item.args)
+
+      if (isConflict(item.mutationName, mutationResult)) {
+        // Konflikt: server wins — zahoď položku a informuj UI
+        await outbox.remove(item.id)
+        result.conflicts++
+        deps.onConflict?.(item)
+      } else {
+        // Úspěch — odstraň z fronty
+        await outbox.remove(item.id)
+        result.flushed++
+      }
+    } catch (err) {
+      // Chyba mutace (síť, auth, server error)
+      const lastError = err instanceof Error ? err.message : String(err)
+      const attempts = priorAttempts + 1
+
+      if (attempts >= MAX_ATTEMPTS) {
+        // Vyčerpány pokusy — dead-letter a POKRAČUJ (neblokuj zbytek fronty navždy)
+        await outbox.update(item.id, { state: "dead", attempts, lastError })
+        result.deadLettered++
+        deps.onDeadLetter?.({ ...item, state: "dead", attempts, lastError })
+        continue
+      }
+
+      // Transientní chyba — NEzahazujeme, zkusíme příště
+      await outbox.update(item.id, { state: "failed", attempts, lastError })
+
+      // ZASTAV flush — položky za touto závisí na FIFO pořadí
+      result.failedStopped = true
+      break
+    }
+  }
+
+  return result
+}
+
+/**
+ * Vyexportuje interní flushing/rerunRequested příznaky pro reset v testech.
  * @internal — nepoužívat v produkčním kódu
  */
 export function _resetFlushingForTests(): void {
   flushing = false
+  rerunRequested = false
 }

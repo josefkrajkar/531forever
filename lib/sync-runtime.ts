@@ -4,7 +4,8 @@
  * Oddělen od sync-engine.ts (který zůstane pure/testovatelný bez singleton importu)
  * a od hooks/ (aby šel importovat i mimo React komponentu, např. v useSyncTriggers).
  *
- * flushNow() = flushOutbox se singleton klientem + buildRegistry(api) + onConflict→pushConflict.
+ * flushNow() = flushOutbox se singleton klientem + buildRegistry(api) +
+ * onConflict→pushConflict + onDeadLetter→pushFailure.
  *
  * Volat odkudkoliv — má interní guard proti souběhu z flushOutbox.
  */
@@ -13,6 +14,8 @@ import { convex } from "@/components/convex-client-provider"
 import { api } from "@/convex/_generated/api"
 import { flushOutbox, buildRegistry } from "@/lib/sync-engine"
 import { pushConflict } from "@/lib/sync-conflicts"
+import { pushFailure } from "@/lib/sync-failures"
+import { getDeadLetters } from "@/lib/outbox"
 
 /** Kanonický registry — sestaví se jednou při importu modulu */
 const registry = buildRegistry(api)
@@ -42,8 +45,30 @@ export async function flushNow(): Promise<void> {
       client: syncClient,
       registry,
       onConflict: pushConflict,
+      onDeadLetter: pushFailure,
     })
   } catch (err) {
     console.error("[sync-runtime] flushNow selhal:", err)
+  }
+}
+
+/**
+ * Naplní failure store existujícími dead-letter položkami z outboxu.
+ *
+ * Volat při startu aplikace (mount) — zajistí, že selhání vzniklá v předchozí
+ * session (např. app byla zavřena před tím, než uživatel stihl reagovat na
+ * banner) se znovu zobrazí uživateli po reloadu.
+ *
+ * Invokace na mount patří do use-sync-triggers.ts (samostatný task) —
+ * tato funkce je jen definována a exportována zde.
+ */
+export async function rehydrateDeadLetters(): Promise<void> {
+  try {
+    const deadLetters = await getDeadLetters()
+    for (const item of deadLetters) {
+      pushFailure(item)
+    }
+  } catch (err) {
+    console.error("[sync-runtime] rehydrateDeadLetters selhal:", err)
   }
 }

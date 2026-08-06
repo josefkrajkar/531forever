@@ -8,6 +8,7 @@ import { getExerciseById } from "@/lib/accessory-catalog"
 import { type AccessorySetLog, type CycleProgressionSummary } from "@/lib/531"
 import { useConnectionState } from "@/hooks/use-connection-state"
 import { useOfflineMutation } from "@/hooks/use-offline-mutation"
+import { localToday } from "@/lib/date"
 
 interface MainSet {
   weight: number
@@ -130,7 +131,7 @@ export function useFinishWorkout(): UseFinishWorkoutReturn {
         if (Object.keys(accessoryLogs).length > 0) {
           await logMultipleAccessories({
             // Datum z klienta — offline replay zaloguje na správné datum (stejný vzor jako bodyweight)
-            date: new Date().toISOString().split("T")[0],
+            date: localToday(),
             logs: Object.entries(accessoryLogs).map(([accessoryId, sets]) => ({
               accessoryId,
               sets,
@@ -145,6 +146,7 @@ export function useFinishWorkout(): UseFinishWorkoutReturn {
 
         const result = await completeWorkout({
           exercises,
+          date: localToday(),
           autoregulated,
           deviationNote: deviationNote || undefined,
           expectedCycle: programCycle,
@@ -178,7 +180,7 @@ export function useFinishWorkout(): UseFinishWorkoutReturn {
         // 1. Accessories nejdřív (pokud existují)
         if (Object.keys(accessoryLogs).length > 0) {
           await enqueueMutation("accessories.logMultipleAccessories", {
-            date: new Date().toISOString().split("T")[0],
+            date: localToday(),
             logs: Object.entries(accessoryLogs).map(([accessoryId, sets]) => ({
               accessoryId,
               sets,
@@ -194,6 +196,7 @@ export function useFinishWorkout(): UseFinishWorkoutReturn {
         // 2. completeWorkout MUSÍ být poslední enqueued
         await enqueueMutation("programs.completeWorkout", {
           exercises,
+          date: localToday(),
           autoregulated,
           deviationNote: deviationNote || undefined,
           expectedCycle: programCycle,

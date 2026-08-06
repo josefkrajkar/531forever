@@ -21,8 +21,11 @@ import { clearOfflineCache } from "@/lib/offline-store"
 import { clearOutbox } from "@/lib/outbox"
 import { OfflineIndicator } from "./offline-indicator"
 import { SyncConflictBanner } from "./sync-conflict-banner"
+import { SyncFailureBanner } from "./sync-failure-banner"
 import ReadinessCard from "./readiness-card"
 import { useSyncTriggers } from "@/hooks/use-sync-triggers"
+import { useConnectionState } from "@/hooks/use-connection-state"
+import { useOfflineMutation } from "@/hooks/use-offline-mutation"
 
 type Tab = "workout" | "history" | "plan"
 
@@ -36,6 +39,8 @@ export default function WorkoutPage() {
   const { signOut } = useAuthActions()
   const { data: currentUser } = useCachedQuery(api.users.currentLoggedInUser, {}, "currentUser")
   const updateAthleteProfile = useMutation(api.users.updateAthleteProfile)
+  const { isOnline } = useConnectionState()
+  const { enqueueMutation } = useOfflineMutation()
 
   // 5/3/1 Program
   const { data: currentProgram } = useCachedQuery(api.programs.getCurrentProgram, {}, "currentProgram")
@@ -88,9 +93,18 @@ export default function WorkoutPage() {
   }
 
   const handleProfileSave = async (profile: UserProfile) => {
-    await updateAthleteProfile(profile)
-    setProfileModalOpen(false)
-    console.log("[workout-page] Athlete profile saved to Convex")
+    try {
+      if (isOnline) {
+        await updateAthleteProfile(profile)
+      } else {
+        await enqueueMutation("users.updateAthleteProfile", { ...profile })
+      }
+      setProfileModalOpen(false)
+      console.log("[workout-page] Athlete profile saved to Convex")
+    } catch (err) {
+      console.error("[workout-page] Profile save error:", err)
+      toast.error(t("profile.saveFailed"))
+    }
   }
 
   const handleSignOut = async () => {
@@ -175,6 +189,8 @@ export default function WorkoutPage() {
       <main className="max-w-2xl mx-auto px-4 py-6">
         {/* Banner pro sync konflikty (server wins) — zobrazí se pokud byl trénink uložen na jiném zařízení */}
         <SyncConflictBanner />
+        {/* Banner pro trvalá sync selhání (dead-letter) — retry/discard */}
+        <SyncFailureBanner />
 
         {activeTab === "plan" &&
         currentProgram &&

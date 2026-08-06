@@ -13,6 +13,8 @@ import TemplateSelector from "./template-selector"
 import { usePreferredUnit } from "@/hooks/use-preferred-unit"
 import { GlossaryTerm } from "@/components/glossary-term"
 import type { GlossaryKey } from "@/lib/glossary"
+import { useConnectionState } from "@/hooks/use-connection-state"
+import { useOfflineMutation } from "@/hooks/use-offline-mutation"
 
 type Program = Doc<"programs">
 type Lift = "squat" | "bench" | "deadlift" | "press"
@@ -371,6 +373,8 @@ export default function ProgramSettings({ program }: ProgramSettingsProps) {
   const { t } = useTranslation()
   const setTrainingMax = useMutation(api.programs.setTrainingMax)
   const pauseProgram = useMutation(api.programs.pauseProgram)
+  const { isOnline } = useConnectionState()
+  const { enqueueMutation } = useOfflineMutation()
 
   const lifts = (program.split as Lift[]).filter((l): l is Lift =>
     ["squat", "bench", "deadlift", "press"].includes(l)
@@ -381,7 +385,11 @@ export default function ProgramSettings({ program }: ProgramSettingsProps) {
 
   const handleSaveTM = async (lift: Lift, newTM: number) => {
     try {
-      await setTrainingMax({ lift, newTM })
+      if (isOnline) {
+        await setTrainingMax({ lift, newTM })
+      } else {
+        await enqueueMutation("programs.setTrainingMax", { lift, newTM })
+      }
       toast.success(t("settings.tmSavedSuccess", { liftName: t(`lifts.${lift}`), value: newTM }))
     } catch (err) {
       console.error("[program-settings] setTrainingMax error:", err)

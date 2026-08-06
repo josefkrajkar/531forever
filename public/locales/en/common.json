@@ -289,7 +289,12 @@
     "offlineWithPendingAria_one": "App is offline — {{count}} pending mutation",
     "offlineWithPendingAria_other": "App is offline — {{count}} pending mutations",
     "offlineAria": "App is offline",
-    "pendingBadge": "⟳ {{count}} pending"
+    "pendingBadge": "⟳ {{count}} pending",
+    "syncFailedMessage": "Sync repeatedly failed — this change was not saved to the server. Try again or discard the change.",
+    "retry": "Retry",
+    "discard": "Discard",
+    "retryAria": "Retry syncing",
+    "discardAria": "Discard unsaved change"
   },
   "readinessInput": {
     "dialogAriaLabel": "Readiness input",
@@ -396,7 +401,8 @@
     "unitLabel": "Preferred weight unit",
     "unitKg": "kg (kilograms)",
     "unitLb": "lb (pounds)",
-    "unitSaveFailed": "Failed to save unit preference"
+    "unitSaveFailed": "Failed to save unit preference",
+    "saveFailed": "Failed to save profile, please try again"
   },
   "autoreg": {
     "title": "Autoregulated day",

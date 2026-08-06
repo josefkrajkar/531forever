@@ -9,6 +9,7 @@ import {
   type CycleProgressionSummary,
   type Lift,
 } from "../lib/531"
+import { assertValidDate } from "./dates"
 
 // Type definitions for 5/3/1 Forever
 type ProgramPhase = "leader1" | "leader2" | "anchor" | "seventh_week"
@@ -334,6 +335,7 @@ export const saveAmrapResult = mutation({
     actualReps: v.number(),
     autoregulated: v.optional(v.boolean()), // Was this session autoregulated?
     clientId: v.optional(v.string()),        // Idempotenční dedup ID — offline replay posílá stejné ID
+    date: v.optional(v.string()),            // YYYY-MM-DD z klienta (lokální datum) — zpětná kompatibilita: fallback níže
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx)
@@ -352,6 +354,7 @@ export const saveAmrapResult = mutation({
     if (!Number.isInteger(args.actualReps) || args.actualReps < 0 || args.actualReps > 100) {
       throw new Error("Neplatný skutečný počet opakování: musí být celé číslo od 0 do 100")
     }
+    if (args.date !== undefined) assertValidDate(args.date)
 
     const program = await ctx.db
       .query("programs")
@@ -382,7 +385,10 @@ export const saveAmrapResult = mutation({
       targetReps: args.targetReps,
       actualReps: args.actualReps,
       autoregulated: args.autoregulated || false,
-      date: new Date().toISOString().split("T")[0],
+      // Klientské (lokální) datum má přednost; fallback na UTC dnešek jen pro
+      // staré queued outbox položky bez `date` (zpětná kompatibilita — `date`
+      // zůstává vždy optional, nikdy povinné).
+      date: args.date ?? new Date().toISOString().split("T")[0],
       clientId: args.clientId,
     })
 
@@ -453,6 +459,7 @@ export const completeWorkout = mutation({
     expectedCycle: v.number(),
     expectedWeek: v.number(),
     expectedDayIndex: v.number(),
+    date: v.optional(v.string()), // YYYY-MM-DD z klienta (lokální datum) — zpětná kompatibilita: fallback níže
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx)
@@ -465,6 +472,7 @@ export const completeWorkout = mutation({
     if (args.deviationNote !== undefined && args.deviationNote.length > 1000) {
       throw new Error("Poznámka o odchylce nesmí přesáhnout 1000 znaků")
     }
+    if (args.date !== undefined) assertValidDate(args.date)
 
     const program = await ctx.db
       .query("programs")
@@ -501,7 +509,10 @@ export const completeWorkout = mutation({
     const isForeverProgram = !!(program.programPhase && program.supplementalTemplate)
 
     // Build workout note — Forever programs include phase name
-    const today = new Date().toISOString().split("T")[0]
+    // Klientské (lokální) datum má přednost; fallback na UTC dnešek jen pro
+    // staré queued outbox položky bez `date` (zpětná kompatibilita — `date`
+    // zůstává vždy optional, nikdy povinné).
+    const today = args.date ?? new Date().toISOString().split("T")[0]
     const lift = program.split[program.dayIndex]
     let workoutNote = args.note
     if (!workoutNote) {

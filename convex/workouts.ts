@@ -1,6 +1,7 @@
 import { v } from "convex/values"
 import { internalQuery, mutation, query } from "./_generated/server"
 import { getAuthUserId } from "@convex-dev/auth/server"
+import { assertValidDate } from "./dates"
 
 export const getDraftWorkout = query({
   args: {},
@@ -34,10 +35,14 @@ export const getCompletedWorkouts = query({
 })
 
 export const createDraft = mutation({
-  args: {},
-  handler: async (ctx) => {
+  args: {
+    date: v.optional(v.string()), // YYYY-MM-DD z klienta — bez klienta zatím (dead code), fallback níže
+  },
+  handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx)
     if (!userId) throw new Error("Not authenticated")
+
+    if (args.date !== undefined) assertValidDate(args.date)
 
     const existing = await ctx.db
       .query("workouts")
@@ -45,7 +50,8 @@ export const createDraft = mutation({
       .first()
     if (existing) return existing._id
 
-    const today = new Date().toISOString().split("T")[0]
+    // Klientské datum má přednost; fallback na UTC dnešek (zpětná kompatibilita)
+    const today = args.date ?? new Date().toISOString().split("T")[0]
     return await ctx.db.insert("workouts", {
       userId,
       date: today,
@@ -254,6 +260,7 @@ export const completeWorkout = mutation({
     workoutId: v.id("workouts"),
     note: v.optional(v.string()),
     rating: v.number(),
+    date: v.optional(v.string()), // YYYY-MM-DD z klienta — bez klienta zatím (dead code), fallback níže
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx)
@@ -263,11 +270,13 @@ export const completeWorkout = mutation({
     if (args.note !== undefined && args.note.length > 2000) {
       throw new Error("Poznámka nesmí přesáhnout 2000 znaků")
     }
+    if (args.date !== undefined) assertValidDate(args.date)
 
     const workout = await ctx.db.get(args.workoutId)
     if (!workout || workout.userId !== userId) throw new Error("Workout not found")
 
-    const today = new Date().toISOString().split("T")[0]
+    // Klientské datum má přednost; fallback na UTC dnešek (zpětná kompatibilita)
+    const today = args.date ?? new Date().toISOString().split("T")[0]
     await ctx.db.patch(args.workoutId, {
       status: "completed",
       note: args.note,
@@ -280,10 +289,13 @@ export const completeWorkout = mutation({
 export const copyWorkoutToDraft = mutation({
   args: {
     workoutId: v.id("workouts"),
+    date: v.optional(v.string()), // YYYY-MM-DD z klienta — bez klienta zatím (dead code), fallback níže
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx)
     if (!userId) throw new Error("Not authenticated")
+
+    if (args.date !== undefined) assertValidDate(args.date)
 
     const existingDraft = await ctx.db
       .query("workouts")
@@ -296,7 +308,8 @@ export const copyWorkoutToDraft = mutation({
     const source = await ctx.db.get(args.workoutId)
     if (!source || source.userId !== userId) throw new Error("Workout not found")
 
-    const today = new Date().toISOString().split("T")[0]
+    // Klientské datum má přednost; fallback na UTC dnešek (zpětná kompatibilita)
+    const today = args.date ?? new Date().toISOString().split("T")[0]
     return await ctx.db.insert("workouts", {
       userId,
       date: today,

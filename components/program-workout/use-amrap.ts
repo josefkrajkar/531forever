@@ -6,6 +6,7 @@ import { api } from "@/convex/_generated/api"
 import { toast } from "sonner"
 import { useConnectionState } from "@/hooks/use-connection-state"
 import { useOfflineMutation } from "@/hooks/use-offline-mutation"
+import { localToday } from "@/lib/date"
 
 interface UseAmrapParams {
   lift: string
@@ -66,6 +67,7 @@ export function useAmrap(): UseAmrapReturn {
           actualReps: reps,
           autoregulated,
           clientId,
+          date: localToday(),
         })
         setAmrapSaved(true)
         console.log(
@@ -84,6 +86,7 @@ export function useAmrap(): UseAmrapReturn {
           actualReps: reps,
           autoregulated,
           clientId,
+          date: localToday(),
         })
         setAmrapSaved(true)
         console.log(

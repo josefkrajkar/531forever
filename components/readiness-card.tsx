@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next"
 import { useQuery } from "convex/react"
 import { api } from "@/convex/_generated/api"
 import { Activity } from "lucide-react"
+import { localToday } from "@/lib/date"
 import {
   computeReadinessScore,
   computeBaseline,
@@ -56,7 +57,7 @@ export default function ReadinessCard() {
   const { t } = useTranslation()
   const [inputOpen, setInputOpen] = useState(false)
   // Dnešní datum z klienta (komponenta je client-only pod AuthWrapper)
-  const today = useMemo(() => new Date().toISOString().split("T")[0], [])
+  const today = useMemo(() => localToday(), [])
 
   const todayDoc = useQuery(api.readiness.getReadinessForDate, { date: today }) as
     | ReadinessDoc

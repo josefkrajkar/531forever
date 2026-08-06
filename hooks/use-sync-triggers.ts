@@ -18,7 +18,7 @@
  */
 
 import { useEffect } from "react"
-import { flushNow } from "@/lib/sync-runtime"
+import { flushNow, rehydrateDeadLetters } from "@/lib/sync-runtime"
 import { initPendingCount } from "@/lib/outbox"
 
 /**
@@ -32,6 +32,11 @@ export function useSyncTriggers(): void {
     // Inicializuj pendingCount z IndexedDB při mountu
     initPendingCount().catch((err) => {
       console.error("[use-sync-triggers] initPendingCount selhal:", err)
+    })
+
+    // Rehydratuj dead-letter selhání z předchozí session (banner po reloadu)
+    rehydrateDeadLetters().catch((err) => {
+      console.error("[use-sync-triggers] rehydrateDeadLetters selhal:", err)
     })
 
     // Flush při mountu — zpracuj položky z předchozí offline session

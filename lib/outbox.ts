@@ -33,8 +33,8 @@ export interface OutboxItem {
   args: Record<string, unknown>
   /** Čas vložení do fronty (Date.now()) */
   enqueuedAt: number
-  /** Stav zpracování */
-  state: "pending" | "failed"
+  /** Stav zpracování — "dead" = vyčerpán počet pokusů, trvale vynechána */
+  state: "pending" | "failed" | "dead"
   /** Počet dosavadních pokusů o odeslání */
   attempts: number
   /** Chybová zpráva z posledního neúspěšného pokusu */
@@ -160,6 +160,16 @@ export async function getAll(): Promise<OutboxItem[]> {
   } catch {
     return []
   }
+}
+
+/**
+ * Vrátí všechny dead-letter položky (state === "dead") — pro rehydrataci
+ * failure store po reloadu/mountu (viz sync-runtime.rehydrateDeadLetters).
+ * Vrátí prázdné pole pokud IndexedDB není dostupný nebo nastala chyba.
+ */
+export async function getDeadLetters(): Promise<OutboxItem[]> {
+  const items = await getAll()
+  return items.filter((item) => item.state === "dead")
 }
 
 /**

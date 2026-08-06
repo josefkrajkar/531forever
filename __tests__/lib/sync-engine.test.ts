@@ -14,7 +14,12 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import "fake-indexeddb/auto"
 
-import { flushOutbox, buildRegistry, _resetFlushingForTests } from "@/lib/sync-engine"
+import {
+  flushOutbox,
+  buildRegistry,
+  _resetFlushingForTests,
+  MAX_ATTEMPTS,
+} from "@/lib/sync-engine"
 import type { SyncClient, MutationRegistry, FlushDeps } from "@/lib/sync-engine"
 import {
   enqueue,
@@ -268,21 +273,30 @@ describe("sync-engine / flushOutbox", () => {
   // ─── Neznámá mutace ───────────────────────────────────────────────────
 
   describe("neznámá mutace v registry", () => {
-    it("neznámá mutace → označí failed a zastav flush", async () => {
+    it("neznámá mutace → okamžitě dead-letter a POKRAČUJ (neblokuje frontu)", async () => {
       await enqueue(makeItem("unknown.nonExistent"))
       await enqueue(makeItem("programs.completeWorkout"))
 
+      const onDeadLetter = vi.fn()
       const client = makeMockClient(async () => ({}))
-      const result = await flushOutbox(makeDeps(client))
+      const result = await flushOutbox(makeDeps(client, { onDeadLetter }))
 
-      expect(result.failedStopped).toBe(true)
-      expect(vi.mocked(client.mutation)).not.toHaveBeenCalled()
+      expect(result.failedStopped).toBe(false)
+      expect(result.deadLettered).toBe(1)
+      // 2. položka JE zpracována — dead-letter nezastaví flush
+      expect(result.flushed).toBe(1)
+      expect(vi.mocked(client.mutation)).toHaveBeenCalledOnce()
+
+      expect(onDeadLetter).toHaveBeenCalledOnce()
+      expect(onDeadLetter.mock.calls[0][0].mutationName).toBe("unknown.nonExistent")
+      expect(onDeadLetter.mock.calls[0][0].state).toBe("dead")
 
       const items = await getAll()
-      expect(items[0].state).toBe("failed")
+      // 2. položka byla úspěšně odeslána a odstraněna — zůstává jen dead položka
+      expect(items).toHaveLength(1)
+      expect(items[0].mutationName).toBe("unknown.nonExistent")
+      expect(items[0].state).toBe("dead")
       expect(items[0].lastError).toContain("unknown.nonExistent")
-      // 2. položka nesmí být zpracována
-      expect(items[1].state).toBe("pending")
     })
   })
 
@@ -317,6 +331,53 @@ describe("sync-engine / flushOutbox", () => {
       // Celkem musí být flushed=2 (obě položky) — první flush je dokončí
       const totalFlushed = result1.flushed + result2.flushed
       expect(totalFlushed).toBe(2)
+    })
+  })
+
+  // ─── Coalesced rerun (flush vyžádán během probíhajícího flushe) ──────
+
+  describe("coalesced rerun — flush vyžádán během probíhajícího flushe", () => {
+    it("položka zařazená mid-flight je zpracována v dorazovém průchodu bez extra externího triggeru", async () => {
+      await enqueue(makeItem("programs.completeWorkout", { order: "A" }))
+
+      const processed: string[] = []
+      const client = makeMockClient(async (_ref, args) => {
+        processed.push((args as { order?: string }).order ?? "?")
+        // Umělé zpoždění — první flush zůstane "in-flight" dost dlouho,
+        // aby se stihl souběžný požadavek + mid-flight enqueue.
+        await new Promise((r) => setTimeout(r, 20))
+        return {}
+      })
+
+      // Volání back-to-back (bez await mezi nimi) — druhé narazí na guard,
+      // zatímco první ještě zpracovává položku "A".
+      const flush1 = flushOutbox(makeDeps(client))
+      const flush2 = flushOutbox(makeDeps(client))
+
+      // Simuluje retryFailure: nová/resetovaná položka vznikne, zatímco
+      // první flush běží — bez coalesced rerunu by čekala na další trigger.
+      await enqueue(makeItem("bodyweight.logBodyweight", { order: "B" }))
+
+      const [result1, result2] = await Promise.all([flush1, flush2])
+
+      expect(processed).toEqual(["A", "B"])
+      expect(result2.flushed).toBe(0)
+      expect(result2.failedStopped).toBe(false)
+      expect(result1.flushed).toBe(2)
+      expect(result1.failedStopped).toBe(false)
+      expect(await getAll()).toHaveLength(0)
+    })
+
+    it("bez souběžného požadavku proběhne jen jeden průchod (žádný zbytečný rerun)", async () => {
+      await enqueue(makeItem("programs.completeWorkout"))
+      await enqueue(makeItem("bodyweight.logBodyweight"))
+
+      const client = makeMockClient(async () => ({}))
+      const result = await flushOutbox(makeDeps(client))
+
+      expect(result.flushed).toBe(2)
+      // getAll je voláno jednou per průchod — jeden průchod = jedno volání
+      expect(vi.mocked(client.mutation)).toHaveBeenCalledTimes(2)
     })
   })
 
@@ -359,6 +420,100 @@ describe("sync-engine / flushOutbox", () => {
       const items = await getAll()
       expect(items[0].attempts).toBe(3)
       expect(items[0].state).toBe("failed")
+    })
+  })
+
+  // ─── Dead-letter po vyčerpání MAX_ATTEMPTS ───────────────────────────
+
+  describe("dead-letter po vyčerpání MAX_ATTEMPTS", () => {
+    it("položka selhávající MAX_ATTEMPTS-krát → dead, deadLettered započítáno, flush POKRAČUJE, onDeadLetter zavolán", async () => {
+      await enqueue(makeItem("programs.completeWorkout"))
+      await enqueue(makeItem("bodyweight.logBodyweight"))
+
+      const failingClient = makeMockClient(async (ref) => {
+        const name = (ref as unknown as { _name: string })._name
+        if (name === "programs.completeWorkout") throw new Error("Trvalá chyba")
+        return {}
+      })
+
+      // MAX_ATTEMPTS - 1 selhání → stále "failed", každý flush se ZASTAVÍ (transient)
+      for (let i = 0; i < MAX_ATTEMPTS - 1; i++) {
+        const r = await flushOutbox(makeDeps(failingClient))
+        expect(r.failedStopped).toBe(true)
+        expect(r.deadLettered).toBe(0)
+      }
+
+      const beforeLast = await getAll()
+      expect(beforeLast[0].state).toBe("failed")
+      expect(beforeLast[0].attempts).toBe(MAX_ATTEMPTS - 1)
+      // Druhá položka nikdy nezpracována (blokovaná FIFO frontou)
+      expect(beforeLast[1].state).toBe("pending")
+
+      // Poslední (MAX_ATTEMPTS-tý) pokus → attempts dosáhne MAX_ATTEMPTS → dead-letter
+      const onDeadLetter = vi.fn()
+      const result = await flushOutbox(makeDeps(failingClient, { onDeadLetter }))
+
+      expect(result.deadLettered).toBe(1)
+      expect(result.failedStopped).toBe(false)
+      // Dead-letter NEBLOKUJE frontu — 2. položka je zpracována ve STEJNÉM průchodu
+      expect(result.flushed).toBe(1)
+
+      expect(onDeadLetter).toHaveBeenCalledOnce()
+      expect(onDeadLetter.mock.calls[0][0].mutationName).toBe("programs.completeWorkout")
+      expect(onDeadLetter.mock.calls[0][0].state).toBe("dead")
+      expect(onDeadLetter.mock.calls[0][0].attempts).toBe(MAX_ATTEMPTS)
+
+      const items = await getAll()
+      // Jen dead položka zůstává — druhá byla úspěšně odeslána a odstraněna
+      expect(items).toHaveLength(1)
+      expect(items[0].mutationName).toBe("programs.completeWorkout")
+      expect(items[0].state).toBe("dead")
+      expect(items[0].attempts).toBe(MAX_ATTEMPTS)
+      expect(items[0].lastError).toBe("Trvalá chyba")
+    })
+
+    it("dead položka je při dalším flushi PŘESKOČENA — nikdy znovu nezkoušena", async () => {
+      await enqueue({
+        ...makeItem("programs.completeWorkout"),
+        state: "dead",
+        attempts: MAX_ATTEMPTS,
+        lastError: "již dead-lettered",
+      })
+
+      const client = makeMockClient(async () => ({}))
+      const result = await flushOutbox(makeDeps(client))
+
+      expect(vi.mocked(client.mutation)).not.toHaveBeenCalled()
+      expect(result.flushed).toBe(0)
+      expect(result.deadLettered).toBe(0)
+      expect(result.failedStopped).toBe(false)
+
+      const items = await getAll()
+      expect(items).toHaveLength(1)
+      expect(items[0].state).toBe("dead") // nezměněno — přeskočeno
+      expect(items[0].attempts).toBe(MAX_ATTEMPTS)
+    })
+
+    it("transientní chyba (attempts < MAX_ATTEMPTS) stále ZASTAVÍ flush (FIFO integrita)", async () => {
+      await enqueue(makeItem("programs.completeWorkout"))
+      await enqueue(makeItem("bodyweight.logBodyweight"))
+
+      const client = makeMockClient(async () => {
+        throw new Error("Transientní síťová chyba")
+      })
+
+      const result = await flushOutbox(makeDeps(client))
+
+      expect(result.deadLettered).toBe(0)
+      expect(result.failedStopped).toBe(true)
+      expect(result.flushed).toBe(0)
+
+      const items = await getAll()
+      expect(items).toHaveLength(2)
+      expect(items[0].state).toBe("failed")
+      expect(items[0].attempts).toBe(1)
+      // Druhá položka nezpracována — FIFO pořadí zachováno
+      expect(items[1].state).toBe("pending")
     })
   })
 })

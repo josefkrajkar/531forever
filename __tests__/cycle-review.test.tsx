@@ -6,7 +6,10 @@ import { render, screen, fireEvent } from "@testing-library/react"
 import CycleReviewModal from "@/components/cycle-review-modal"
 import type { CycleProgressionSummary } from "@/lib/531"
 
-// CycleReviewModal je read-only — nepotřebuje mock Convex
+// usePreferredUnit interně volá useQuery(convex/react) — bez providera je třeba mock
+vi.mock("convex/react", () => ({
+  useQuery: () => ({ preferredUnit: "kg" }),
+}))
 
 const mockProgressionSummary: CycleProgressionSummary = {
   completedCycle: 1,

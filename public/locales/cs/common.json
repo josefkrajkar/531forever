@@ -292,7 +292,12 @@
     "offlineWithPendingAria_few": "Aplikace je offline — {{count}} čekající mutace",
     "offlineWithPendingAria_other": "Aplikace je offline — {{count}} čekajících mutací",
     "offlineAria": "Aplikace je offline",
-    "pendingBadge": "⟳ {{count}} čeká"
+    "pendingBadge": "⟳ {{count}} čeká",
+    "syncFailedMessage": "Synchronizace se opakovaně nezdařila — změna nebyla uložena na server. Zkus to znovu nebo změnu zahoď.",
+    "retry": "Zkusit znovu",
+    "discard": "Zahodit",
+    "retryAria": "Zkusit synchronizaci znovu",
+    "discardAria": "Zahodit neuloženou změnu"
   },
   "readinessInput": {
     "dialogAriaLabel": "Zadání readiness",
@@ -399,7 +404,8 @@
     "unitLabel": "Preferovaná jednotka váhy",
     "unitKg": "kg (kilogramy)",
     "unitLb": "lb (libry)",
-    "unitSaveFailed": "Nepodařilo se uložit jednotku"
+    "unitSaveFailed": "Nepodařilo se uložit jednotku",
+    "saveFailed": "Nepodařilo se uložit profil, zkus to znovu"
   },
   "autoreg": {
     "title": "Autoregulovaný den",

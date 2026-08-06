@@ -492,7 +492,7 @@ describe("programs.saveAmrapResult", () => {
     const t = makeT()
     const userId = await seedUser(t)
     const programId = await seedActiveProgram(t, userId)
-    
+
     await t.withIdentity({ subject: userId }).mutation(api.programs.saveAmrapResult, {
       lift: "squat",
       weight: 95,
@@ -500,9 +500,44 @@ describe("programs.saveAmrapResult", () => {
       actualReps: 3,
       autoregulated: true,
     })
-    
+
     const program = await t.run(async (ctx) => ctx.db.get(programId))
     expect(program!.amrapResults![0].autoregulated).toBe(true)
+  })
+
+  // ── Klientské datum (Task 2.1 — Finding 1: UTC date bug fix) ────────────────
+  it("uloží klientské datum, pokud je předáno", async () => {
+    const t = makeT()
+    const userId = await seedUser(t)
+    const programId = await seedActiveProgram(t, userId)
+
+    await t.withIdentity({ subject: userId }).mutation(api.programs.saveAmrapResult, {
+      lift: "squat",
+      weight: 95,
+      targetReps: 5,
+      actualReps: 8,
+      date: "2026-01-01",
+    })
+
+    const program = await t.run(async (ctx) => ctx.db.get(programId))
+    expect(program!.amrapResults![0].date).toBe("2026-01-01")
+  })
+
+  it("bez klientského data použije UTC fallback dnešek", async () => {
+    const t = makeT()
+    const userId = await seedUser(t)
+    const programId = await seedActiveProgram(t, userId)
+
+    await t.withIdentity({ subject: userId }).mutation(api.programs.saveAmrapResult, {
+      lift: "squat",
+      weight: 95,
+      targetReps: 5,
+      actualReps: 8,
+    })
+
+    const program = await t.run(async (ctx) => ctx.db.get(programId))
+    const expectedFallback = new Date().toISOString().split("T")[0]
+    expect(program!.amrapResults![0].date).toBe(expectedFallback)
   })
 })
 
@@ -555,6 +590,41 @@ describe("programs.completeWorkout", () => {
     const workout = await t.run(async (ctx) => ctx.db.get(result.workoutId!))
     expect(workout!.autoregulated).toBe(true)
     expect(workout!.deviationNote).toBe("Bolest zad, snížil jsem váhu")
+  })
+
+  // ── Klientské datum (Task 2.1 — Finding 1: UTC date bug fix) ────────────────
+  it("uloží klientské datum workoutu, pokud je předáno", async () => {
+    const t = makeT()
+    const userId = await seedUser(t)
+    await seedActiveProgram(t, userId)
+
+    const result = await t.withIdentity({ subject: userId }).mutation(api.programs.completeWorkout, {
+      exercises: [{ id: "ex1", name: "Squat", sets: [{ weight: 85, reps: 5, completed: true }] }],
+      date: "2026-01-01",
+      expectedCycle: 1,
+      expectedWeek: 1,
+      expectedDayIndex: 0,
+    })
+
+    const workout = await t.run(async (ctx) => ctx.db.get(result.workoutId!))
+    expect(workout!.date).toBe("2026-01-01")
+  })
+
+  it("bez klientského data použije UTC fallback dnešek pro datum workoutu", async () => {
+    const t = makeT()
+    const userId = await seedUser(t)
+    await seedActiveProgram(t, userId)
+
+    const result = await t.withIdentity({ subject: userId }).mutation(api.programs.completeWorkout, {
+      exercises: [{ id: "ex1", name: "Squat", sets: [{ weight: 85, reps: 5, completed: true }] }],
+      expectedCycle: 1,
+      expectedWeek: 1,
+      expectedDayIndex: 0,
+    })
+
+    const workout = await t.run(async (ctx) => ctx.db.get(result.workoutId!))
+    const expectedFallback = new Date().toISOString().split("T")[0]
+    expect(workout!.date).toBe(expectedFallback)
   })
 
   it("advances program after workout", async () => {

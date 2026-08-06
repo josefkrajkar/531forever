@@ -2,6 +2,7 @@ import { v } from "convex/values"
 import { internalMutation, mutation, query } from "./_generated/server"
 import { getAuthUserId } from "@convex-dev/auth/server"
 import { estimateE1RM } from "../lib/strength-calculations"
+import { assertValidDate } from "./dates"
 
 // ============================================================================
 // VALIDATION CONSTANTS
@@ -188,9 +189,6 @@ export const setDayAccessories = mutation({
 // ACCESSORY LOGS (for double progression tracking)
 // ============================================================================
 
-// Regex pro validaci formátu YYYY-MM-DD (shodný s bodyweight.ts)
-const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/
-
 // Log accessory performance
 export const logAccessory = mutation({
   args: {
@@ -211,9 +209,7 @@ export const logAccessory = mutation({
     validateSets(args.sets)
 
     // Validace klientského data (pokud přišlo)
-    if (args.date !== undefined && !DATE_REGEX.test(args.date)) {
-      throw new Error("Neplatný formát data — očekáváno YYYY-MM-DD")
-    }
+    if (args.date !== undefined) assertValidDate(args.date)
 
     // Get program context if available
     const program = await ctx.db
@@ -295,12 +291,17 @@ export const getLastAccessoryLog = query({
 
 // Get all accessory logs for today (for workout view)
 export const getTodayAccessoryLogs = query({
-  args: {},
-  handler: async (ctx) => {
+  args: {
+    date: v.optional(v.string()), // YYYY-MM-DD z klienta — bez klienta zatím (dead code), fallback níže
+  },
+  handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx)
     if (!userId) return []
 
-    const today = new Date().toISOString().split("T")[0]
+    if (args.date !== undefined) assertValidDate(args.date)
+
+    // Klientské datum má přednost; fallback na UTC dnešek (zpětná kompatibilita)
+    const today = args.date ?? new Date().toISOString().split("T")[0]
 
     return await ctx.db
       .query("accessoryLogs")
@@ -342,9 +343,7 @@ export const logMultipleAccessories = mutation({
     }
 
     // Validace klientského data (pokud přišlo)
-    if (args.date !== undefined && !DATE_REGEX.test(args.date)) {
-      throw new Error("Neplatný formát data — očekáváno YYYY-MM-DD")
-    }
+    if (args.date !== undefined) assertValidDate(args.date)
 
     const program = await ctx.db
       .query("programs")

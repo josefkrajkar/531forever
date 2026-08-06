@@ -19,6 +19,7 @@ import "fake-indexeddb/auto"
 import {
   enqueue,
   getAll,
+  getDeadLetters,
   remove,
   update,
   count,
@@ -180,6 +181,75 @@ describe("outbox", () => {
 
       const items = await getAll()
       expect(items[0].lastError).toBe("druhá chyba")
+    })
+
+    it("state 'dead' round-tripuje přes update/getAll", async () => {
+      const id = await enqueue(makeItem("programs.completeWorkout"))
+
+      await update(id, { state: "dead", attempts: 5, lastError: "vyčerpány pokusy" })
+
+      const items = await getAll()
+      expect(items[0].state).toBe("dead")
+      expect(items[0].attempts).toBe(5)
+      expect(items[0].lastError).toBe("vyčerpány pokusy")
+    })
+
+    it("state lze zpět nastavit z 'dead' na 'pending' (retryFailure flow)", async () => {
+      const id = await enqueue(makeItem("programs.completeWorkout"))
+      await update(id, { state: "dead", attempts: 5, lastError: "chyba" })
+
+      await update(id, { state: "pending", attempts: 0, lastError: undefined })
+
+      const items = await getAll()
+      expect(items[0].state).toBe("pending")
+      expect(items[0].attempts).toBe(0)
+      expect(items[0].lastError).toBeUndefined()
+    })
+  })
+
+  // ─── getDeadLetters ──────────────────────────────────────────────────────
+
+  describe("getDeadLetters", () => {
+    it("vrátí pouze položky se state 'dead'", async () => {
+      const id1 = await enqueue(makeItem("first"))
+      const id2 = await enqueue(makeItem("second"))
+      const id3 = await enqueue(makeItem("third"))
+
+      await update(id1, { state: "dead", attempts: 5, lastError: "chyba 1" })
+      await update(id2, { state: "failed", attempts: 2, lastError: "chyba 2" })
+      // id3 zůstává "pending"
+
+      const deadLetters = await getDeadLetters()
+      expect(deadLetters).toHaveLength(1)
+      expect(deadLetters[0].id).toBe(id1)
+      expect(deadLetters[0].mutationName).toBe("first")
+      expect(deadLetters[0].state).toBe("dead")
+    })
+
+    it("prázdná fronta → getDeadLetters vrátí prázdné pole", async () => {
+      expect(await getDeadLetters()).toEqual([])
+    })
+
+    it("žádná dead položka → getDeadLetters vrátí prázdné pole", async () => {
+      await enqueue(makeItem("pending-item"))
+      const id = await enqueue(makeItem("failed-item"))
+      await update(id, { state: "failed", attempts: 1 })
+
+      expect(await getDeadLetters()).toEqual([])
+    })
+
+    it("zachová FIFO pořadí u vícero dead položek", async () => {
+      const id1 = await enqueue(makeItem("dead-1"))
+      await enqueue(makeItem("pending-between"))
+      const id3 = await enqueue(makeItem("dead-2"))
+
+      await update(id1, { state: "dead", attempts: 5 })
+      await update(id3, { state: "dead", attempts: 5 })
+
+      const deadLetters = await getDeadLetters()
+      expect(deadLetters).toHaveLength(2)
+      expect(deadLetters[0].mutationName).toBe("dead-1")
+      expect(deadLetters[1].mutationName).toBe("dead-2")
     })
   })
 

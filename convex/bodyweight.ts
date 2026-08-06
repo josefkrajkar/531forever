@@ -8,9 +8,7 @@
 import { v } from "convex/values"
 import { mutation, query } from "./_generated/server"
 import { getAuthUserId } from "@convex-dev/auth/server"
-
-// Regex pro validaci formátu YYYY-MM-DD
-const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/
+import { assertValidDate } from "./dates"
 
 /**
  * Zaloguje tělesnou váhu pro daný den (UPSERT — druhé zalogování v týž den přepíše).
@@ -31,9 +29,7 @@ export const logBodyweight = mutation({
     if (!userId) throw new Error("Není přihlášen")
 
     // Validace formátu data
-    if (!DATE_REGEX.test(args.date)) {
-      throw new Error("Neplatný formát data — očekáváno YYYY-MM-DD")
-    }
+    assertValidDate(args.date)
 
     // Validace váhy
     if (!Number.isFinite(args.weightKg) || args.weightKg < 30 || args.weightKg > 300) {

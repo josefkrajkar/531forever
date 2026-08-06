@@ -5,6 +5,8 @@ import { useMutation } from "convex/react"
 import { api } from "@/convex/_generated/api"
 import { toast } from "sonner"
 import { type SeventhWeekType } from "@/lib/531"
+import { useConnectionState } from "@/hooks/use-connection-state"
+import { useOfflineMutation } from "@/hooks/use-offline-mutation"
 
 interface UseSeventhWeekParams {
   initialType: SeventhWeekType | null
@@ -19,6 +21,9 @@ interface UseSeventhWeekReturn {
 
 export function useSeventhWeek({ programSeventhWeekType }: Pick<UseSeventhWeekParams, "programSeventhWeekType">): UseSeventhWeekReturn {
   const setSeventhWeekType = useMutation(api.programs.setSeventhWeekType)
+
+  const { isOnline } = useConnectionState()
+  const { enqueueMutation } = useOfflineMutation()
 
   const serverValue = (programSeventhWeekType as SeventhWeekType) || null
 
@@ -38,7 +43,11 @@ export function useSeventhWeek({ programSeventhWeekType }: Pick<UseSeventhWeekPa
     setSelectedSeventhWeekType(type)
     setSavingSeventhWeekType(true)
     try {
-      await setSeventhWeekType({ type })
+      if (isOnline) {
+        await setSeventhWeekType({ type })
+      } else {
+        await enqueueMutation("programs.setSeventhWeekType", { type })
+      }
       console.log("[program-workout] 7th week type set to:", type)
     } catch (err) {
       console.error("[program-workout] Error setting 7th week type:", err)

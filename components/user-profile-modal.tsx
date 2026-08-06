@@ -15,6 +15,9 @@ import {
 } from "@/lib/profile"
 import { type WeightUnit } from "@/lib/units"
 import { usePreferredUnit } from "@/hooks/use-preferred-unit"
+import { useConnectionState } from "@/hooks/use-connection-state"
+import { useOfflineMutation } from "@/hooks/use-offline-mutation"
+import { localToday } from "@/lib/date"
 
 export interface UserProfile {
   gender: string
@@ -26,7 +29,7 @@ export interface UserProfile {
 
 interface Props {
   initialProfile?: UserProfile | null
-  onSubmit: (profile: UserProfile) => void
+  onSubmit: (profile: UserProfile) => void | Promise<void>
   onClose: () => void
   submitLabel?: string
   subtitle?: string
@@ -53,6 +56,8 @@ export default function UserProfileModal({
   const [downloadingCsv, setDownloadingCsv] = useState(false)
   const [loggingWeight, setLoggingWeight] = useState(false)
   const { toDisplay, label: unitLabel } = usePreferredUnit()
+  const { isOnline } = useConnectionState()
+  const { enqueueMutation } = useOfflineMutation()
 
   // Modal je podmíněně mountován — query/mutation je aktivní jen když je modal otevřen
   const currentUser = useQuery(api.users.currentLoggedInUser)
@@ -77,13 +82,17 @@ export default function UserProfileModal({
         toast.error(t("profile.unitSaveFailed"))
       })
     }
-    onSubmit({
-      gender,
-      age: parseInt(age) || 25,
-      height: parseInt(height) || 175,
-      weight: parseFloat(weight) || 80,
-      experience,
-    })
+    try {
+      await onSubmit({
+        gender,
+        age: parseInt(age) || 25,
+        height: parseInt(height) || 175,
+        weight: parseFloat(weight) || 80,
+        experience,
+      })
+    } catch {
+      // Caller surfaces its own error toast — catch zde jen zabrání unhandled rejection.
+    }
   }
 
   // Poslední zaznamenaná váha (pro hint pod polem)
@@ -98,8 +107,12 @@ export default function UserProfileModal({
     }
     setLoggingWeight(true)
     try {
-      const today = new Date().toISOString().split("T")[0]
-      await logBodyweight({ date: today, weightKg: parsedWeight })
+      const today = localToday()
+      if (isOnline) {
+        await logBodyweight({ date: today, weightKg: parsedWeight })
+      } else {
+        await enqueueMutation("bodyweight.logBodyweight", { date: today, weightKg: parsedWeight })
+      }
       toast.success(t("profile.weightLogged", { weight: parsedWeight }))
     } catch {
       toast.error(t("profile.errorWeightLog"))
@@ -107,8 +120,6 @@ export default function UserProfileModal({
       setLoggingWeight(false)
     }
   }
-
-  const getDateSuffix = () => new Date().toISOString().split("T")[0]
 
   const triggerDownload = (content: string, filename: string, mimeType: string) => {
     const blob = new Blob([content], { type: mimeType })
@@ -129,7 +140,7 @@ export default function UserProfileModal({
       const json = toExportJson(exportData, new Date().toISOString())
       triggerDownload(
         json,
-        `531forever-export-${getDateSuffix()}.json`,
+        `531forever-export-${localToday()}.json`,
         "application/json;charset=utf-8"
       )
       toast.success(t("profile.exportJsonSuccess"))
@@ -147,7 +158,7 @@ export default function UserProfileModal({
       const csv = toWorkoutsCsv(exportData)
       triggerDownload(
         csv,
-        `531forever-export-${getDateSuffix()}.csv`,
+        `531forever-export-${localToday()}.csv`,
         "text/csv;charset=utf-8"
       )
       toast.success(t("profile.exportCsvSuccess"))

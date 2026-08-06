@@ -12,8 +12,7 @@
 import { v } from "convex/values"
 import { mutation, query } from "./_generated/server"
 import { getAuthUserId } from "@convex-dev/auth/server"
-
-const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/
+import { assertValidDate } from "./dates"
 
 const sourceValidator = v.union(
   v.literal("manual"),
@@ -42,9 +41,7 @@ export const upsertReadinessSignal = mutation({
     const userId = await getAuthUserId(ctx)
     if (!userId) throw new Error("Není přihlášen")
 
-    if (!DATE_REGEX.test(args.date)) {
-      throw new Error("Neplatný formát data — očekáváno YYYY-MM-DD")
-    }
+    assertValidDate(args.date)
 
     // Validace rozsahů (jen pro dodané metriky)
     if (args.hrvMs !== undefined) {
